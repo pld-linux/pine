@@ -10,7 +10,7 @@ Copyright:	distributable
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
-Source1:	pine.wmconfig
+Source1:	pine.desktop
 Source2:	pine.1.pl
 Patch0:		pine-config.patch
 Patch1:		pine-doc.patch
@@ -27,6 +27,8 @@ URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
+
+%define		_applnkdir 	/usr/X11R6/applnk
 
 %description
 Pine is a very full featured text based mail and news client. It is
@@ -86,14 +88,14 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}}
-install -d $RPM_BUILD_ROOT/etc/X11/wmconfig
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
+	$RPM_BUILD_ROOT%{_applnkdir}/Networking/Mail
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
+install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Networking/Mail
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine.conf
@@ -121,7 +123,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
 
-/etc/X11/wmconfig/*
+%{_applnkdir}/Networking/Mail/pine.desktop
 
 %config(noreplace) %verify(not size mtime md5) /etc/pine.conf
 
