@@ -57,7 +57,7 @@ Patch24:	%{name}-utf_ra.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.6k
+BuildRequires:	openssl-devel >= 0.9.6m
 Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
