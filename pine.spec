@@ -1,14 +1,16 @@
+%define realversion 4.44
+
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
 Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
-Version:	4.44
-Release:	2
+Version:	%{realversion}L
+Release:	2.1
 License:	distributable
 Group:		Applications/Mail
-Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
+Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
@@ -31,6 +33,8 @@ Patch15:	%{name}-fixhome.patch
 Patch16:	%{name}-terminit.patch
 Patch17:	%{name}-ssl.patch
 Patch18:	%{name}-non_english_man_path_fix.patch
+Patch19:	%{name}-no_1777_warning.patch
+Patch20:	%{name}-L_on_version.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -109,7 +113,7 @@ stylu compsera pine. Podobnie jak w pine polecenia sa wy¶wietlane na
 dole ekranu oraz jest dostêpna pomoc kontekstowa.
 
 %prep
-%setup   -q -a3 -n %{name}%{version}
+%setup   -q -a3 -n %{name}%{realversion}
 %patch0  -p1
 %patch1  -p1
 %patch2  -p1
@@ -129,6 +133,8 @@ dole ekranu oraz jest dostêpna pomoc kontekstowa.
 #%patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
+%patch20 -p1
 
 %build
 ./build slx \
