@@ -1,6 +1,6 @@
-diff -Nur pine4.58.orig/build pine4.58/build
---- pine4.58.orig/build	Mon Dec  9 18:54:38 2002
-+++ pine4.58/build	Thu Dec 11 15:28:44 2003
+diff -urN pine4.60/build pine-patched/build
+--- pine4.60/build	2004-05-07 19:32:32.000000000 +0000
++++ pine-patched/build	2004-06-05 17:30:52.000000000 +0000
 @@ -67,6 +67,8 @@
  
  L1=
@@ -10,7 +10,7 @@ diff -Nur pine4.58.orig/build pine4.58/build
  K1=
  K2=
  S1=
-@@ -129,6 +131,7 @@
+@@ -131,6 +133,7 @@
      *) makeargs="$makeargs '$var'"
         case "$var" in
  	 CC=*)                   NOCC=1    ;;
@@ -18,7 +18,7 @@ diff -Nur pine4.58.orig/build pine4.58/build
  	 LDAPLIBS=*)             LLIBS=1   ;;
  	 LDAPCFLAGS=*)           LFLAGS=1  ;;
  	 GSSDIR=*)               GDIR=1
-@@ -232,6 +235,11 @@
+@@ -236,6 +239,11 @@
          echo ''
          cd "$PHOME"
  
@@ -30,20 +30,20 @@ diff -Nur pine4.58.orig/build pine4.58/build
  # Try to automatically include LDAP definitions.
          if [ "$NOLDAP" != "1" -a -f contrib/ldap-setup -a \
  	     \( "$LLIBS" != "1" -o "$LFLAGS" != "1" \) ]
-@@ -429,8 +437,8 @@
- 
-         echo "Making Pine and rpload/rpdump".
+@@ -459,8 +467,8 @@
+ 	    PINEEXTRAC="'LOCALPINECFLAGS=-DSYSTEM_PINERC=\\\"/etc/pine.conf\\\" -DSYSTEM_PINERC_FIXED=\\\"/etc/pine.conf.fixed\\\" -DSYSTEM_PINE_INFO_PATH=\\\"/etc/pine.info\\\"'"
+ 	fi
          cd "$PHOME/pine"
--        eval echo make "$makeargs" "$L1" "$L2" -f makefile.$pinetarg
--        eval make "$makeargs" "$L1" "$L2" -f makefile.$pinetarg
-+        eval echo make "$makeargs" "$L1" "$L2" "$H1" "$H2" -f makefile.$pinetarg
-+        eval make "$makeargs" "$L1" "$L2" "$H1" "$H2" -f makefile.$pinetarg
+-        eval echo make "$makeargs" "$L1" "$L2" "$PINEEXTRAC" -f makefile.$pinetarg
+-        eval make "$makeargs" "$L1" "$L2" "$PINEEXTRAC" -f makefile.$pinetarg
++        eval echo make "$makeargs" "$L1" "$L2" "$H1" "$H2" "$PINEEXTRAC" -f makefile.$pinetarg
++        eval make "$makeargs" "$L1" "$L2" "$H1" "$H2" "$PINEEXTRAC" -f makefile.$pinetarg
  	rc=$?
  	if [ $rc != "0" ] ; then exit $rc ; fi
          cd "$PHOME"
-diff -Nur pine4.58.orig/pine/init.c pine4.58/pine/init.c
---- pine4.58.orig/pine/init.c	Thu Dec 11 14:34:10 2003
-+++ pine4.58/pine/init.c	Thu Dec 11 15:19:49 2003
+diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
+--- pine4.60/pine/init.c	2004-06-05 17:27:47.000000000 +0000
++++ pine-patched/pine/init.c	2004-06-05 17:28:52.000000000 +0000
 @@ -67,6 +67,13 @@
  #include "headers.h"
  #include "../c-client/imap4r1.h"  /* for LEVELSTATUS() */
@@ -58,7 +58,7 @@ diff -Nur pine4.58.orig/pine/init.c pine4.58/pine/init.c
  
  typedef enum {Sapling, Seedling, Seasoned} FeatureLevel;
  
-@@ -1384,7 +1391,7 @@
+@@ -1429,7 +1436,7 @@
      }
  
      if(!ps->pinerc){
@@ -67,9 +67,9 @@ diff -Nur pine4.58.orig/pine/init.c pine4.58/pine/init.c
        ps->pinerc = cpystr(buf);
      }
  
-diff -Nur pine4.58.orig/pine/makefile.lnx pine4.58/pine/makefile.lnx
---- pine4.58.orig/pine/makefile.lnx	Thu Dec 11 14:34:10 2003
-+++ pine4.58/pine/makefile.lnx	Thu Dec 11 15:19:49 2003
+diff -urN pine4.60/pine/makefile.lnx pine-patched/pine/makefile.lnx
+--- pine4.60/pine/makefile.lnx	2004-06-05 17:27:47.000000000 +0000
++++ pine-patched/pine/makefile.lnx	2004-06-05 17:32:12.000000000 +0000
 @@ -62,11 +62,11 @@
  
  STDLIBS=     -lncurses
@@ -81,12 +81,12 @@ diff -Nur pine4.58.orig/pine/makefile.lnx pine4.58/pine/makefile.lnx
  STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
 -CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) \
 +CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) $(HOMEETCCFLAGS) \
- 	     $(STDCFLAGS)
+ 	     $(LOCALPINECFLAGS) $(STDCFLAGS)
  
  OFILES=	addrbook.o adrbkcmd.o adrbklib.o args.o bldaddr.o context.o filter.o \
-diff -Nur pine4.58.orig/pine/pine-use.c pine4.58/pine/pine-use.c
---- pine4.58.orig/pine/pine-use.c	Fri Mar 15 08:13:42 1996
-+++ pine4.58/pine/pine-use.c	Thu Dec 11 15:19:49 2003
+diff -urN pine4.60/pine/pine-use.c pine-patched/pine/pine-use.c
+--- pine4.60/pine/pine-use.c	2000-02-16 23:53:08.000000000 +0000
++++ pine-patched/pine/pine-use.c	2004-06-05 17:28:52.000000000 +0000
 @@ -49,6 +49,13 @@
  /* #define MAILSPOOLPCTS "/usr/mail/%s" */
  #endif
