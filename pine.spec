@@ -1,7 +1,7 @@
 #
 # Conditional build:
-%bcond_without utf8		# build without utf-8 support
-%bcond_without home_etc		# build without home-etc support
+%bcond_with utf8		# build without utf-8 support
+%bcond_with home_etc		# build without home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
@@ -15,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.60
 Version:	%{realversion}L
-Release:	0.1
+Release:	0.2
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -25,12 +25,6 @@ Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source3-md5:	7bd233708a9621f3dfd173acb20ec0bb
 Source4:	pico.desktop
-# renamed files from
-# http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/
-#Source5:	%{name}-rules.c.gz
-# Source5-md5:	9380005dba3bb45db1fa24dbee459fea
-#Source6:	%{name}-rules.h.gz
-# Source6-md5:	27b9833d2394b5d1826ed5f77cfa8ecb
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -39,32 +33,29 @@ Patch4:		%{name}-unix.patch
 Patch5:		%{name}-filter.patch
 Patch6:		%{name}-quote.patch
 Patch7:		%{name}-fhs.patch
-#Patch8:		%{name}-maildir.patch
-#Patch9:		%{name}-maildirfix.patch
-Patch10:	%{name}-segfix.patch
-#Patch11:	%{name}-whitespace.patch
-Patch12:	%{name}-libc-client.patch
-Patch13:	%{name}-fixhome.patch
-#Patch14:	%{name}-terminit.patch
-Patch15:	%{name}-ssl.patch
-Patch16:	%{name}-non_english_man_path_fix.patch
-Patch17:	%{name}-no_1777_warning.patch
-Patch18:	%{name}-L_on_version.patch
-Patch19:	%{name}-overflow.patch
+Patch8:		%{name}-segfix.patch
+Patch9:		%{name}-libc-client.patch
+Patch10:	%{name}-fixhome.patch
+#Patch11:	%{name}-terminit.patch
+Patch12:	%{name}-ssl.patch
+Patch13:	%{name}-non_english_man_path_fix.patch
+Patch14:	%{name}-no_1777_warning.patch
+Patch15:	%{name}-L_on_version.patch
+Patch16:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
+Patch17:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
-Patch21:	%{name}-smime.patch
-Patch22:	%{name}-css.patch
+Patch18:	%{name}-smime.patch
+Patch19:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
-Patch23:	%{name}-iconv-9d.patch
-Patch24:	%{name}-home_etc.patch
+Patch20:	%{name}-iconv-9d.patch
+Patch21:	%{name}-home_etc.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-devel >= 0.9.6m
 Requires:	mailcap
 %{?with_home_etc:Requires:	home-etc >= 1.0.8}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -196,36 +187,28 @@ ajuda de acordo com o contexto estА disponМvel.
 
 %prep
 %setup   -q -a3 -n %{name}%{realversion}
-%patch0  -p1
-%patch1  -p1
-%patch2  -p1
-%patch3  -p1
-%patch4  -p1
-#%patch5  -p1
-#%patch6  -p1
-%patch7  -p1
-#%patch8  -p1
-#%patch9  -p1
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 %patch10 -p1
-#%patch11 -p1
+# breaks keys on some terminals
+##%patch11 -p1
 %patch12 -p1
 %patch13 -p1
-# breaks keys on some terminals
-##%patch14 -p1
+%patch14 -p1
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
 # breaks pine
-##%patch21 -p1
-%patch22 -p1
-%{?with_utf8:%patch23 -p1}
-%{?with_home_etc:%patch24 -p1}
-
-zcat %{SOURCE5} >pine/rules.c
-zcat %{SOURCE6} >pine/rules.h
+##%patch18 -p1
+%patch19 -p1
+%{?with_utf8:%patch20 -p1}
+%{?with_home_etc:%patch21 -p1}
 
 %build
 ./build slx \
