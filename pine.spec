@@ -24,7 +24,7 @@ Patch8:		pine-noflock.patch
 Patch9:		pine-fhs.patch
 Patch10:	pine-maildir.patch
 URL:		http://www.washington.edu/pine/
-BuidRequire:	ncurses-devel >= 5.0
+BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
 
