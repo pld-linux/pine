@@ -167,7 +167,7 @@ rm -rf $RPM_BUILD_ROOT
   non-root account),
 - added using %%{name} macro %%{version} in Source and %setup,
 - added %clean section,
-- added "Requires: mailcap" and removed %config /usr/lib/mime.types,
+- added "Requires: mailcap" and removed %config %{_libdir}/mime.types,
 - pine.conf* files moved to /etc,
 - removed -DDEBUG compile time option,
 - all stuff linked against libncurses instead libtermcap,
