@@ -89,7 +89,7 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
-	$RPM_BUILD_ROOT%{_applnkdir}/Networking/Mail
+	$RPM_BUILD_ROOT{%{_applnkdir}/Networking/Mail,/etc}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
