@@ -5,13 +5,14 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.10
-Release:	3
+Release:	4
 Copyright:	distributable
 URL:		http://www.washington.edu/pine
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
 Source1:	pine.wmconfig
+Source2:	pine.1.pl
 Patch0:		pine-config.patch
 Patch1:		pine-doc.patch
 Patch2:		pine-makefile.patch
@@ -83,13 +84,15 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{usr/{bin,man/man1},etc/{pine,X11/wmconfig}}
+install -d $RPM_BUILD_ROOT/{usr/{bin,man/{man1,pl/man1}},etc/{pine,X11/wmconfig}}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT/usr/bin
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT/usr/man/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
+
+install %{SOURCE2} $RPM_BUILD_ROOT/usr/man/pl/man1/pine.1
 
 $RPM_BUILD_ROOT/usr/bin/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
@@ -105,7 +108,7 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
 
 EOF
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* \
+gzip -9fn $RPM_BUILD_ROOT/usr/man/{man1/*,pl/man1/*} \
 	README doc/*.txt doc/mailcap.unx 
 
 %clean
@@ -123,8 +126,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(755,root,root) /usr/bin/pi*
 /usr/man/man1/*
+%lang(pl) /usr/man/pl/man1/*
 
 %changelog
+* Sun Apr 25 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [4.10-4]
+- added pl man page for pine.
+
 * Thu Apr 22 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [4.10-3]
 - removed %config from /etc/X11/wmconfig/pine,
