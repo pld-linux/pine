@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without utf8		# build without utf-8 support
-%bcond_without home_etc		# build without home-etc support
+%bcond_with home_etc		# build with home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
@@ -15,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.60
 Version:	%{realversion}L
-Release:	0.3
+Release:	1
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -52,10 +52,10 @@ Patch20:	%{name}-iconv-9d.patch
 Patch21:	%{name}-home_etc.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
-%{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
+%{?with_utf8:BuildRequires:	glibc-devel >= 2.2.5}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-devel >= 0.9.6m
 Requires:	mailcap
 %{?with_home_etc:Requires:	home-etc >= 1.0.8}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -214,7 +214,7 @@ ajuda de acordo com o contexto estА disponМvel.
 ./build slx \
 	OPTIMIZE="%{rpmcflags}" \
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
-	EXTRACFLAGS="-DHAVE_ICONV" \
+	%{!?with_utf8:EXTRACFLAGS="-DHAVE_ICONV"} \
 	%{?with_home_etc:HOMEETCLIB="1"} \
 	SSLTYPE="unix" \
 	DEBUG=" " \
