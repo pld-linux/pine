@@ -18,7 +18,7 @@ Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
 # Source0-md5:	937a958be18b40543902f4c53ae5466f
 Source1:	%{name}.desktop
 Source2:	%{name}.png
-Source3:	%{name}-non-english-man-pages.tar.bz2
+Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source3-md5:	7bd233708a9621f3dfd173acb20ec0bb
 Source4:	pico.desktop
 # renamed files from
