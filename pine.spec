@@ -25,6 +25,7 @@ Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
 Patch10:	pine-noroot.patch
 Patch11:	pine-fhs.patch
+Patch12:	pine-lockwarn.patch
 Requires:	mailcap
 BuildPrereq:	ncurses-devel
 Buildroot:	/tmp/%{name}-%{version}-root
@@ -79,6 +80,7 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %patch9  -p1 
 %patch10 -p1 
 %patch11 -p1 
+%patch12 -p1 
 
 %build
 ./build \
