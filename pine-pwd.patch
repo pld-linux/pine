@@ -1,0 +1,18 @@
+diff -Nur pine4.58.orig/pine/osdep/os-lnx.h pine4.58/pine/osdep/os-lnx.h
+--- pine4.58.orig/pine/osdep/os-lnx.h	2004-05-07 13:57:14.000000000 +0200
++++ pine4.58/pine/osdep/os-lnx.h	2004-05-07 14:02:23.000000000 +0200
+@@ -254,6 +254,14 @@
+ #define MAX_SCREEN_ROWS  (200) 
+ 
+ 
++
++/*----------------------------------------------------------------------
++ *     File name used to store the user's server/id/password triple between
++ *      session.  It is rooted in the same directory as the PINERC.
++ *       ----*/
++#define PASSFILE        ".pine.pwd"
++
++
+ /*----------------------------------------------------------------------
+     Where to put the output of pine in debug mode. Files are created
+  in the user's home directory and have a number appended to them when
