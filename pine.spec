@@ -5,7 +5,7 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.10
-Release:	4
+Release:	5
 Copyright:	distributable
 URL:		http://www.washington.edu/pine
 Group:		Applications/Mail
@@ -23,6 +23,8 @@ Patch6:		pine-filter.patch
 Patch7:		pine-quote.patch
 Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
+Patch10:	pine-noroot.patch
+Patch11:	pine-fhs.patch
 Requires:	mailcap
 BuildPrereq:	ncurses-devel
 Buildroot:	/tmp/%{name}-%{version}-root
@@ -64,17 +66,19 @@ metin düzenleyici olarak ilgi görmüþtür. Pine, MIME desteði, adres defteri ve
 IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 
 %prep
-%setup -q -n %{name}%{version}
-%patch0 -p1 
-%patch1 -p1 
-%patch2 -p1 
-%patch3 -p1 
-%patch4 -p1 
-%patch5 -p1 
-%patch6 -p1 
-%patch7 -p1 
-%patch8 -p1 
-%patch9 -p1 
+%setup   -q -n %{name}%{version}
+%patch0  -p1 
+%patch1  -p1 
+%patch2  -p1 
+%patch3  -p1 
+%patch4  -p1 
+%patch5  -p1 
+%patch6  -p1 
+%patch7  -p1 
+%patch8  -p1 
+%patch9  -p1 
+%patch10 -p1 
+%patch11 -p1 
 
 %build
 ./build \
@@ -84,7 +88,7 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{usr/{bin,man/{man1,pl/man1}},etc/{pine,X11/wmconfig}}
+install -d $RPM_BUILD_ROOT/{usr/{bin,share/man/{man1,pl/man1}},etc/{pine,X11/wmconfig}}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
