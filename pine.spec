@@ -84,6 +84,7 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch9  -p1 
 %patch10 -p1 
 %patch11 -p1 
+%patch12 -p1 
 
 %build
 ./build slx \
