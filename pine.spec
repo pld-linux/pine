@@ -2,8 +2,10 @@
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
+Summary(es):	Lector de mail con soporte a MIME y news
 Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
+Summary(pt_BR):	Leitor de mail com suporte a MIME e news
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	%{realversion}L
@@ -55,6 +57,12 @@ einfachen Editor (Pico), der zum Verfassen der Nachrichten dient, sich
 jedoch inzwischen einen Namen als autonomer Texteditor gemacht hat.
 Pine unterstützt MIME, Adreßbücher, IMAP, Mail- und HM-Ordner.
 
+%description -l es
+Pine es un programa cliente de mail ("lector de mail") basado en texto
+y cliente de news. Está orientado tanto a principiantes como a
+usuarios más expertos. Posee soporte para MINE, agendas de dirección,
+y soporte para folders de estilo IMAP, mail y MH.
+
 %description -l fr
 pine est un client courrier et news très complet en mode texte. Il est
 destiné aux débutants comme aux experts. Il comprend un éditeur simple
@@ -72,6 +80,12 @@ elektronicznej, posiada wspomaganie dla MIME i IMAP, mo¿na w ³atwy
 sposób tworzyæ ksi±¿ki adresowe i skonfigurowaæ go do wspó³pracy z
 aplikacj± PGP.
 
+%description -l pt_BR
+Pine é um programa cliente de mail ("leitor de mail") baseado em texto
+e cliente de news. Ele é dirigido tanto para novatos como para
+usuários experientes. Possui suporte para MIME, agendas de endereço, e
+suporte para pastas de estilo IMAP, mail e MH.
+
 %description -l tr
 Pine, metin tabanlý bir ileti ve haber servisi (news) istemcisidir.
 Hem acemi hem de uzman kullanýcýlar için uygundur. Ýleti yazmak için
@@ -82,7 +96,9 @@ biçimlerini destekleme özelliklerini taþýr.
 
 %package -n pico
 Summary:	Simple text editor in the style of the Pine Composer
+Summary(es):	Simple, easy-to-use text-based editor
 Summary(pl):	Prosty edytor tekstowy w stylu pine
+Summary(pt_BR):	Editor de textos para terminal simples e fácil de usar
 Group:		Applications/Editors
 
 %description -n pico
@@ -91,18 +107,35 @@ message system composer. As with Pine, commands are displayed at the
 bottom of the screen, and context-sensitive help is provided. As
 characters are typed they are immediately inserted into the text.
 
+%description -n pico -l es
+Pico is a simple, display-oriented text editor based on the Pine
+message system composer. As with Pine, commands are displayed at the
+bottom of the screen, and context- sensitive help is provided.
+
 %description -n pico -l pl
 Pico jest prostym, zorientowanym na wy¶wietlanie edytorem bazuj±cym na
 pine. Tak jak w pine komendy s± wy¶wietlane na dole ekranu oraz
 dostêpna jest pomoc konteksowa. Wpisywane znaki s± natychmiast
 w³±czane do tekstu.
 
+%description -n pico -l pt_BR
+Pico é um editor de texto baseado no compositor de mensagens do Pine.
+Assim como no Pine, comandos são mostrados na parte de baixo da tela,
+e ajuda de acordo com o contexto está disponível.
+
 %package -n pilot
 Summary:	Simple file system browser in the style of the Pine Composer
+Summary(es):	Simple filesystem browser in the style of the Pine Composer
 Summary(pl):	Prosta przegl±darka plików w stylu composera pine
+Summary(pt_BR):	Navegador de sistemas de arquivos no estilo do compositor do Pine
 Group:		Applications/Shells
 
 %description -n pilot
+Pilot is a simple, display-oriented file system browser based on the
+Pine message system composer. As with Pine, commands are displayed at
+the bottom of the screen, and context-sensitive help is provided.
+
+%description -n pilot -l es
 Pilot is a simple, display-oriented file system browser based on the
 Pine message system composer. As with Pine, commands are displayed at
 the bottom of the screen, and context-sensitive help is provided.
@@ -111,6 +144,11 @@ the bottom of the screen, and context-sensitive help is provided.
 Pilot jest prost±, zorientowan± na wy¶wietlanie przegl±dark± plików w
 stylu compsera pine. Podobnie jak w pine polecenia sa wy¶wietlane na
 dole ekranu oraz jest dostêpna pomoc kontekstowa.
+
+%description -n pilot -l pt_BR
+Pilot é um navegador de sistemas de arquivos baseado no Pine. Assim
+como no Pine, comandos são apresentados na parte de baixo da tela, e
+ajuda de acordo com o contexto está disponível.
 
 %prep
 %setup   -q -a3 -n %{name}%{realversion}
