@@ -261,9 +261,9 @@ ustawiona).
 .br
 /usr/share/info/pine.info	Lokalny wska¼nik do administratora systemu
 .br
-/etc/pine/pine.conf	Systemowy plik konfiguracyjny
+/etc/pine.conf	Systemowy plik konfiguracyjny
 .br
-/etc/pine/pine.conf.fixed  Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
+/etc/pine.conf.fixed  Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
 .br
 /tmp/.\\var\\mail\\xxxx		Pliki blokuj±ce dla ka¿dego folderu
 .br
