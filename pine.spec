@@ -40,9 +40,10 @@ Patch18:	%{name}-non_english_man_path_fix.patch
 Patch19:	%{name}-no_1777_warning.patch
 Patch20:	%{name}-L_on_version.patch
 Patch21:	%{name}-overflow.patch
+Patch22:	http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 # http://www.math.washington.edu/~chappa/pine/
-Patch22:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.gz
-#Patch23:	http://jshin.net/i18n/pine4.44.iconv.patch
+Patch23:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.gz
+#Patch24:	http://jshin.net/i18n/pine4.44.iconv.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -199,7 +200,8 @@ ajuda de acordo com o contexto está disponível.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-#%patch23 -p1
+%patch23 -p1
+#%patch24 -p1
 
 %build
 ./build slx \
