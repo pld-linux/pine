@@ -1,4 +1,3 @@
-%define realversion 4.44
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
@@ -10,8 +9,9 @@ Summary(ru):	óÏ×ÍÅÓÔÉÍÙÊ Ó MIME ÐÏÞÔÏ×ÙÊ ÒÅÄÁËÔÏÒ Ó ÐÏÄÄÅÒÖËÏÊ ÔÅÌÅËÏÎÆÅÒÅÎÃÉÊ
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Summary(uk):	óÕÍ¦ÓÎÉÊ Ú MIME ÐÏÞÔÏ×ÉÊ ÒÅÄÁËÔÏÒ Ú Ð¦ÄÔÒÉÍËÏÀ ÔÅÌÅËÏÎÆÅÒÅÎÃ¦Ê
 Name:		pine
+%define		realversion	4.50
 Version:	%{realversion}L
-Release:	15
+Release:	0.2
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -46,7 +46,7 @@ Patch19:	%{name}-no_1777_warning.patch
 Patch20:	%{name}-L_on_version.patch
 Patch21:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch22:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.gz
+Patch22:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch23:	%{name}-smime.patch
 #Patch24:	http://jshin.net/i18n/pine4.44.iconv.patch
@@ -186,9 +186,9 @@ ajuda de acordo com o contexto está disponível.
 %setup   -q -a3 -n %{name}%{realversion}
 %patch0  -p1
 %patch1  -p1
-%patch2  -p1
+#%patch2  -p1
 %patch3  -p1
-%patch4  -p1
+#%patch4  -p1
 %patch5  -p1
 %patch6  -p1
 %patch7  -p1
@@ -200,15 +200,15 @@ ajuda de acordo com o contexto está disponível.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-#%patch16 -p1
+##%patch16 -p1
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
-%patch20 -p1
+#%patch20 -p1
 %patch21 -p1
 %patch22 -p1
-#%patch23 -p1
-#%patch24 -p1
+##%patch23 -p1
+##%patch24 -p1
 %patch25 -p1
 
 zcat %{SOURCE5} >pine/rules.c
