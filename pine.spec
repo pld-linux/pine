@@ -15,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.58
 Version:	%{realversion}L
-Release:	3
+Release:	4
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -62,11 +62,11 @@ Patch24:	%{name}-home_etc.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
-%{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.7}
+%{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 Requires:	mailcap
-%{?with_home_etc:Requires:	home-etc >= 1.0.7}
+%{?with_home_etc:Requires:	home-etc >= 1.0.8}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
