@@ -23,7 +23,7 @@ diff -Nur pine4.20/pico/makefile.lnx pine4.20.pld/pico/makefile.lnx
 -STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
 +DEBUG=       # -g -DDEBUG
 +CC=          gcc
-+STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE -D_USE_PLD
++STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
  CFLAGS=         $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(STDCFLAGS)
  
  # switches for library building
@@ -44,7 +44,7 @@ diff -Nur pine4.20/pine/makefile.lnx pine4.20.pld/pine/makefile.lnx
               `cat $(CCLIENTDIR)/LDFLAGS`
  
 -STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
-+STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE -D_USE_PLD
++STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
  CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) \
  	     $(STDCFLAGS)
  
