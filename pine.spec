@@ -18,7 +18,8 @@ Source0:	ftp://ftp.cac.washington.edu/pine/old/%{name}%{realversion}.tar.Z
 # Source0-md5:	1fb0b1a264300373e5c7181c36affc96
 Source1:	%{name}.desktop
 Source2:	%{name}.png
-Source3:	%{name}-non-english-man-pages.tar.bz2
+Source3:       http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
+# Source3-md5: 7bd233708a9621f3dfd173acb20ec0bb
 Source4:	pico.desktop
 # renamed files from
 # http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/
