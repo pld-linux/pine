@@ -24,9 +24,8 @@ Patch7:		pine-quote.patch
 Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
 Patch10:	pine-fhs.patch
-Patch11:	pine-man.patch
-Patch12:	pine-maildir.patch
-Patch13:	pine-security.patch
+Patch11:	pine-maildir.patch
+Patch12:	pine-security.patch
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -81,7 +80,6 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %patch10 -p1 
 %patch11 -p1 
 %patch12 -p1
-%patch13 -p1
 
 %build
 ./build slx \
