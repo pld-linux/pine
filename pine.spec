@@ -12,7 +12,7 @@ Group(pl):	Aplikacje/Poczta
 Group(pt):	Aplicações/Correio Eletrônico
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
 Source1:	%{name}.desktop
-Source2:	%{name}.1.pl
+Source2:	%{name}-non-english-man-pages.tar.bz2
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -31,6 +31,7 @@ Patch14:	%{name}-libc-client.patch
 Patch15:	%{name}-fixhome.patch
 Patch16:	%{name}-terminit.patch
 Patch17:	%{name}-ssl.patch
+Patch18:	%{name}-non_english_man_path_fix.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -77,7 +78,7 @@ Pine, MIME desteði, adres defteri ve IMAP, MH gibi ileti arþivi
 biçimlerini destekleme özelliklerini taþýr.
 
 %prep
-%setup   -q -n %{name}%{version}
+%setup   -q -a2 -n %{name}%{version}
 %patch0  -p1 
 %patch1  -p1 
 %patch2  -p1 
@@ -96,6 +97,7 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch15 -p1
 #%patch16 -p1
 %patch17 -p1
+%patch18 -p1 
 
 %build
 ./build slx \
@@ -106,17 +108,21 @@ biçimlerini destekleme özelliklerini taþýr.
 	CC="%{__cc}"
 
 echo "%{__cc}" > ~/gcc.info
+
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,{es,fi,hu,pl}/man1}} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_sysconfdir}}
 
 install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install es/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/es/man1
+install fi/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/fi/man1
+install hu/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/hu/man1
+install pl/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/pl/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/Mail
-install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
@@ -148,4 +154,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(755,root,root) %{_bindir}/pi*
 %{_mandir}/man1/*
+%lang(es) %{_mandir}/es/man1/*
+%lang(fi) %{_mandir}/fi/man1/*
+%lang(hu) %{_mandir}/hu/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
