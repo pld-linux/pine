@@ -8,7 +8,7 @@ diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix
 -	 SPOOLDIR=/var/spool \
 -	 ACTIVEFILE=/var/lib/news/active \
 +	 SPOOLDIR=/var \
-+	 ACTIVEFILE=/var/state/news/active \
++	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
  	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE"
  	 CC=gcc
@@ -19,7 +19,7 @@ diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix
 -	 SPOOLDIR=/var/spool \
 -	 ACTIVEFILE=/var/lib/news/active \
 +	 SPOOLDIR=/var \
-+	 ACTIVEFILE=/var/state/news/active \
++	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
  	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE" \
  	 BASELDFLAGS="-lcrypt"
