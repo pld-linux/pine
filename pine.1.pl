@@ -274,7 +274,7 @@ ustawiona).
 ~/mail/sent-mail	Archiwum wys³anych wiadomo¶ci
 .br
 ~/mail/saved-messages	Domy¶lny folder na zapisywane wiadomo¶ci
-.SH "ZOBACZ TE¯"
+.SH "ZOBACZ TAK¯E"
 
 pico(1), binmail(1), aliases(5), mailaddr(7), sendmail(8), spell(1), imapd(8)
 
