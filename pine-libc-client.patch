@@ -1,25 +1,24 @@
-diff -uNr pine4.21.orig/imap/src/osdep/unix/unix.c pine4.21/imap/src/osdep/unix/unix.c
---- pine4.21.orig/imap/src/osdep/unix/unix.c	Thu Oct 14 20:46:33 1999
-+++ pine4.21/imap/src/osdep/unix/unix.c	Thu Sep 21 14:04:17 2000
-@@ -238,7 +238,7 @@
+--- ./imap/src/osdep/unix/unix.c.org	Sat Sep 22 01:51:46 2001
++++ ./imap/src/osdep/unix/unix.c	Sat Sep 22 01:54:10 2001
+@@ -214,7 +214,7 @@
    int i,fd;
    time_t ti = time (0);
    if (!(s = dummy_file (mbx,mailbox))) {
 -    sprintf (tmp,"Can't create %.80s: invalid name",mailbox);
 +    snprintf (tmp,MAILTMPLEN,"Can't create %.80s: invalid name",mailbox);
-     mm_log (tmp,ERROR);
+     MM_LOG (tmp,ERROR);
    }
  				/* create underlying file */
-@@ -247,7 +247,7 @@
+@@ -223,7 +223,7 @@
      if ((s = strrchr (s,'/')) && !s[1]) return T;
      if ((fd = open (mbx,O_WRONLY,
  		    (int) mail_parameters (NIL,GET_MBXPROTECTION,NIL))) < 0) {
 -      sprintf (tmp,"Can't reopen mailbox node %.80s: %s",mbx,strerror (errno));
 +      snprintf (tmp,MAILTMPLEN,"Can't reopen mailbox node %.80s: %s",mbx,strerror (errno));
-       mm_log (tmp,ERROR);
+       MM_LOG (tmp,ERROR);
        unlink (mbx);		/* delete the file */
      }
-@@ -255,18 +255,18 @@
+@@ -231,18 +231,18 @@
      else if (mail_parameters (NIL,GET_USERHASNOLIFE,NIL)) ret = T;
      else {			/* initialize header */
        memset (tmp,'\0',MAILTMPLEN);
@@ -41,5 +40,5 @@ diff -uNr pine4.21.orig/imap/src/osdep/unix/unix.c pine4.21/imap/src/osdep/unix/
 -	sprintf (tmp,"Can't initialize mailbox node %.80s: %s",mbx,
 +	snprintf (tmp,MAILTMPLEN,"Can't initialize mailbox node %.80s: %s",mbx,
  		 strerror (errno));
- 	mm_log (tmp,ERROR);
+ 	MM_LOG (tmp,ERROR);
  	unlink (mbx);		/* delete the file */
