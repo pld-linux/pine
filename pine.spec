@@ -11,7 +11,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 Version:	%{realversion}L
-Release:	14
+Release:	15
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
