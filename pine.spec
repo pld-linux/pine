@@ -188,7 +188,7 @@ como no Pine, comandos são apresentados na parte de baixo da tela, e
 ajuda de acordo com o contexto está disponível.
 
 %prep
-%setup   -q -a3 -n %{name}%{realversion}
+%setup -q -a3 -n %{name}%{realversion}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
