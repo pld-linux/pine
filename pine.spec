@@ -26,9 +26,7 @@ Patch10:	pine-maildir.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
-Buildroot:	/tmp/%{name}-%{version}-root
-
-%define		_applnkdir 	/usr/X11R6/share/applnk
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Pine is a very full featured text based mail and news client. It is
