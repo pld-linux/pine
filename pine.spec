@@ -29,6 +29,7 @@ Patch12:	%{name}-time.patch
 Patch13:	%{name}-segfix.patch
 Patch14:	%{name}-whitespace.patch
 Patch15:	%{name}-terminit.patch
+Patch16:	%{name}-libc-client.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
@@ -91,6 +92,7 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 ./build slx \
