@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without utf8		# build without utf-8 support
-%bcond_with home_etc		# build without home-etc support
+%bcond_with home_etc		# build with home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
