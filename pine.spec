@@ -9,7 +9,7 @@ Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
-%define		realversion	4.53
+%define		realversion	4.55
 Version:	%{realversion}L
 Release:	2
 License:	distributable
