@@ -11,10 +11,11 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.55
 Version:	%{realversion}L
-Release:	1
+Release:	2
 License:	distributable
 Group:		Applications/Mail
-Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
+Source0:	ftp://ftp.cac.washington.edu/pine/old/%{name}%{realversion}.tar.Z
+# Source0-md5:	1fb0b1a264300373e5c7181c36affc96
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
@@ -49,6 +50,7 @@ Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversio
 Patch21:	%{name}-smime.patch
 Patch22:	pine-css.patch
 Patch23:	http://www.math.washington.edu/~chappa/pine/patches/pine4.21/blank.patch.gz
+Patch24:	%{name}-4.44-CAN-2003-0720-CAN-2003-0721.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6j
@@ -208,6 +210,7 @@ ajuda de acordo com o contexto estА disponМvel.
 ##%patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
