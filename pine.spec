@@ -1,7 +1,3 @@
-#
-# Conditional build:
-# _without_utf8		build without utf-8 support
-
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
 Summary(es):	Lector de mail con soporte a MIME y news
@@ -59,9 +55,8 @@ Patch22:	pine-css.patch
 Patch23:	pine-iconv-7e.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
-%{!?_without_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.6j
 Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -224,7 +219,7 @@ zcat %{SOURCE6} >pine/rules.h
 
 %build
 ./build slx \
-	OPTIMIZE="%{rpmcflags} -DHAVE_ICONV" \
+	OPTIMIZE="%{rpmcflags}" \
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
 	SSLTYPE="unix" \
 	DEBUG=" " \
