@@ -267,8 +267,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README doc/*.txt doc/mailcap.unx
-%doc doc/tech-notes/*.html
+%doc README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
 %attr(755,root,root) %{_bindir}/pine
 %{_applnkdir}/Network/Mail/pine.desktop
