@@ -221,8 +221,8 @@ echo "%{__cc}" > ~/gcc.info
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,{es,fi,hu,pl}/man1}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/{Network/Mail,Editors}} \
-	$RPM_BUILD_ROOT%{_pixmapsdir},%{_sysconfdir}
+	$RPM_BUILD_ROOT%{_applnkdir}/{Network/Mail,Editors} \
+	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_sysconfdir}}
 
 install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
