@@ -106,28 +106,27 @@ diff -Naur pine4.33/imap/src/c-client/mail.h pine4.33-p/imap/src/c-client/mail.h
    unsigned long user_flags;	/* user-assignable flags */
  } MESSAGECACHE;
  
-diff -Naur pine4.33/imap/src/osdep/unix/Makefile pine4.33-p/imap/src/osdep/unix/Makefile
---- pine4.33/imap/src/osdep/unix/Makefile	Tue Mar  6 16:42:22 2001
-+++ pine4.33-p/imap/src/osdep/unix/Makefile	Tue Mar  6 16:44:22 2001
-@@ -22,7 +22,7 @@
- 
+--- ./imap/src/osdep/unix/Makefile.org  Sat Sep 22 01:27:46 2001
++++ ./imap/src/osdep/unix/Makefile      Sat Sep 22 01:29:31 2001
+@@ -21,7 +21,7 @@
+ # Command line build parameters
+
  EXTRAAUTHENTICATORS=
- SPECIALAUTHENTICATORS=
 -EXTRADRIVERS=mbox
 +EXTRADRIVERS=maildir mbox
  PASSWDTYPE=std
- 
- 
-@@ -82,7 +82,7 @@
+ SSLTYPE=none
+
+@@ -105,7 +105,7 @@
  # Standard distribution build parameters
- 
- DEFAULTAUTHENTICATORS=md5 $(SPECIALAUTHENTICATORS) log
+
+ DEFAULTAUTHENTICATORS=md5 pla log
 -DEFAULTDRIVERS=imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
-+DEFAULTDRIVERS=maildir imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
- 
- 
++DEFAULTDRIVERS=maildir map nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
+
+
  # Normally no need to change any of these
-@@ -91,7 +91,8 @@
+@@ -114,7 +114,8 @@
  BINARIES=mail.o misc.o newsrc.o smanager.o osdep.o utf8.o siglocal.o \
   dummy.o pseudo.o netmsg.o flstring.o fdstring.o \
   rfc822.o nntp.o smtp.o imap4r1.o pop3.o \
@@ -135,20 +134,20 @@ diff -Naur pine4.33/imap/src/osdep/unix/Makefile pine4.33-p/imap/src/osdep/unix/
 + unix.o mbox.o mbx.o mmdf.o tenex.o mtx.o news.o phile.o mh.o mx.o \
 + maildir.o
  CFLAGS=-g
- 
+
  CAT=cat
-@@ -765,7 +766,7 @@
+@@ -809,7 +810,7 @@
  tenex.o: mail.h misc.h osdep.h tenex.h dummy.h
  unix.o: mail.h misc.h osdep.h unix.h pseudo.h dummy.h
  utf8.o: mail.h misc.h osdep.h utf8.h
 -
-+maildir.o: mail.h misc.h osdep.h maildir.h dummy.h
- 
++maildir.o: mail.h misc.h osdep.h maildir.h dummy.
+
  # OS-dependent
- 
+
 diff -Naur pine4.33/imap/src/osdep/unix/maildir.c pine4.33-p/imap/src/osdep/unix/maildir.c
---- pine4.33/imap/src/osdep/unix/maildir.c	Thu Jan  1 01:00:00 1970
-+++ pine4.33-p/imap/src/osdep/unix/maildir.c	Tue Mar  6 16:43:39 2001
+--- pine4.33/imap/src/osdep/unix/maildir.c      Thu Jan  1 01:00:00 1970
++++ pine4.33-p/imap/src/osdep/unix/maildir.c    Tue Mar  6 16:43:39 2001
 @@ -0,0 +1,1229 @@
 +/*
 + * Maildir Module for PINE 4.0x - fourth release, use with CARE! 
