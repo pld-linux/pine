@@ -5,7 +5,7 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.33
-Release:	11
+Release:	12
 License:	Distributable
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
@@ -28,7 +28,7 @@ Patch11:	%{name}-maildirfix.patch
 Patch12:	%{name}-time.patch
 Patch13:	%{name}-segfix.patch
 Patch14:	%{name}-whitespace.patch
-Patch15:	%{name}-terminit.patch
+Patch15:	%{name}-ssl.patch
 Patch16:	%{name}-libc-client.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
@@ -101,6 +101,7 @@ biçimlerini destekleme özelliklerini taþýr.
 	DEBUG="" \
 	CC="%{__cc}"
 
+echo "%{__cc}" > ~/gcc.info
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
