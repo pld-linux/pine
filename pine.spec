@@ -23,10 +23,10 @@ Patch6:		pine-filter.patch
 Patch7:		pine-quote.patch
 Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
-Patch10:	pine-noroot.patch
-Patch11:	pine-fhs.patch
-Patch12:	pine-man.patch
-Patch13:	pine-maildir.patch
+Patch10:	pine-fhs.patch
+Patch11:	pine-man.patch
+Patch12:	pine-maildir.patch
+Patch13:	pine-security.patch
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -84,16 +84,15 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %patch13 -p1
 
 %build
-./build \
+./build slx \
 	OPTIMIZE="$RPM_OPT_FLAGS" \
 	BASECFLAGS="$RPM_OPT_FLAGS -DNFSKLUDGE" \
-	DEBUG="" \
-	slx
+	DEBUG=""
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_prefix}/{bin,share/man/{man1,pl/man1}}
-install -d $RPM_BUILD_ROOT/etc/{pine,X11/wmconfig}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}}
+install -d $RPM_BUILD_ROOT/etc/X11/wmconfig
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
@@ -103,7 +102,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
-cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
+cat <<EOF > $RPM_BUILD_ROOT/etc/pine.conf.fixed
 #
 # Pine system-wide enforced configuration file - customize as needed
 #
@@ -127,10 +126,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
 
-/etc/X11/wmconfig/pine
+/etc/X11/wmconfig/*
 
-%dir /etc/pine
-%config %verify(not size mtime md5) /etc/pine/pine.conf*
+%config(noreplace) %verify(not size mtime md5) /etc/pine.conf
 
 %attr(755,root,root) %{_bindir}/pi*
 %{_mandir}/man1/*
