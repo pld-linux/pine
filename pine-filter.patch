@@ -1,7 +1,6 @@
-diff -Nur pine4.20/imap/src/osdep/unix/env_unix.c pine4.20.pld/imap/src/osdep/unix/env_unix.c
---- pine4.20/imap/src/osdep/unix/env_unix.c	Sat Oct 16 12:03:36 1999
-+++ pine4.20.pld/imap/src/osdep/unix/env_unix.c	Sat Oct 16 12:04:15 1999
-@@ -70,13 +70,13 @@
+--- pine4.33/imap/src/osdep/unix/env_unix.c	Tue Mar  6 16:38:48 2001
++++ pine4.33/imap/src/osdep/unix/env_unix.sz.c	Tue Mar  6 16:37:40 2001
+@@ -55,16 +55,16 @@
  				/* default directory protection */
  static long dir_protection = 0700;
  				/* default lock file protection */
@@ -9,24 +8,17 @@ diff -Nur pine4.20/imap/src/osdep/unix/env_unix.c pine4.20.pld/imap/src/osdep/un
 +static long lock_protection = 0600;
  				/* default ftp file protection */
  static long ftp_protection = 0644;
+ static long ftp_dir_protection = 0755;
  				/* default public file protection */
 -static long public_protection = 0666;
+-static long public_dir_protection = 0777;
 +static long public_protection = 0600;
++static long public_dir_protection = 0700;
  				/* default shared file protection */
 -static long shared_protection = 0660;
+-static long shared_dir_protection = 0770;
 +static long shared_protection = 0600;
++static long shared_dir_protection = 0700;
  static long locktimeout = 5;	/* default lock timeout */
- static long disableFcntlLock =	/* flock() emulator is a no-op */
- #ifdef SVR4_DISABLE_FLOCK
-diff -Nur pine4.20/pine/filter.c pine4.20.pld/pine/filter.c
---- pine4.20/pine/filter.c	Sat Oct 16 12:04:48 1999
-+++ pine4.20.pld/pine/filter.c	Sat Oct 16 12:05:12 1999
-@@ -140,7 +140,7 @@
- #define	OP_MD_ALL	(S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | \
- 			 S_IROTH | S_IWOTH)
- #else
--#define	OP_MD_ALL	0666
-+#define	OP_MD_ALL	0600
- #endif
- 
- 
+ 				/* flock() emulator is a no-op */
+ static long disableFcntlLock = NIL;

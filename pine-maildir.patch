@@ -1,6 +1,6 @@
-diff -Nur pine4.20/README.maildir pine4.20.pld/README.maildir
---- pine4.20/README.maildir	Thu Jan  1 01:00:00 1970
-+++ pine4.20.pld/README.maildir	Tue Jun  8 20:01:41 1999
+diff -Naur pine4.33/README.maildir pine4.33-p/README.maildir
+--- pine4.33/README.maildir	Thu Jan  1 01:00:00 1970
++++ pine4.33-p/README.maildir	Tue Mar  6 16:43:39 2001
 @@ -0,0 +1,93 @@
 +Pine 4.0x Maildir c-client module
 +---------------------------------
@@ -95,9 +95,60 @@ diff -Nur pine4.20/README.maildir pine4.20.pld/README.maildir
 +Industrivagen 4
 +SE-194 77 Upplands Vasby
 +SWEDEN
-diff -Nur pine4.20/imap/src/osdep/unix/maildir.c pine4.20.pld/imap/src/osdep/unix/maildir.c
---- pine4.20/imap/src/osdep/unix/maildir.c	Thu Jan  1 01:00:00 1970
-+++ pine4.20.pld/imap/src/osdep/unix/maildir.c	Tue Jun  8 20:03:25 1999
+diff -Naur pine4.33/imap/src/c-client/mail.h pine4.33-p/imap/src/c-client/mail.h
+--- pine4.33/imap/src/c-client/mail.h	Fri Jan 19 03:10:36 2001
++++ pine4.33-p/imap/src/c-client/mail.h	Tue Mar  6 16:43:39 2001
+@@ -655,6 +655,7 @@
+   unsigned int spare2 : 1;	/* second spare bit */
+   unsigned int spare3 : 1;	/* third spare bit */
+   void *sparep;			/* spare pointer */
++  void *maildirp;		/* for the Maildir driver */
+   unsigned long user_flags;	/* user-assignable flags */
+ } MESSAGECACHE;
+ 
+diff -Naur pine4.33/imap/src/osdep/unix/Makefile pine4.33-p/imap/src/osdep/unix/Makefile
+--- pine4.33/imap/src/osdep/unix/Makefile	Tue Mar  6 16:42:22 2001
++++ pine4.33-p/imap/src/osdep/unix/Makefile	Tue Mar  6 16:44:22 2001
+@@ -22,7 +22,7 @@
+ 
+ EXTRAAUTHENTICATORS=
+ SPECIALAUTHENTICATORS=
+-EXTRADRIVERS=mbox
++EXTRADRIVERS=maildir mbox
+ PASSWDTYPE=std
+ 
+ 
+@@ -82,7 +82,7 @@
+ # Standard distribution build parameters
+ 
+ DEFAULTAUTHENTICATORS=md5 $(SPECIALAUTHENTICATORS) log
+-DEFAULTDRIVERS=imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
++DEFAULTDRIVERS=maildir imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
+ 
+ 
+ # Normally no need to change any of these
+@@ -91,7 +91,8 @@
+ BINARIES=mail.o misc.o newsrc.o smanager.o osdep.o utf8.o siglocal.o \
+  dummy.o pseudo.o netmsg.o flstring.o fdstring.o \
+  rfc822.o nntp.o smtp.o imap4r1.o pop3.o \
+- unix.o mbox.o mbx.o mmdf.o tenex.o mtx.o news.o phile.o mh.o mx.o
++ unix.o mbox.o mbx.o mmdf.o tenex.o mtx.o news.o phile.o mh.o mx.o \
++ maildir.o
+ CFLAGS=-g
+ 
+ CAT=cat
+@@ -765,7 +766,7 @@
+ tenex.o: mail.h misc.h osdep.h tenex.h dummy.h
+ unix.o: mail.h misc.h osdep.h unix.h pseudo.h dummy.h
+ utf8.o: mail.h misc.h osdep.h utf8.h
+-
++maildir.o: mail.h misc.h osdep.h maildir.h dummy.h
+ 
+ # OS-dependent
+ 
+diff -Naur pine4.33/imap/src/osdep/unix/maildir.c pine4.33-p/imap/src/osdep/unix/maildir.c
+--- pine4.33/imap/src/osdep/unix/maildir.c	Thu Jan  1 01:00:00 1970
++++ pine4.33-p/imap/src/osdep/unix/maildir.c	Tue Mar  6 16:43:39 2001
 @@ -0,0 +1,1229 @@
 +/*
 + * Maildir Module for PINE 4.0x - fourth release, use with CARE! 
@@ -1328,9 +1379,9 @@ diff -Nur pine4.20/imap/src/osdep/unix/maildir.c pine4.20.pld/imap/src/osdep/uni
 +  }
 +
 +}
-diff -Nur pine4.20/imap/src/osdep/unix/maildir.h pine4.20.pld/imap/src/osdep/unix/maildir.h
---- pine4.20/imap/src/osdep/unix/maildir.h	Thu Jan  1 01:00:00 1970
-+++ pine4.20.pld/imap/src/osdep/unix/maildir.h	Tue Jun  8 20:03:25 1999
+diff -Naur pine4.33/imap/src/osdep/unix/maildir.h pine4.33-p/imap/src/osdep/unix/maildir.h
+--- pine4.33/imap/src/osdep/unix/maildir.h	Thu Jan  1 01:00:00 1970
++++ pine4.33-p/imap/src/osdep/unix/maildir.h	Tue Mar  6 16:43:39 2001
 @@ -0,0 +1,56 @@
 +/*
 + * Please read maildir.c for license and information
@@ -1388,53 +1439,3 @@ diff -Nur pine4.20/imap/src/osdep/unix/maildir.h pine4.20.pld/imap/src/osdep/uni
 +int maildir_select (struct direct *name);
 +int maildir_namesort (struct direct **d1,struct direct **d2);
 +void maildir_listwork(char *name, MAILSTREAM *stream, char *s2, char *subdir, int flag);
-diff -Nur pine4.20/imap/src/c-client/mail.h pine4.20.pld/imap/src/c-client/mail.h
---- pine4.20/imap/src/c-client/mail.h	Sat Oct 16 11:58:58 1999
-+++ pine4.20.pld/imap/src/c-client/mail.h	Sat Oct 16 11:59:28 1999
-@@ -621,6 +621,7 @@
-   unsigned int spare2 : 1;	/* second spare bit */
-   unsigned int spare3 : 1;	/* third spare bit */
-   void *sparep;			/* spare pointer */
-+  void *maildirp;		/* for the Maildir driver */
-   unsigned long user_flags;	/* user-assignable flags */
- } MESSAGECACHE;
- 
-diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix/Makefile
---- pine4.20/imap/src/osdep/unix/Makefile	Sat Oct 16 12:00:35 1999
-+++ pine4.20.pld/imap/src/osdep/unix/Makefile	Sat Oct 16 12:01:44 1999
-@@ -35,7 +35,7 @@
- 
- EXTRAAUTHENTICATORS=
- SPECIALAUTHENTICATORS=
--EXTRADRIVERS=mbox
-+EXTRADRIVERS=maildir mbox
- PASSWDTYPE=std
- 
- 
-@@ -94,7 +94,7 @@
- # Standard distribution build parameters
- 
- DEFAULTAUTHENTICATORS=md5 $(SPECIALAUTHENTICATORS) log
--DEFAULTDRIVERS=imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
-+DEFAULTDRIVERS=maildir imap nntp pop3 mh mx mbx tenex mtx mmdf unix news phile
- 
- 
- # Normally no need to change any of these
-@@ -103,7 +103,7 @@
- BINARIES=mail.o misc.o newsrc.o smanager.o osdep.o utf8.o siglocal.o \
-  dummy.o pseudo.o netmsg.o flstring.o fdstring.o \
-  rfc822.o nntp.o smtp.o imap4r1.o pop3.o \
-- unix.o mbox.o mbx.o mmdf.o tenex.o mtx.o news.o phile.o mh.o mx.o
-+ unix.o mbox.o mbx.o mmdf.o tenex.o mtx.o news.o phile.o mh.o mx.o maildir.o
- CFLAGS=$(BASECFLAGS) $(EXTRACFLAGS)
- MAKE=make
- MV=mv
-@@ -663,7 +663,7 @@
- tenex.o: mail.h misc.h osdep.h tenex.h dummy.h
- unix.o: mail.h misc.h osdep.h unix.h pseudo.h dummy.h
- utf8.o: mail.h misc.h osdep.h utf8.h
--
-+maildir.o: mail.h misc.h osdep.h maildir.h dummy.h
- 
- # OS-dependent
- 
