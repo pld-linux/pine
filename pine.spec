@@ -16,7 +16,7 @@ Name:		pine
 %define		realversion	4.60
 Version:	%{realversion}L
 Release:	5
-License:	distributable
+License:	not distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
 # Source0-md5:	aece91c8a857605994829ffa91d98c9f
