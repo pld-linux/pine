@@ -11,7 +11,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.56
 Version:	%{realversion}L
-Release:	0.2
+Release:	0.3
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -214,7 +214,8 @@ ajuda de acordo com o contexto estА disponМvel.
 ##%patch21 -p1
 %patch22 -p1
 %patch23 -p1
-%patch24 -p1
+# Temporary - it fails while building
+##%patch24 -p1
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
