@@ -1,0 +1,24 @@
+diff -uNr pine4.21.orig/pine/makefile.lnx pine4.21/pine/makefile.lnx
+--- pine4.21.orig/pine/makefile.lnx	Mon Mar  8 18:20:41 1999
++++ pine4.21/pine/makefile.lnx	Wed Jun 14 12:05:52 2000
+@@ -120,7 +120,7 @@
+ osdep/os-lnx.c:	osdep/bld_path osdep/canacces osdep/canonicl \
+ 		osdep/chnge_pw osdep/coredump osdep/creatdir \
+ 		osdep/diskquot.non osdep/domnames osdep/err_desc \
+-		osdep/expnfldr osdep/fgetpos.non osdep/filesize osdep/fltrname \
++		osdep/expnfldr osdep/fgetpos osdep/filesize osdep/fltrname \
+ 		osdep/fnexpand osdep/header osdep/hostname \
+ 		osdep/jobcntrl osdep/lstcmpnt osdep/mimedisp osdep/pipe \
+ 		osdep/print osdep/pw_stuff osdep/readfile osdep/debuging.tim \
+diff -uNr pine4.21.orig/pine/osdep/os-lnx.ic pine4.21/pine/osdep/os-lnx.ic
+--- pine4.21.orig/pine/osdep/os-lnx.ic	Mon Nov  3 15:44:34 1997
++++ pine4.21/pine/osdep/os-lnx.ic	Wed Jun 14 14:11:13 2000
+@@ -105,7 +105,7 @@
+ 
+ ; Most systems have the ANSI fgetpos and fsetpos functions.  For those,
+ ; use fgetpos.  If a system doesn't have it use fgetpos.non.
+-include(fgetpos.non)
++include(fgetpos)
+ 
+ ; These functions are similar to popen(), but allow both an input stream 
+ ; and an output buffer.
