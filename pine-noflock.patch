@@ -1,5 +1,6 @@
---- pine4.04/imap/src/osdep/unix/os_lnx.h.noflock	Thu Sep  3 03:05:55 1998
-+++ pine4.04/imap/src/osdep/unix/os_lnx.h	Fri Oct  9 17:35:09 1998
+diff -Nur pine4.20/imap/src/osdep/unix/os_lnx.h pine4.20.pld/imap/src/osdep/unix/os_lnx.h
+--- pine4.20/imap/src/osdep/unix/os_lnx.h	Sat Oct 16 11:45:28 1999
++++ pine4.20.pld/imap/src/osdep/unix/os_lnx.h	Sat Oct 16 11:46:14 1999
 @@ -41,6 +41,7 @@
  #include <fcntl.h>
  #include <syslog.h>
@@ -14,8 +15,9 @@
  #include "tcp.h"
 +
 +#include "lockfix.h"
---- pine4.04/imap/src/osdep/unix/os_lnx.c.noflock	Thu Sep  3 03:05:54 1998
-+++ pine4.04/imap/src/osdep/unix/os_lnx.c	Fri Oct  9 17:35:09 1998
+diff -Nur pine4.20/imap/src/osdep/unix/os_lnx.c pine4.20.pld/imap/src/osdep/unix/os_lnx.c
+--- pine4.20/imap/src/osdep/unix/os_lnx.c	Sat Oct 16 11:45:25 1999
++++ pine4.20.pld/imap/src/osdep/unix/os_lnx.c	Sat Oct 16 11:52:06 1999
 @@ -57,4 +57,6 @@
  #define fork vfork
  #include "tcp_unix.c"
@@ -23,13 +25,14 @@
 +#undef flock
 +#include "flock.c"
  #include "tz_sv4.c"
---- pine4.04/imap/src/osdep/unix/flock.c.noflock	Thu Sep  3 03:04:53 1998
-+++ pine4.04/imap/src/osdep/unix/flock.c	Fri Oct  9 17:35:09 1998
+diff -Nur pine4.20/imap/src/osdep/unix/flock.c pine4.20.pld/imap/src/osdep/unix/flock.c
+--- pine4.20/imap/src/osdep/unix/flock.c	Sat Oct 16 11:47:12 1999
++++ pine4.20.pld/imap/src/osdep/unix/flock.c	Sat Oct 16 11:47:54 1999
 @@ -33,10 +33,16 @@
   *
   */
   
-+#ifdef	USE_NFS_JACKET
++#ifdef USE_NFS_JACKET
  #define flock fcntl_flock
  #include "flcksafe.c"		/* get safe locking routines */
  #undef flock

@@ -1,34 +1,6 @@
-diff -Nur pine4.10/pico/osdep/os-lnx.h pine4.10.pld/pico/osdep/os-lnx.h
---- pine4.10/pico/osdep/os-lnx.h	Thu Oct  8 18:03:43 1998
-+++ pine4.10.pld/pico/osdep/os-lnx.h	Sat Feb 13 12:37:20 1999
-@@ -99,12 +99,12 @@
- /* #include <sgtty.h> */   /* BSD-based systems */
- 
- /*--------- System V terminal driver -----------------------------------*/
--#define HAVE_TERMIO     /* this is for pure System V */
--#include <termio.h>     /* Sys V */
-+/* #define HAVE_TERMIO */    /* this is for pure System V */
-+/* #include <termio.h> */   /* Sys V */
- 
- /*--------- POSIX terminal driver --------------------------------------*/
--/* #define HAVE_TERMIOS */ /* this is an alternative */
--/* #include <termios.h> */ /* POSIX */
-+#define HAVE_TERMIOS  /* this is an alternative */
-+#include <termios.h>  /* POSIX */
- 
- 
- 
-@@ -116,8 +116,8 @@
- 
- 
- /*-------- Use terminfo database instead of termcap --------------------*/
--/* #define USE_TERMINFO */ /* use terminfo instead of termcap */
--#define USE_TERMCAP    /* use termcap */
-+#define USE_TERMINFO  /* use terminfo instead of termcap */
-+/* #define USE_TERMCAP */   /* use termcap */
- 
- 
- 
+diff -Nur pine4.20/pico/osdep/os-lnx.h pine4.20.pld/pico/osdep/os-lnx.h
+--- pine4.20/pico/osdep/os-lnx.h	Sat Oct 16 11:17:45 1999
++++ pine4.20.pld/pico/osdep/os-lnx.h	Sat Oct 16 11:18:51 1999
 @@ -163,7 +163,7 @@
  /*
   * Place where mail gets delivered (for pico's new mail checking)
@@ -38,29 +10,17 @@ diff -Nur pine4.10/pico/osdep/os-lnx.h pine4.10.pld/pico/osdep/os-lnx.h
  
  /*
   * What and where the tool that checks spelling is located.  If this is
-diff -Nur pine4.10/pico/osdep/os-lnx.ic pine4.10.pld/pico/osdep/os-lnx.ic
---- pine4.10/pico/osdep/os-lnx.ic	Fri Feb 21 22:35:02 1997
-+++ pine4.10.pld/pico/osdep/os-lnx.ic	Sat Feb 13 12:38:04 1999
-@@ -10,6 +10,6 @@
- 
- include(read.sel)
- 
--include(raw.io)
-+include(raw.ios)
- 
--include(term.cap)
-+include(term.inf)
-diff -Nur pine4.10/pico/osdep/os-lyn.h pine4.10.pld/pico/osdep/os-lyn.h
---- pine4.10/pico/osdep/os-lyn.h	Thu Oct  8 18:04:53 1998
-+++ pine4.10.pld/pico/osdep/os-lyn.h	Sat Feb 13 12:40:02 1999
+diff -Nur pine4.20/pico/osdep/os-lyn.h pine4.20.pld/pico/osdep/os-lyn.h
+--- pine4.20/pico/osdep/os-lyn.h	Sat Oct 16 11:19:40 1999
++++ pine4.20.pld/pico/osdep/os-lyn.h	Sat Oct 16 11:20:23 1999
 @@ -109,8 +109,8 @@
  
  
  /*-------- Use terminfo database instead of termcap --------------------*/
 -/* #define USE_TERMINFO */ /* use terminfo instead of termcap */
 -#define USE_TERMCAP    /* use termcap */
-+#define USE_TERMINFO  /* use terminfo instead of termcap */
-+/* #define USE_TERMCAP  */  /* use termcap */
++#define USE_TERMINFO       /* use terminfo instead of termcap */
++/* #define USE_TERMCAP */  /* use termcap */
  
  
  

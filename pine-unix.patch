@@ -1,6 +1,7 @@
---- pine4.10/imap/src/osdep/unix/Makefile	Sun Feb 14 14:33:01 1999
-+++ pine4.10.pld/imap/src/osdep/unix/Makefile	Sun Feb 14 14:38:12 1999
-@@ -82,7 +82,7 @@
+diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix/Makefile
+--- pine4.20/imap/src/osdep/unix/Makefile	Sat Oct 16 11:33:49 1999
++++ pine4.20.pld/imap/src/osdep/unix/Makefile	Sat Oct 16 11:34:53 1999
+@@ -86,7 +86,7 @@
  # Commands possibly overriden by the individual port
  
  ARRC=ar rc
@@ -9,7 +10,7 @@
  LN=ln -s
  RANLIB=ranlib
  
-@@ -471,7 +471,7 @@
+@@ -485,7 +485,7 @@
  	 SPOOLDIR=/var/spool \
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \

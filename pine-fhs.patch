@@ -1,7 +1,18 @@
-diff -Nur pine4.10/imap/src/osdep/unix/Makefile pine4.10.pld/imap/src/osdep/unix/Makefile
---- pine4.10/imap/src/osdep/unix/Makefile	Thu May 27 21:16:49 1999
-+++ pine4.10.pld/imap/src/osdep/unix/Makefile	Thu May 27 21:16:23 1999
-@@ -468,8 +468,8 @@
+diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix/Makefile
+--- pine4.20/imap/src/osdep/unix/Makefile	Sat Oct 16 11:54:29 1999
++++ pine4.20.pld/imap/src/osdep/unix/Makefile	Sat Oct 16 11:55:14 1999
+@@ -360,8 +360,8 @@
+ 	@echo If your system has shadow passwords, or if crypt is not
+ 	@echo in the C library, you must use slx, sl4, or sl5 instead!
+ 	$(BUILD) `cat EXTRASPECIALS` OS=$@ SIGTYPE=psx \
+-	 SPOOLDIR=/var/spool \
+-	 ACTIVEFILE=/var/lib/news/active \
++	 SPOOLDIR=/var \
++	 ACTIVEFILE=/var/state/news/active \
+ 	 RSHPATH=/usr/bin/rsh \
+ 	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE"
+ 	 CC=gcc
+@@ -482,8 +482,8 @@
  	@echo If you want libc5 versions you must use sl5 instead!
  	@echo If you want libc4 versions you must use sl4 instead!
  	$(BUILD) `cat EXTRASPECIALS` OS=$@ SIGTYPE=psx CHECKPW=psx \
@@ -10,5 +21,5 @@ diff -Nur pine4.10/imap/src/osdep/unix/Makefile pine4.10.pld/imap/src/osdep/unix
 +	 SPOOLDIR=/var \
 +	 ACTIVEFILE=/var/state/news/active \
  	 RSHPATH=/usr/bin/rsh \
- 	 BASECFLAGS="-O2 -mpentium -fomit-frame-pointer -DNFSKLUDGE" \
+ 	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE" \
  	 BASELDFLAGS="-lcrypt"

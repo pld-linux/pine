@@ -1,5 +1,6 @@
---- pine4.10/pine/makefile.lnx	Thu Aug 27 18:50:00 1998
-+++ pine4.10.pld/pine/makefile.lnx	Sat Feb 13 12:43:20 1999
+diff -Nur pine4.20/pine/makefile.lnx pine4.20.pld/pine/makefile.lnx
+--- pine4.20/pine/makefile.lnx	Sat Oct 16 11:14:52 1999
++++ pine4.20.pld/pine/makefile.lnx	Sat Oct 16 11:15:50 1999
 @@ -45,9 +45,9 @@
  RM=          rm -f
  LN=          ln -s
@@ -12,15 +13,6 @@
  
  CCLIENTDIR=  ../c-client
  PICODIR=     ../pico
-@@ -60,7 +60,7 @@
- LDAPOFILES=   addrbook.o adrbkcmd.o args.o bldaddr.o init.o \
- 	      other.o pine.o takeaddr.o
- 
--STDLIBS=     -ltermcap
-+STDLIBS=     -lncurses
- LOCLIBS=     $(PICODIR)/libpico.a $(CCLIENTDIR)/c-client.a
- LIBS=        $(EXTRALIBES) $(LOCLIBS) $(LDAPLIBS) $(STDLIBS) \
-              `cat $(CCLIENTDIR)/LDFLAGS`
 @@ -85,7 +85,7 @@
  pine:  $(OFILES) $(LOCLIBS)
  	echo "char datestamp[]="\"`date`\"";" > date.c

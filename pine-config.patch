@@ -1,12 +1,12 @@
-diff -Nur pine4.10/pine/osdep/os-lnx.h pine4.10.pld/pine/osdep/os-lnx.h
---- pine4.10/pine/osdep/os-lnx.h	Wed Oct  7 23:51:47 1998
-+++ pine4.10.pld/pine/osdep/os-lnx.h	Sat Feb 13 12:47:01 1999
+diff -Nur pine4.20/pine/osdep/os-lnx.h pine4.20.pld/pine/osdep/os-lnx.h
+--- pine4.20/pine/osdep/os-lnx.h	Sat Oct 16 10:47:53 1999
++++ pine4.20.pld/pine/osdep/os-lnx.h	Sat Oct 16 10:49:36 1999
 @@ -60,7 +60,7 @@
     there should be a dummy disk_quota() routine in os-xxx.c so that defining
     this won't be harmful anyway.
   ----*/
 -/* #define USE_QUOTAS */
-+#define USE_QUOTAS 
++#define USE_QUOTAS
  
  
  
@@ -16,8 +16,8 @@ diff -Nur pine4.10/pine/osdep/os-lnx.h pine4.10.pld/pine/osdep/os-lnx.h
  /*----- System-wide config file ----------------------------------------*/
 -#define SYSTEM_PINERC             "/usr/local/lib/pine.conf"
 -#define SYSTEM_PINERC_FIXED       "/usr/local/lib/pine.conf.fixed"
-+#define SYSTEM_PINERC             "/etc/pine/pine.conf"
-+#define SYSTEM_PINERC_FIXED       "/etc/pine/pine.conf.fixed"
++#define SYSTEM_PINERC             "/etc/pine.conf"
++#define SYSTEM_PINERC_FIXED       "/etc/pine.conf.fixed"
  
  
  
