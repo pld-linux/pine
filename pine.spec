@@ -5,7 +5,7 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.21
-Release:	1
+Release:	2
 Copyright:	distributable
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
@@ -28,7 +28,7 @@ BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
 
-%define		_applnkdir 	/usr/X11R6/applnk
+%define		_applnkdir 	/usr/X11R6/share/applnk
 
 %description
 Pine is a very full featured text based mail and news client. It is
