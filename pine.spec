@@ -6,7 +6,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.40
 Release:	1
-License:	Distributable
+License:	distributable
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
 Group(pt):	Aplicações/Correio Eletrônico
