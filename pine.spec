@@ -221,7 +221,7 @@ echo "%{__cc}" > ~/gcc.info
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,{es,fi,hu,pl}/man1}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/{Network/Mail,Utilities/Editors}} \
+	$RPM_BUILD_ROOT{%{_applnkdir}/{Network/Mail,Editors}} \
 	$RPM_BUILD_ROOT%{_pixmapsdir},%{_sysconfdir}
 
 install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
@@ -233,7 +233,7 @@ install hu/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/hu/man1
 install pl/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/pl/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/Mail
-install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/Utilities/Editors
+install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/Editors
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
@@ -271,7 +271,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n pico
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pico
-%{_applnkdir}/Utilities/Editors/pico.desktop
+%{_applnkdir}/Editors/pico.desktop
 %{_mandir}/man1/pico*
 %lang(es) %{_mandir}/es/man1/pico*
 %lang(fi) %{_mandir}/fi/man1/pico*
