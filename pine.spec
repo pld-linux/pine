@@ -25,6 +25,7 @@ Patch8:		%{name}-noflock.patch
 Patch9:		%{name}-fhs.patch
 Patch10:	%{name}-maildir.patch
 Patch11:	%{name}-maildirfix.patch
+Patch12:	%{name}-timezone.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
