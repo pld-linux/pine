@@ -15,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.61
 Version:	%{realversion}L
-Release:	3
+Release:	3.1
 License:	not distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -220,6 +220,8 @@ ajuda de acordo com o contexto estА disponМvel.
 	%{!?with_utf8:EXTRACFLAGS="-DHAVE_ICONV"} \
 	%{?with_home_etc:HOMEETCLIB="1"} \
 	SSLTYPE="unix" \
+	SSLDIR="/var/lib/openssl/certs" \
+	SSLCERTS="/var/lib/openssl/certs" \
 	DEBUG=" " \
 	LDAPLIBS=-lldap \
 	LDAPCFLAGS=-DENABLE_LDAP \
