@@ -11,7 +11,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 Version:	%{realversion}L
-Release:	11
+Release:	11.9
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -40,9 +40,10 @@ Patch18:	%{name}-non_english_man_path_fix.patch
 Patch19:	%{name}-no_1777_warning.patch
 Patch20:	%{name}-L_on_version.patch
 Patch21:	%{name}-overflow.patch
-Patch22:	http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 # http://www.math.washington.edu/~chappa/pine/
-Patch23:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.gz
+Patch22:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.gz
+# Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
+Patch23:	%{name}-smime.patch
 #Patch24:	http://jshin.net/i18n/pine4.44.iconv.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
