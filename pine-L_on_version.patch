@@ -1,11 +1,11 @@
---- pine4.53/pine/pine.h.orig	Sat Jan 11 00:25:55 2003
-+++ pine4.53/pine/pine.h	Fri Jan 17 12:16:41 2003
+--- pine4.55/pine/pine.h.orig	Wed Apr 16 08:22:12 2003
++++ pine4.55/pine/pine.h	Fri Apr 18 00:07:40 2003
 @@ -63,7 +63,7 @@
  #ifndef _PINE_INCLUDED
  #define _PINE_INCLUDED
  
--#define PINE_VERSION		"4.53"
-+#define PINE_VERSION		"4.53L"
+-#define PINE_VERSION		"4.55"
++#define PINE_VERSION		"4.55L"
  #define	PHONE_HOME_VERSION	"-count"
  #define	PHONE_HOME_HOST		"docserver.cac.washington.edu"
  

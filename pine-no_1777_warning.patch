@@ -1,16 +1,24 @@
-diff -ur pine4.44.orig/imap/src/osdep/unix/env_unix.c pine4.44/imap/src/osdep/unix/env_unix.c
---- pine4.44.orig/imap/src/osdep/unix/env_unix.c	Sun May  5 16:31:57 2002
-+++ pine4.44/imap/src/osdep/unix/env_unix.c	Sun May  5 16:32:22 2002
-@@ -1001,12 +1001,6 @@
+--- pine4.55/imap/src/osdep/unix/env_unix.c.orig	Wed Apr 16 23:12:20 2003
++++ pine4.55/imap/src/osdep/unix/env_unix.c	Fri Apr 18 00:01:56 2003
+@@ -1048,20 +1048,7 @@
        }
        close (pi[0]); close (pi[1]);
      }
--    if (lockEaccesError) {	/* punt silently if paranoid site */
--      sprintf (tmp,"Mailbox vulnerable - directory %.80s",base->lock);
--      if (s = strrchr (tmp,'/')) *s = '\0';
--      strcat (tmp," must have 1777 protection");
--      MM_LOG (tmp,WARN);
+-				/* find directory/file delimiter */
+-    if (s = strrchr (base->lock,'/')) {
+-      *s = '\0';		/* tie off at directory */
+-      sprintf(tmp,		/* generate default message */
+-	      "Mailbox vulnerable - directory %.80s must have 1777 protection",
+-	      base->lock);
+-				/* definitely not 1777 if can't stat */
+-      mask = stat (base->lock,&sb) ? 0 : (sb.st_mode & 1777);
+-      *s = '/';			/* restore lock name */
+-      if (mask != 1777) {	/* default warning if not 1777 */
+-	if (!disableLockWarning) MM_LOG (tmp,WARN);
+-	break;
+-      }
 -    }
-     break;
++    break;
    default:
      sprintf (tmp,"Mailbox vulnerable - error creating %.80s: %s",
+ 	     base->lock,strerror (errno));

@@ -1,6 +1,5 @@
-diff -Nur pine4.20/pine/osdep/os-lnx.h pine4.20.pld/pine/osdep/os-lnx.h
---- pine4.20/pine/osdep/os-lnx.h	Sat Oct 16 10:47:53 1999
-+++ pine4.20.pld/pine/osdep/os-lnx.h	Sat Oct 16 10:49:36 1999
+--- pine4.55/pine/osdep/os-lnx.h.orig	Wed Mar 19 01:57:38 2003
++++ pine4.55/pine/osdep/os-lnx.h	Thu Apr 17 23:43:31 2003
 @@ -60,7 +60,7 @@
     there should be a dummy disk_quota() routine in os-xxx.c so that defining
     this won't be harmful anyway.
@@ -10,27 +9,29 @@ diff -Nur pine4.20/pine/osdep/os-lnx.h pine4.20.pld/pine/osdep/os-lnx.h
  
  
  
-@@ -160,8 +160,8 @@
- 
+@@ -163,10 +163,10 @@
  
  /*----- System-wide config file ----------------------------------------*/
+ #ifndef SYSTEM_PINERC
 -#define SYSTEM_PINERC             "/usr/local/lib/pine.conf"
--#define SYSTEM_PINERC_FIXED       "/usr/local/lib/pine.conf.fixed"
 +#define SYSTEM_PINERC             "/etc/pine.conf"
+ #endif
+ #ifndef SYSTEM_PINERC_FIXED
+-#define SYSTEM_PINERC_FIXED       "/usr/local/lib/pine.conf.fixed"
 +#define SYSTEM_PINERC_FIXED       "/etc/pine.conf.fixed"
+ #endif
  
  
- 
-@@ -223,7 +223,7 @@
- 
+@@ -234,7 +234,7 @@
  
  /*--------- Program employed by users to change their password ---------*/
+ #ifndef	PASSWD_PROG
 -#define	PASSWD_PROG	"/bin/passwd"
 +#define	PASSWD_PROG	"/usr/bin/passwd"
+ #endif
  
  
- /*-------------- A couple constants used to size arrays ----------------*/
-@@ -254,7 +254,7 @@
+@@ -266,7 +266,7 @@
   investigated. Users tend to go in and out of Pine a few times and there
   is one file for each pine invocation
   ----*/
