@@ -27,5 +27,5 @@ Exec=pine
 Terminal=true
 Type=Application 
 Encoding=UTF-8
-Categories=Network;Email;
+Categories=ConsoleOnly;Network;Email;
 # vi: encoding=utf-8
