@@ -13,13 +13,13 @@ Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
-%define		realversion	4.58
+%define		realversion	4.60
 Version:	%{realversion}L
-Release:	4
+Release:	0.1
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
-# Source0-md5:	6135222a12f06b2dfceea5c1b736891e
+# Source0-md5:	aece91c8a857605994829ffa91d98c9f
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
@@ -27,9 +27,9 @@ Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-ma
 Source4:	pico.desktop
 # renamed files from
 # http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/
-Source5:	%{name}-rules.c.gz
+#Source5:	%{name}-rules.c.gz
 # Source5-md5:	9380005dba3bb45db1fa24dbee459fea
-Source6:	%{name}-rules.h.gz
+#Source6:	%{name}-rules.h.gz
 # Source6-md5:	27b9833d2394b5d1826ed5f77cfa8ecb
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
@@ -39,10 +39,10 @@ Patch4:		%{name}-unix.patch
 Patch5:		%{name}-filter.patch
 Patch6:		%{name}-quote.patch
 Patch7:		%{name}-fhs.patch
-Patch8:		%{name}-maildir.patch
-Patch9:		%{name}-maildirfix.patch
+#Patch8:		%{name}-maildir.patch
+#Patch9:		%{name}-maildirfix.patch
 Patch10:	%{name}-segfix.patch
-Patch11:	%{name}-whitespace.patch
+#Patch11:	%{name}-whitespace.patch
 Patch12:	%{name}-libc-client.patch
 Patch13:	%{name}-fixhome.patch
 #Patch14:	%{name}-terminit.patch
@@ -57,7 +57,7 @@ Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversio
 Patch21:	%{name}-smime.patch
 Patch22:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
-Patch23:	%{name}-iconv-7e.patch
+Patch23:	%{name}-iconv-9d.patch
 Patch24:	%{name}-home_etc.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
@@ -201,13 +201,13 @@ ajuda de acordo com o contexto estА disponМvel.
 %patch2  -p1
 %patch3  -p1
 %patch4  -p1
-%patch5  -p1
-%patch6  -p1
+#%patch5  -p1
+#%patch6  -p1
 %patch7  -p1
-%patch8  -p1
-%patch9  -p1
+#%patch8  -p1
+#%patch9  -p1
 %patch10 -p1
-%patch11 -p1
+#%patch11 -p1
 %patch12 -p1
 %patch13 -p1
 # breaks keys on some terminals
