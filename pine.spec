@@ -23,6 +23,7 @@ Patch7:		pine-quote.patch
 Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
 Requires:	mailcap
+BuildPrereq:	ncurses-devel
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
