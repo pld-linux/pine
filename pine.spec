@@ -11,7 +11,7 @@ Summary(uk):	óÕÍ¦ÓÎÉÊ Ú MIME ÐÏÞÔÏ×ÉÊ ÒÅÄÁËÔÏÒ Ú Ð¦ÄÔÒÉÍËÏÀ ÔÅÌÅËÏÎÆÅÒÅÎÃ¦Ê
 Name:		pine
 %define		realversion	4.50
 Version:	%{realversion}L
-Release:	0.2
+Release:	1
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -27,30 +27,28 @@ Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
 Patch3:		%{name}-terminfo.patch
-Patch4:		%{name}-nodebug.patch
-Patch5:		%{name}-unix.patch
-Patch6:		%{name}-filter.patch
-Patch7:		%{name}-quote.patch
-Patch8:		%{name}-fhs.patch
-Patch9:		%{name}-maildir.patch
-Patch10:	%{name}-maildirfix.patch
-Patch11:	%{name}-time.patch
-Patch12:	%{name}-segfix.patch
-Patch13:	%{name}-whitespace.patch
-Patch14:	%{name}-libc-client.patch
-Patch15:	%{name}-fixhome.patch
-#Patch16:	%{name}-terminit.patch
-Patch17:	%{name}-ssl.patch
-Patch18:	%{name}-non_english_man_path_fix.patch
-Patch19:	%{name}-no_1777_warning.patch
-Patch20:	%{name}-L_on_version.patch
-Patch21:	%{name}-overflow.patch
+Patch4:		%{name}-unix.patch
+Patch5:		%{name}-filter.patch
+Patch6:		%{name}-quote.patch
+Patch7:		%{name}-fhs.patch
+Patch8:		%{name}-maildir.patch
+Patch9:		%{name}-maildirfix.patch
+Patch10:	%{name}-time.patch
+Patch11:	%{name}-segfix.patch
+Patch12:	%{name}-whitespace.patch
+Patch13:	%{name}-libc-client.patch
+Patch14:	%{name}-fixhome.patch
+#Patch15:	%{name}-terminit.patch
+Patch16:	%{name}-ssl.patch
+Patch17:	%{name}-non_english_man_path_fix.patch
+Patch18:	%{name}-no_1777_warning.patch
+Patch19:	%{name}-L_on_version.patch
+Patch20:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch22:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
+Patch21:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
-Patch23:	%{name}-smime.patch
-#Patch24:	http://jshin.net/i18n/pine4.44.iconv.patch
-Patch25:	pine-css.patch
+Patch22:	%{name}-smime.patch
+Patch23:	pine-css.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -186,9 +184,9 @@ ajuda de acordo com o contexto está disponível.
 %setup   -q -a3 -n %{name}%{realversion}
 %patch0  -p1
 %patch1  -p1
-#%patch2  -p1
+%patch2  -p1
 %patch3  -p1
-#%patch4  -p1
+%patch4  -p1
 %patch5  -p1
 %patch6  -p1
 %patch7  -p1
@@ -199,17 +197,15 @@ ajuda de acordo com o contexto está disponível.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
-##%patch16 -p1
+##%patch15 -p1
+%patch16 -p1
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
-#%patch20 -p1
+%patch20 -p1
 %patch21 -p1
-%patch22 -p1
-##%patch23 -p1
-##%patch24 -p1
-%patch25 -p1
+##%patch22 -p1
+%patch23 -p1
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
