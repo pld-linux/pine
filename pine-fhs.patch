@@ -1,0 +1,14 @@
+diff -Nur pine4.10/imap/src/osdep/unix/Makefile pine4.10.pld/imap/src/osdep/unix/Makefile
+--- pine4.10/imap/src/osdep/unix/Makefile	Thu May 27 21:16:49 1999
++++ pine4.10.pld/imap/src/osdep/unix/Makefile	Thu May 27 21:16:23 1999
+@@ -468,8 +468,8 @@
+ 	@echo If you want libc5 versions you must use sl5 instead!
+ 	@echo If you want libc4 versions you must use sl4 instead!
+ 	$(BUILD) `cat EXTRASPECIALS` OS=$@ SIGTYPE=psx CHECKPW=psx \
+-	 SPOOLDIR=/var/spool \
+-	 ACTIVEFILE=/var/lib/news/active \
++	 SPOOLDIR=/var \
++	 ACTIVEFILE=/var/state/news/active \
+ 	 RSHPATH=/usr/bin/rsh \
+ 	 BASECFLAGS="-O2 -mpentium -fomit-frame-pointer -DNFSKLUDGE" \
+ 	 BASELDFLAGS="-lcrypt"
