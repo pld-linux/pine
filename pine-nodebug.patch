@@ -1,35 +1,33 @@
-diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix/Makefile
---- pine4.20/imap/src/osdep/unix/Makefile	Sat Oct 16 11:24:00 1999
-+++ pine4.20.pld/imap/src/osdep/unix/Makefile	Sat Oct 16 11:26:45 1999
-@@ -363,7 +363,8 @@
+diff -Nru pine4.30/imap/src/osdep/unix/Makefile pine4.30.new/imap/src/osdep/unix/Makefile
+--- pine4.30/imap/src/osdep/unix/Makefile	Sun Nov  5 19:58:50 2000
++++ pine4.30.new/imap/src/osdep/unix/Makefile	Sun Nov  5 20:00:48 2000
+@@ -395,7 +395,8 @@
  	 SPOOLDIR=/var/spool \
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
--	 BASECFLAGS="-g -O -DNFSKLUDGE"
-+	 BASECFLAGS="$(OPTIMIZE) -DNFSKLUDGE"
+-	 BASECFLAGS="-g -O"
++	 BASECFLAGS="$(OPTIMIZE) -DNFSKLUDGE" \
 +	 CC=gcc
  
  lyn:	# LynxOS
- 	$(BUILD) `cat EXTRASPECIALS` OS=$@ \
-diff -Nur pine4.20/pico/makefile.lnx pine4.20.pld/pico/makefile.lnx
---- pine4.20/pico/makefile.lnx	Sat Oct 16 11:29:00 1999
-+++ pine4.20.pld/pico/makefile.lnx	Sat Oct 16 11:30:05 1999
-@@ -38,9 +38,9 @@
+ 	$(BUILD) `$(CAT) SPECIALS` OS=$@ \
+diff -Nru pine4.30/pico/makefile.lnx pine4.30.new/pico/makefile.lnx
+--- pine4.30/pico/makefile.lnx	Sun Nov  5 19:58:50 2000
++++ pine4.30.new/pico/makefile.lnx	Sun Nov  5 19:47:37 2000
+@@ -38,8 +38,8 @@
  MAKE=        make
  OPTIMIZE=    # -O
  PROFILE=     # -pg
 -DEBUG=       -g -DDEBUG
 -
--STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
 +DEBUG=       # -g -DDEBUG
 +CC=          gcc
-+STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
+ STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
  CFLAGS=         $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(STDCFLAGS)
  
- # switches for library building
-diff -Nur pine4.20/pine/makefile.lnx pine4.20.pld/pine/makefile.lnx
---- pine4.20/pine/makefile.lnx	Sat Oct 16 11:31:38 1999
-+++ pine4.20.pld/pine/makefile.lnx	Sat Oct 16 11:32:22 1999
+diff -Nru pine4.30/pine/makefile.lnx pine4.30.new/pine/makefile.lnx
+--- pine4.30/pine/makefile.lnx	Sun Nov  5 19:58:50 2000
++++ pine4.30.new/pine/makefile.lnx	Sun Nov  5 19:47:37 2000
 @@ -48,7 +48,7 @@
  OPTIMIZE=    -O2
  PROFILE=     # -pg
@@ -38,13 +36,4 @@ diff -Nur pine4.20/pine/makefile.lnx pine4.20.pld/pine/makefile.lnx
 +CC=          gcc
  CCLIENTDIR=  ../c-client
  PICODIR=     ../pico
- 
-@@ -65,7 +65,7 @@
- LIBS=        $(EXTRALIBES) $(LOCLIBS) $(LDAPLIBS) $(STDLIBS) \
-              `cat $(CCLIENTDIR)/LDFLAGS`
- 
--STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
-+STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
- CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) \
- 	     $(STDCFLAGS)
  
