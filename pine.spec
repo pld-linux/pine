@@ -11,7 +11,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.51
 Version:	%{realversion}L
-Release:	1
+Release:	2
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -216,7 +216,7 @@ zcat %{SOURCE6} >pine/rules.h
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
 	EXTRACFLAGS="-DHAVE_ICONV" \
 	SSLTYPE="unix" \
-	DEBUG="-O" \
+	DEBUG=" " \
 	CC="%{__cc}"
 
 echo "%{__cc}" > ~/gcc.info
