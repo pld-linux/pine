@@ -11,13 +11,14 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 Version:	%{realversion}L
-Release:	12
+Release:	13
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
+Source4:	pico.desktop
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -220,7 +221,8 @@ echo "%{__cc}" > ~/gcc.info
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,{es,fi,hu,pl}/man1}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_pixmapsdir},%{_sysconfdir}}
+	$RPM_BUILD_ROOT{%{_applnkdir}/{Network/Mail,Utilities/Editors}} \
+	$RPM_BUILD_ROOT%{_pixmapsdir},%{_sysconfdir}
 
 install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
@@ -231,6 +233,7 @@ install hu/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/hu/man1
 install pl/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/pl/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/Mail
+install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/Utilities/Editors
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
@@ -268,6 +271,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n pico
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pico
+%{_applnkdir}/Utilities/Editors/pico.desktop
 %{_mandir}/man1/pico*
 %lang(es) %{_mandir}/es/man1/pico*
 %lang(fi) %{_mandir}/fi/man1/pico*
