@@ -1,0 +1,111 @@
+diff -ur man.old/es/man1/pine.1 man/es/man1/pine.1
+--- man.old/es/man1/pine.1	Fri Jul 16 21:28:13 1999
++++ man/es/man1/pine.1	Tue Oct 16 08:43:23 2001
+@@ -277,7 +277,7 @@
+ .if n .ta 2.8i
+ .if t .ta 2.1i
+ 
+-/usr/spool/mail/xxxx	Carpeta por defecto para el correo entrante.
++/var/mail/xxxx	Carpeta por defecto para el correo entrante.
+ .br
+ ~/mail	Directorio por defecto para las carpetas de correo.
+ .br
+@@ -302,13 +302,13 @@
+ /etc/mime.types	Fichero general de sistema de mapeo de extensiones de tipos
+ MIME.
+ .br
+-/usr/local/lib/pine.info	Puntero local al administrador del sistema.
++/usr/lib/pine.info	Puntero local al administrador del sistema.
+ .br
+-/usr/local/lib/pine.conf	Fichero de configuración global del sistema.
++/etc/pine.conf	Fichero de configuración global del sistema.
+ .br
+-/usr/local/lib/pine.conf.fixed	 Fichero de configuración no excluible.
++/etc/pine.conf.fixed	Fichero de configuración no excluible.
+ .br
+-/tmp/.\\usr\\spool\\mail\\xxxx	ficheros de bloqueo de buzones por carpeta.
++/tmp/.\\var\\mail\\xxxx	ficheros de bloqueo de buzones por carpeta.
+ .br
+ ~/.pine-interrupted-mail	Mensaje que fue interrumpido.
+ .br
+diff -ur man.old/fi/man1/pine.1 man/fi/man1/pine.1
+--- man.old/fi/man1/pine.1	Sun Nov 14 02:34:31 1999
++++ man/fi/man1/pine.1	Tue Oct 16 08:44:53 2001
+@@ -199,7 +199,7 @@
+ .if n .ta 2.8i
+ .if t .ta 2.1i
+ 
+-/var/spool/mail/xxxx	Tulevien postiviestien oletuskansio.
++/var/mail/xxxx	Tulevien postiviestien oletuskansio.
+ .br
+ ~/mail	postiviestikansioiden oletushakemisto.
+ .br
+@@ -225,11 +225,11 @@
+ .br
+ /usr/lib/pine.info	Paikallinen pointteri Pinen administraattoriin
+ br
+-/usr/lib/pine.conf	Systemin kattava  konfigurointitiedosto..
++/etc/pine.conf	Systemin kattava  konfigurointitiedosto..
+ .br
+-/usr/lib/pine.conf.fixed	Pysyvä  konfigurointitiedosto.
++/etc/pine.conf.fixed	Pysyvä  konfigurointitiedosto.
+ .br
+-/tmp/.\\var\\spool\\mail\\xxxx	Kansiokohtaiset postilaatikoiden lukkotiedostot
++/tmp/.\\var\\mail\\xxxx	Kansiokohtaiset postilaatikoiden lukkotiedostot
+ .br
+ ~/.pine-interrupted-mail	Keskeytetty viesti
+ .br
+diff -ur man.old/hu/man1/pine.1 man/hu/man1/pine.1
+--- man.old/hu/man1/pine.1	Sun Jul  9 14:19:10 2000
++++ man/hu/man1/pine.1	Tue Oct 16 08:43:35 2001
+@@ -254,7 +254,7 @@
+ .if n .ta 2.8i
+ .if t .ta 2.1i
+ 
+-/var/spool/mail/xxxx	Alapértelmezett mappa a bejövõ leveleknek.
++/var/mail/xxxx	Alapértelmezett mappa a bejövõ leveleknek.
+ .br
+ ~/mail	A mappák alapértelmezett könyvtára.
+ .br
+@@ -280,11 +280,11 @@
+ .br
+ /usr/lib/pine.info	Helyi mutató a rendszeradminisztrátor számára.
+ .br
+-/usr/lib/pine.conf	Rendszerszintû konfigurációs fájl.
++/etc/pine.conf	Rendszerszintû konfigurációs fájl.
+ .br
+-/usr/lib/pine.conf.fixed	 Nem felülbírálható konfigurációs fájl.
++/etc/pine.conf.fixed	Nem felülbírálható konfigurációs fájl.
+ .br
+-/tmp/.\\var\\spool\\mail\\xxxx	Megnyitottságot jelzõ fájlok felhasznalónként.
++/tmp/.\\var\\mail\\xxxx	Megnyitottságot jelzõ fájlok felhasznalónként.
+ .br
+ ~/.pine-interrupted-mail	A félbehagyott üzenet.
+ .br
+diff -ur man.old/pl/man1/pine.1 man/pl/man1/pine.1
+--- man.old/pl/man1/pine.1	Sun May  9 14:11:46 1999
++++ man/pl/man1/pine.1	Tue Oct 16 08:44:22 2001
+@@ -235,7 +235,7 @@
+ .if n .ta 2.8i
+ .if t .ta 2.1i
+ 
+-/var/spool/mail/xxxx	Domy¶lny folder dla przychodz±cej poczty.
++/var/mail/xxxx	Domy¶lny folder dla przychodz±cej poczty.
+ .br
+ ~/mail	Domy¶lny katalog dla folderów.
+ .br
+@@ -261,11 +261,11 @@
+ .br
+ /usr/lib/pine.info	Lokalny wska¼nik do administratora systemu
+ .br
+-/usr/lib/pine.conf	Systemowy plik konfiguracyjny
++/etc/pine.conf	Systemowy plik konfiguracyjny
+ .br
+-/usr/lib/pine.conf.fixed	 Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
++/etc/pine.conf.fixed	 Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
+ .br
+-/tmp/.\\var\\spool\\mail\\xxxx	Pliki blokuj±ce dla ka¿dego folderu
++/tmp/.\\var\\mail\\xxxx	Pliki blokuj±ce dla ka¿dego folderu
+ .br
+ ~/.pine-interrupted-mail	Wiadomo¶æ, której tworzenie zosta³o przerwane
+ .br
