@@ -14,7 +14,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.58
 Version:	%{realversion}L
-Release:	0.2
+Release:	1
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -54,9 +54,9 @@ Patch19:	%{name}-overflow.patch
 Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch21:	%{name}-smime.patch
-Patch22:	pine-css.patch
+Patch22:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
-Patch23:	pine-iconv-7e.patch
+Patch23:	%{name}-iconv-7e.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{!?_without_utf8:BuildRequires:	glibc-devel >= 2.3.2}
