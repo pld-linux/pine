@@ -61,7 +61,7 @@ URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{!?_without_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.7c
 Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
