@@ -11,7 +11,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Summary(uk):	óÕÍ¦ÓÎÉÊ Ú MIME ÐÏÞÔÏ×ÉÊ ÒÅÄÁËÔÏÒ Ú Ð¦ÄÔÒÉÍËÏÀ ÔÅÌÅËÏÎÆÅÒÅÎÃ¦Ê
 Name:		pine
 Version:	%{realversion}L
-Release:	13
+Release:	14
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -19,6 +19,10 @@ Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
 Source4:	pico.desktop
+# renamed files from
+# http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/
+Source5:	%{name}-rules.c.gz
+Source6:	%{name}-rules.h.gz
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -206,6 +210,9 @@ ajuda de acordo com o contexto está disponível.
 #%patch23 -p1
 #%patch24 -p1
 %patch25 -p1
+
+zcat %{SOURCE5} >pine/rules.c
+zcat %{SOURCE6} >pine/rules.h
 
 %build
 ./build slx \
