@@ -5,7 +5,7 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.10
-Release:	1d
+Release:	2
 Copyright:	distributable
 URL:		http://www.washington.edu/pine
 Group:		Applications/Mail
@@ -32,12 +32,12 @@ alone text editor in it's own right. It features MIME support, address
 books, and support for IMAP, mail, and MH style folders.
 
 %description -l pl
-Pine jest doskona³ym czytnikiem poczty elektronicznej i newsów, prcuj±cym w
+Pine jest doskona³ym czytnikiem poczty elektronicznej i newsów, pracuj±cym w
 trybie tekstowym. W pakiecie znajduje siê równie¿ ³atwy w u¿yciu edytor pico,
 wykorzystywany do pisania wiadomo¶ci. Pine jest obecnie jednym z najbardziej 
 popularnych czytników poczty elektronicznej, posiada wspomaganie dla MIME i 
 IMAP, mo¿na w ³atwy sposób tworzyæ ksi±¿ki adresowe i skonfigurowaæ go do 
-wspó³pracy z aplkikacj± PGP.
+wspó³pracy z aplikacj± PGP.
 
 %description -l de
 Pine ist ein kompletter textbasierender Mail- und New-Client, der sich 
@@ -108,15 +108,15 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
 
 EOF
 
-bzip2 -9  README doc/*.txt doc/mailcap.unx
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* 
+gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* \
+	README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.bz2 doc/*.txt.bz2 doc/tech-notes/*.html doc/mailcap.unx.bz2
+%doc {README,doc/*.txt,doc/tech-notes/*.html,doc/mailcap.unx}.gz
 
 %config(missingok) /etc/X11/wmconfig/pine
 
@@ -125,9 +125,15 @@ rm -rf $RPM_BUILD_ROOT
 %config %verify(not size mtime md5) /etc/pine/pine.conf*
 
 %attr(755,root,root) /usr/bin/pi*
-%attr(644,root, man) /usr/man/man1/*
+/usr/man/man1/*
 
 %changelog
+* Sun Apr  4 1999 Piotr Czerwiñski <pius@pld.org.pl>
+  [4.10-2]
+- gzipping documentation instead bzipping,
+- removed man group from man pages,
+- cosmetic changes for common l&f.
+
 * Mon Oct 26 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
   [4.05-1d]
 - updated tp 4.05,
