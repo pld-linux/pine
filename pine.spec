@@ -51,7 +51,7 @@ Patch22:	pine-css.patch
 Patch23:	http://www.math.washington.edu/~chappa/pine/patches/pine4.21/blank.patch.gz
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel
+BuildRequires:	openssl-devel >= 0.9.7
 Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
