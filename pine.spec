@@ -224,9 +224,8 @@ zcat %{SOURCE6} >pine/rules.h
 
 %build
 ./build slx \
-	OPTIMIZE="%{rpmcflags}" \
+	OPTIMIZE="%{rpmcflags} -DHAVE_ICONV" \
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
-	EXTRACFLAGS="-DHAVE_ICONV" \
 	SSLTYPE="unix" \
 	DEBUG=" " \
 	CC="%{__cc}"
