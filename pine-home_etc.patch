@@ -1,0 +1,112 @@
+diff -Nur pine4.58.orig/build pine4.58/build
+--- pine4.58.orig/build	Mon Dec  9 18:54:38 2002
++++ pine4.58/build	Thu Dec 11 15:28:44 2003
+@@ -67,6 +67,8 @@
+ 
+ L1=
+ L2=
++H1=
++H2=
+ K1=
+ K2=
+ S1=
+@@ -129,6 +131,7 @@
+     *) makeargs="$makeargs '$var'"
+        case "$var" in
+ 	 CC=*)                   NOCC=1    ;;
++	 HOMEETCLIB=*)		 HELIB=1   ;;
+ 	 LDAPLIBS=*)             LLIBS=1   ;;
+ 	 LDAPCFLAGS=*)           LFLAGS=1  ;;
+ 	 GSSDIR=*)               GDIR=1
+@@ -232,6 +235,11 @@
+         echo ''
+         cd "$PHOME"
+ 
++# Try to include HOME-ETC.
++	if [ x"$HELIB" != x"" ]; then
++	    H1="'HOMEETCLIBS=-lhome_etc'"
++	    H2="'HOMEETCCFLAGS=-DHAVE_HOME_ETC'"
++	fi
+ # Try to automatically include LDAP definitions.
+         if [ "$NOLDAP" != "1" -a -f contrib/ldap-setup -a \
+ 	     \( "$LLIBS" != "1" -o "$LFLAGS" != "1" \) ]
+@@ -429,8 +437,8 @@
+ 
+         echo "Making Pine and rpload/rpdump".
+         cd "$PHOME/pine"
+-        eval echo make "$makeargs" "$L1" "$L2" -f makefile.$pinetarg
+-        eval make "$makeargs" "$L1" "$L2" -f makefile.$pinetarg
++        eval echo make "$makeargs" "$L1" "$L2" "$H1" "$H2" -f makefile.$pinetarg
++        eval make "$makeargs" "$L1" "$L2" "$H1" "$H2" -f makefile.$pinetarg
+ 	rc=$?
+ 	if [ $rc != "0" ] ; then exit $rc ; fi
+         cd "$PHOME"
+diff -Nur pine4.58.orig/pine/init.c pine4.58/pine/init.c
+--- pine4.58.orig/pine/init.c	Thu Dec 11 14:34:10 2003
++++ pine4.58/pine/init.c	Thu Dec 11 15:19:49 2003
+@@ -67,6 +67,13 @@
+ #include "headers.h"
+ #include "../c-client/imap4r1.h"  /* for LEVELSTATUS() */
+ 
++#ifdef HAVE_HOME_ETC
++# include <home_etc.h>
++# define HOMEDIR _HEdir
++#else
++# define HOMEDIR ps->home_dir
++#endif
++
+ 
+ typedef enum {Sapling, Seedling, Seasoned} FeatureLevel;
+ 
+@@ -1384,7 +1391,7 @@
+     }
+ 
+     if(!ps->pinerc){
+-      build_path(buf, ps->home_dir, ".pinerc", sizeof(buf));
++      build_path(buf, HOMEDIR, ".pinerc", sizeof(buf));
+       ps->pinerc = cpystr(buf);
+     }
+ 
+diff -Nur pine4.58.orig/pine/makefile.lnx pine4.58/pine/makefile.lnx
+--- pine4.58.orig/pine/makefile.lnx	Thu Dec 11 14:34:10 2003
++++ pine4.58/pine/makefile.lnx	Thu Dec 11 15:19:49 2003
+@@ -62,11 +62,11 @@
+ 
+ STDLIBS=     -lncurses
+ LOCLIBS=     $(PICODIR)/libpico.a $(CCLIENTDIR)/c-client.a
+-LIBS=        $(LOCLIBS) $(LDAPLIBS) $(STDLIBS) \
++LIBS=        $(LOCLIBS) $(LDAPLIBS) $(HOMEETCLIBS) $(STDLIBS) \
+              `cat $(CCLIENTDIR)/LDFLAGS`
+ 
+ STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
+-CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) \
++CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) $(HOMEETCCFLAGS) \
+ 	     $(STDCFLAGS)
+ 
+ OFILES=	addrbook.o adrbkcmd.o adrbklib.o args.o bldaddr.o context.o filter.o \
+diff -Nur pine4.58.orig/pine/pine-use.c pine4.58/pine/pine-use.c
+--- pine4.58.orig/pine/pine-use.c	Fri Mar 15 08:13:42 1996
++++ pine4.58/pine/pine-use.c	Thu Dec 11 15:19:49 2003
+@@ -49,6 +49,13 @@
+ /* #define MAILSPOOLPCTS "/usr/mail/%s" */
+ #endif
+ 
++#ifdef HAVE_HOME_ETC
++# include <home_etc.h>
++# define HOMEDIR _HEdir
++#else
++# define HOMEDIR pw->pw_dir
++#endif
++
+ #define DAYSEC (60*60*24)
+ 
+ main(argc, argv)
+@@ -98,7 +105,7 @@
+         if(strcmp(pw->pw_dir, "/") == 0)
+           continue;
+ 
+-        sprintf(filename, "%s/.pinerc", pw->pw_dir);
++        sprintf(filename, "%s/.pinerc", HOMEDIR);
+         if(stat(filename, &statb) < 0)
+           continue;
+         if(statb.st_mtime + 7 * DAYSEC > now) 

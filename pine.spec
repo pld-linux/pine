@@ -1,6 +1,7 @@
 #
 # Conditional build:
 # _without_utf8		build without utf-8 support
+# _without_home_etc	build without home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
@@ -14,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.58
 Version:	%{realversion}L
-Release:	2
+Release:	3
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -57,12 +58,15 @@ Patch21:	%{name}-smime.patch
 Patch22:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
 Patch23:	%{name}-iconv-7e.patch
+Patch24:	%{name}-home_etc.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{!?_without_utf8:BuildRequires:	glibc-devel >= 2.3.2}
+%{!?_without_home_etc:BuildRequires:	home-etc-devel >= 1.0.6}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 Requires:	mailcap
+%{!?_without_home_etc:Requires:	home-etc >= 1.0.6}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -218,6 +222,7 @@ ajuda de acordo com o contexto estА disponМvel.
 ##%patch21 -p1
 %patch22 -p1
 %{!?_without_utf8:%patch23 -p1}
+%{!?_without_home_etc:%patch24 -p1}
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
@@ -227,6 +232,7 @@ zcat %{SOURCE6} >pine/rules.h
 	OPTIMIZE="%{rpmcflags}" \
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
 	EXTRACFLAGS="-DHAVE_ICONV" \
+	%{!?_without_home_etc:HOMEETCLIB="1"} \
 	SSLTYPE="unix" \
 	DEBUG=" " \
 	CC="%{__cc}"
