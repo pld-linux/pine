@@ -5,7 +5,7 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.10
-Release:	5
+Release:	8
 Copyright:	distributable
 URL:		http://www.washington.edu/pine
 Group:		Applications/Mail
@@ -25,9 +25,8 @@ Patch8:		pine-ioctl.patch
 Patch9:		pine-noflock.patch
 Patch10:	pine-noroot.patch
 Patch11:	pine-fhs.patch
-Patch12:	pine-lockwarn.patch
+Patch12:	pine-man.patch
 Requires:	mailcap
-BuildPrereq:	ncurses-devel
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -80,24 +79,25 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %patch9  -p1 
 %patch10 -p1 
 %patch11 -p1 
-%patch12 -p1 
+%patch12 -p1
 
 %build
 ./build \
 	OPTIMIZE="$RPM_OPT_FLAGS" \
 	BASECFLAGS="$RPM_OPT_FLAGS -DNFSKLUDGE" \
-    slx
+	DEBUG="" \
+	slx
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{usr/{bin,share/man/{man1,pl/man1}},etc/{pine,X11/wmconfig}}
+install -d $RPM_BUILD_ROOT%{_prefix}/{bin,share/man/{man1,pl/man1}}
+install -d $RPM_BUILD_ROOT/etc/{pine,X11/wmconfig}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
-
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
@@ -124,10 +124,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
+
 /etc/X11/wmconfig/pine
 
 %dir /etc/pine
-
 %config %verify(not size mtime md5) /etc/pine/pine.conf*
 
 %attr(755,root,root) %{_bindir}/pi*
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %lang(pl) %{_mandir}/pl/man1/*
 
 %changelog
+* Sat Jun 05 1999 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
+- misc fixes 
+
 * Sun Apr 25 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [4.10-4]
 - added pl man page for pine.
