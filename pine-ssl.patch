@@ -1,0 +1,26 @@
+diff -urN pine4.33/imap/src/osdep/unix/auth_ssl.c pine4.33.patch/imap/src/osdep/unix/auth_ssl.c
+--- pine4.33/imap/src/osdep/unix/auth_ssl.c	Fri Jan 19 03:24:45 2001
++++ pine4.33.patch/imap/src/osdep/unix/auth_ssl.c	Wed Aug  1 01:03:58 2001
+@@ -19,14 +19,14 @@
+  */
+ 
+ #define crypt ssl_private_crypt
+-#include <x509.h>
+-#include <ssl.h>
+-#include <err.h>
+-#include <pem.h>
+-#include <buffer.h>
+-#include <bio.h>
+-#include <crypto.h>
+-#include <rand.h>
++#include <openssl/x509.h>
++#include <openssl/ssl.h>
++#include <openssl/err.h>
++#include <openssl/pem.h>
++#include <openssl/buffer.h>
++#include <openssl/bio.h>
++#include <openssl/crypto.h>
++#include <openssl/rand.h>
+ #undef crypt
+ 
+ #define SSLBUFLEN 8192
