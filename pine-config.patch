@@ -1,0 +1,41 @@
+diff -Nur pine4.10/pine/osdep/os-lnx.h pine4.10.pld/pine/osdep/os-lnx.h
+--- pine4.10/pine/osdep/os-lnx.h	Wed Oct  7 23:51:47 1998
++++ pine4.10.pld/pine/osdep/os-lnx.h	Sat Feb 13 12:47:01 1999
+@@ -60,7 +60,7 @@
+    there should be a dummy disk_quota() routine in os-xxx.c so that defining
+    this won't be harmful anyway.
+  ----*/
+-/* #define USE_QUOTAS */
++#define USE_QUOTAS 
+ 
+ 
+ 
+@@ -160,8 +160,8 @@
+ 
+ 
+ /*----- System-wide config file ----------------------------------------*/
+-#define SYSTEM_PINERC             "/usr/local/lib/pine.conf"
+-#define SYSTEM_PINERC_FIXED       "/usr/local/lib/pine.conf.fixed"
++#define SYSTEM_PINERC             "/etc/pine/pine.conf"
++#define SYSTEM_PINERC_FIXED       "/etc/pine/pine.conf.fixed"
+ 
+ 
+ 
+@@ -223,7 +223,7 @@
+ 
+ 
+ /*--------- Program employed by users to change their password ---------*/
+-#define	PASSWD_PROG	"/bin/passwd"
++#define	PASSWD_PROG	"/usr/bin/passwd"
+ 
+ 
+ /*-------------- A couple constants used to size arrays ----------------*/
+@@ -254,7 +254,7 @@
+  investigated. Users tend to go in and out of Pine a few times and there
+  is one file for each pine invocation
+  ----*/
+-#define NUMDEBUGFILES 4
++#define NUMDEBUGFILES 0
+ 
+ /*----------------------------------------------------------------------
+    The default debug level to set (approximate meanings):

@@ -1,0 +1,61 @@
+diff -Nur pine4.10/imap/src/osdep/unix/Makefile pine4.10.pld/imap/src/osdep/unix/Makefile
+--- pine4.10/imap/src/osdep/unix/Makefile	Wed Jan 27 00:19:19 1999
++++ pine4.10.pld/imap/src/osdep/unix/Makefile	Sun Feb 14 14:18:57 1999
+@@ -345,8 +345,9 @@
+ 	 SPOOLDIR=/var/spool \
+ 	 ACTIVEFILE=/var/lib/news/active \
+ 	 RSHPATH=/usr/bin/rsh \
+-	 BASECFLAGS="-g -O -DNFSKLUDGE"
+-
++	 BASECFLAGS="-O2 -fomit-frame-pointer -DNFSKLUDGE"
++	 CC=gcc
++	 
+ lnp:	# Linux Pluggable Authentication modules
+ 	$(BUILD) `cat EXTRASPECIALS` OS=lnx SIGTYPE=psx CHECKPW=pam \
+ 	 SPOOLDIR=/var/spool \
+diff -Nur pine4.10/pico/makefile.lnx pine4.10.pld/pico/makefile.lnx
+--- pine4.10/pico/makefile.lnx	Tue Jun 30 01:17:37 1998
++++ pine4.10.pld/pico/makefile.lnx	Sun Feb 14 14:20:46 1999
+@@ -38,9 +38,9 @@
+ MAKE=        make
+ OPTIMIZE=    # -O
+ PROFILE=     # -pg
+-DEBUG=       -g -DDEBUG
+-
+-STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE
++DEBUG=       # -g -DDEBUG
++CC=	     gcc
++STDCFLAGS=	-Dlnx -DJOB_CONTROL -DPOSIX -DMOUSE -D_USE_PLD
+ CFLAGS=         $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(STDCFLAGS)
+ 
+ # switches for library building
+@@ -48,7 +48,7 @@
+ LIBARGS=	ru
+ RANLIB=		ranlib
+ 
+-LIBS=		$(EXTRALIBES) -ltermcap
++LIBS=		$(EXTRALIBES) -lncurses
+ 
+ OFILES=		attach.o basic.o bind.o browse.o buffer.o \
+ 		composer.o display.o file.o fileio.o line.o pico_os.o \
+diff -Nur pine4.10/pine/makefile.lnx pine4.10.pld/pine/makefile.lnx
+--- pine4.10/pine/makefile.lnx	Sun Feb 14 14:21:25 1999
++++ pine4.10.pld/pine/makefile.lnx	Sun Feb 14 14:20:22 1999
+@@ -48,7 +48,7 @@
+ OPTIMIZE=    -O2
+ PROFILE=     # -pg
+ DEBUG=       # -g -DDEBUG
+-
++CC=	     gcc
+ CCLIENTDIR=  ../c-client
+ PICODIR=     ../pico
+ 
+@@ -65,7 +65,7 @@
+ LIBS=        $(EXTRALIBES) $(LOCLIBS) $(LDAPLIBS) $(STDLIBS) \
+              `cat $(CCLIENTDIR)/LDFLAGS`
+ 
+-STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE
++STDCFLAGS=   -DLNX -DSYSTYPE=\"LNX\" -DMOUSE -D_USE_PLD
+ CFLAGS=      $(OPTIMIZE) $(PROFILE) $(DEBUG) $(EXTRACFLAGS) $(LDAPCFLAGS) \
+ 	     $(STDCFLAGS)
+ 
