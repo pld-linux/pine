@@ -15,7 +15,7 @@ diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
 -	 BASECFLAGS="-g -fno-omit-frame-pointer -O6 -DNFSKLUDGE" \
-+	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE" \
++	 BASECFLAGS="$(OPTIMIZE) -DNFSKLUDGE" \
  	 BASELDFLAGS="-lcrypt"
  
  sl4:	# Secure Linux using libc4

@@ -6,7 +6,7 @@ diff -Nur pine4.20/imap/src/osdep/unix/Makefile pine4.20.pld/imap/src/osdep/unix
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
 -	 BASECFLAGS="-g -O -DNFSKLUDGE"
-+	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE"
++	 BASECFLAGS="$(OPTIMIZE) -DNFSKLUDGE"
 +	 CC=gcc
  
  lyn:	# LynxOS
