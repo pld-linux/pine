@@ -1,12 +1,6 @@
---- pine4.33/imap/src/osdep/unix/env_unix.c	Tue Mar  6 16:38:48 2001
-+++ pine4.33/imap/src/osdep/unix/env_unix.sz.c	Tue Mar  6 16:37:40 2001
-@@ -55,16 +55,16 @@
- 				/* default directory protection */
- static long dir_protection = 0700;
- 				/* default lock file protection */
--static long lock_protection = 0666;
-+static long lock_protection = 0600;
- 				/* default ftp file protection */
+--- ./imap/src/osdep/unix/env_unix.c.org	Sat Sep 22 01:10:39 2001
++++ ./imap/src/osdep/unix/env_unix.c	Sat Sep 22 01:11:09 2001
+@@ -69,11 +69,11 @@
  static long ftp_protection = 0644;
  static long ftp_dir_protection = 0755;
  				/* default public file protection */
@@ -20,5 +14,5 @@
 +static long shared_protection = 0600;
 +static long shared_dir_protection = 0700;
  static long locktimeout = 5;	/* default lock timeout */
- 				/* flock() emulator is a no-op */
- static long disableFcntlLock = NIL;
+ 				/* default prototypes */
+ static MAILSTREAM *createProto = NIL;
