@@ -1,5 +1,5 @@
 Summary:	MIME compliant mail reader w/ news support as well
-Summary(de):	MIME-konformer Mail-Reader mit News-Support 
+Summary(de):	MIME-konformer Mail-Reader mit News-Support
 Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
@@ -78,17 +78,17 @@ biçimlerini destekleme özelliklerini taþýr.
 
 %prep
 %setup   -q -a3 -n %{name}%{version}
-%patch0  -p1 
-%patch1  -p1 
-%patch2  -p1 
-%patch3  -p1 
-%patch4  -p1 
-%patch5  -p1 
-%patch6  -p1 
-%patch7  -p1 
-%patch8  -p1 
-%patch9  -p1 
-%patch10 -p1 
+%patch0  -p1
+%patch1  -p1
+%patch2  -p1
+%patch3  -p1
+%patch4  -p1
+%patch5  -p1
+%patch6  -p1
+%patch7  -p1
+%patch8  -p1
+%patch9  -p1
+%patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
@@ -96,7 +96,7 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch15 -p1
 #%patch16 -p1
 %patch17 -p1
-%patch18 -p1 
+%patch18 -p1
 
 %build
 ./build slx \
@@ -138,7 +138,7 @@ cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
 
 EOF
 
-gzip -9nf README doc/*.txt doc/mailcap.unx 
+gzip -9nf README doc/*.txt doc/mailcap.unx
 
 %clean
 rm -rf $RPM_BUILD_ROOT
