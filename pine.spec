@@ -5,25 +5,28 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.21
-Release:	5
-Copyright:	distributable
+Release:	27
+License:	Distributable
 Group:		Applications/Mail
-Group(pt):	Aplicações/Correio Eletrônico
 Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
-Source1:	pine.desktop
-Source2:	pine.1.pl
-Patch0:		pine-config.patch
-Patch1:		pine-doc.patch
-Patch2:		pine-makefile.patch
-Patch3:		pine-terminfo.patch
-Patch4:		pine-nodebug.patch
-Patch5:		pine-unix.patch
-Patch6:		pine-filter.patch
-Patch7:		pine-quote.patch
-Patch8:		pine-noflock.patch
-Patch9:		pine-fhs.patch
-Patch10:	pine-maildir.patch
+Source1:	%{name}.desktop
+Source2:	%{name}.1.pl
+Patch0:		%{name}-config.patch
+Patch1:		%{name}-doc.patch
+Patch2:		%{name}-makefile.patch
+Patch3:		%{name}-terminfo.patch
+Patch4:		%{name}-nodebug.patch
+Patch5:		%{name}-unix.patch
+Patch6:		%{name}-filter.patch
+Patch7:		%{name}-quote.patch
+Patch8:		%{name}-noflock.patch
+Patch9:		%{name}-fhs.patch
+Patch10:	%{name}-maildir.patch
+Patch11:	%{name}-maildirfix.patch
+Patch12:	%{name}-compile.patch
+Patch13:	%{name}-headerfix.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
@@ -81,19 +84,22 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch8  -p1 
 %patch9  -p1 
 %patch10 -p1 
+%patch11 -p1 
+%patch12 -p1 
+%patch13 -p1 
 
 %build
 ./build slx \
-	OPTIMIZE="$RPM_OPT_FLAGS" \
-	BASECFLAGS="$RPM_OPT_FLAGS -DNFSKLUDGE" \
+	OPTIMIZE="%{!?debug:$RPM_OPT_FLAGS}{?debug:-O -g}" \
+	BASECFLAGS="%{!?debug:$RPM_OPT_FLAGS}{?debug:-O -g} -DNFSKLUDGE" \
 	DEBUG=""
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
-$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_sysconfdir}}
+	$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_sysconfdir}}
 
-install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
+install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -114,8 +120,7 @@ cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
 
 EOF
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/{man1/*,pl/man1/*} \
-	README doc/*.txt doc/mailcap.unx 
+gzip -9nf README doc/*.txt doc/mailcap.unx 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
