@@ -216,7 +216,7 @@ zcat %{SOURCE6} >pine/rules.h
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
 	EXTRACFLAGS="-DHAVE_ICONV" \
 	SSLTYPE="unix" \
-	DEBUG="" \
+	DEBUG="-O" \
 	CC="%{__cc}"
 
 echo "%{__cc}" > ~/gcc.info
