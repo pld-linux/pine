@@ -64,7 +64,7 @@ URL:		http://www.washington.edu/pine/
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.7d
 Requires:	mailcap
 %{?with_home_etc:Requires:	home-etc >= 1.0.8}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
