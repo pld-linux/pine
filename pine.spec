@@ -90,8 +90,8 @@ biçimlerini destekleme özelliklerini taþýr.
 
 %build
 ./build slx \
-	OPTIMIZE="%{!?debug:$RPM_OPT_FLAGS}{?debug:-O -g}" \
-	BASECFLAGS="%{!?debug:$RPM_OPT_FLAGS}{?debug:-O -g} -DNFSKLUDGE" \
+	OPTIMIZE="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g}" \
+	BASECFLAGS="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g} -DNFSKLUDGE" \
 	DEBUG=""
 
 %install
