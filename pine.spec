@@ -86,7 +86,7 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/{usr/{bin,man/{man1,pl/man1}},etc/{pine,X11/wmconfig}}
 
-install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT/usr/bin
+install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
@@ -94,7 +94,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
 
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
-$RPM_BUILD_ROOT/usr/bin/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
+$RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
 #
 # Pine system-wide enforced configuration file - customize as needed
@@ -124,7 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %config %verify(not size mtime md5) /etc/pine/pine.conf*
 
-%attr(755,root,root) /usr/bin/pi*
+%attr(755,root,root) %{_bindir}/pi*
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
