@@ -13,7 +13,8 @@ Group(pl):	Aplikacje/Poczta
 Group(pt):	Aplicações/Correio Eletrônico
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
 Source1:	%{name}.desktop
-Source2:	%{name}-non-english-man-pages.tar.bz2
+Source2:	%{name}.png
+Source3:	%{name}-non-english-man-pages.tar.bz2
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -79,7 +80,7 @@ Pine, MIME desteði, adres defteri ve IMAP, MH gibi ileti arþivi
 biçimlerini destekleme özelliklerini taþýr.
 
 %prep
-%setup   -q -a2 -n %{name}%{version}
+%setup   -q -a3 -n %{name}%{version}
 %patch0  -p1 
 %patch1  -p1 
 %patch2  -p1 
@@ -113,7 +114,7 @@ echo "%{__cc}" > ~/gcc.info
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,{es,fi,hu,pl}/man1}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_sysconfdir}}
+	$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_pixmapsdir},%{_sysconfdir}}
 
 install bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
@@ -124,6 +125,7 @@ install hu/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/hu/man1
 install pl/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/pl/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/Mail
+install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
@@ -148,12 +150,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
-
-%{_applnkdir}/Network/Mail/pine.desktop
-
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
-
 %attr(755,root,root) %{_bindir}/pi*
+%{_applnkdir}/Network/Mail/pine.desktop
+%{_pixmapsdir}/*
+
 %{_mandir}/man1/*
 %lang(es) %{_mandir}/es/man1/*
 %lang(fi) %{_mandir}/fi/man1/*
