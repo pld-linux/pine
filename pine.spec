@@ -26,6 +26,7 @@ Patch9:		pine-noflock.patch
 Patch10:	pine-noroot.patch
 Patch11:	pine-fhs.patch
 Patch12:	pine-man.patch
+Patch13:	pine-maildir.patch
 Requires:	mailcap
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -80,6 +81,7 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %patch10 -p1 
 %patch11 -p1 
 %patch12 -p1
+%patch13 -p1
 
 %build
 ./build \
