@@ -1,0 +1,11 @@
+--- pine4.44/pine/pine.h.custom_ver	2002-01-08 18:55:49.000000000 -0200
++++ pine4.44/pine/pine.h	2002-01-10 13:52:44.000000000 -0200
+@@ -63,7 +63,7 @@
+ #ifndef _PINE_INCLUDED
+ #define _PINE_INCLUDED
+ 
+-#define PINE_VERSION		"4.44"
++#define PINE_VERSION		"4.44L"
+ #define	PHONE_HOME_VERSION	"-count"
+ #define	PHONE_HOME_HOST		"docserver.cac.washington.edu"
+ 
