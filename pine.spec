@@ -14,7 +14,7 @@ Version:	%{realversion}L
 Release:	1
 License:	distributable
 Group:		Applications/Mail
-Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
+Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
@@ -33,22 +33,21 @@ Patch6:		%{name}-quote.patch
 Patch7:		%{name}-fhs.patch
 Patch8:		%{name}-maildir.patch
 Patch9:		%{name}-maildirfix.patch
-Patch10:	%{name}-time.patch
-Patch11:	%{name}-segfix.patch
-Patch12:	%{name}-whitespace.patch
-Patch13:	%{name}-libc-client.patch
-Patch14:	%{name}-fixhome.patch
-#Patch15:	%{name}-terminit.patch
-Patch16:	%{name}-ssl.patch
-Patch17:	%{name}-non_english_man_path_fix.patch
-Patch18:	%{name}-no_1777_warning.patch
-Patch19:	%{name}-L_on_version.patch
-Patch20:	%{name}-overflow.patch
+Patch10:	%{name}-segfix.patch
+Patch11:	%{name}-whitespace.patch
+Patch12:	%{name}-libc-client.patch
+Patch13:	%{name}-fixhome.patch
+#Patch14:	%{name}-terminit.patch
+Patch15:	%{name}-ssl.patch
+Patch16:	%{name}-non_english_man_path_fix.patch
+Patch17:	%{name}-no_1777_warning.patch
+Patch18:	%{name}-L_on_version.patch
+Patch19:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch21:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
+Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
-Patch22:	%{name}-smime.patch
-Patch23:	pine-css.patch
+Patch21:	%{name}-smime.patch
+Patch22:	pine-css.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -196,16 +195,17 @@ ajuda de acordo com o contexto está disponível.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-##%patch15 -p1
+# breaks keys on some terminals
+##%patch14 -p1
+%patch15 -p1
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
-%patch21 -p1
-##%patch22 -p1
-%patch23 -p1
+# breaks pine
+##%patch21 -p1
+%patch22 -p1
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
