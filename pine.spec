@@ -15,7 +15,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.60
 Version:	%{realversion}L
-Release:	3
+Release:	4
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
@@ -50,6 +50,7 @@ Patch19:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
 Patch20:	%{name}-iconv-9d.patch
 Patch21:	%{name}-home_etc.patch
+Patch22:	%{name}-pwd.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
@@ -209,6 +210,7 @@ ajuda de acordo com o contexto estА disponМvel.
 %patch19 -p1
 %{?with_utf8:%patch20 -p1}
 %{?with_home_etc:%patch21 -p1}
+%patch22 -p1
 
 %build
 ./build slx \
