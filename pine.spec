@@ -14,14 +14,15 @@ Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
 Source1:	pine.wmconfig
 Patch0:		pine-config.patch
 Patch1:		pine-doc.patch
-Patch2:		pine-gssapi.patch
-Patch3:		pine-makefile.patch
-Patch4:		pine-terminfo.patch
-Patch5:		pine-nodebug.patch
-Patch6:		pine-unix.patch
-Patch7:		pine-noroot.patch
+Patch2:		pine-makefile.patch
+Patch3:		pine-terminfo.patch
+Patch4:		pine-nodebug.patch
+Patch5:		pine-unix.patch
+Patch6:		pine-filter.patch
+Patch7:		pine-quote.patch
+Patch8:		pine-ioctl.patch
+Patch9:		pine-noflock.patch
 Requires:	mailcap
-Requires:	krb5-lib >= 1.0.5
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -30,14 +31,6 @@ aimed at both novice and expert users. It includes an easy to use editor,
 pico, for composing messages. Pico has gained popularity as a stand
 alone text editor in it's own right. It features MIME support, address
 books, and support for IMAP, mail, and MH style folders.
-
-%description -l pl
-Pine jest doskona³ym czytnikiem poczty elektronicznej i newsów, pracuj±cym w
-trybie tekstowym. W pakiecie znajduje siê równie¿ ³atwy w u¿yciu edytor pico,
-wykorzystywany do pisania wiadomo¶ci. Pine jest obecnie jednym z najbardziej 
-popularnych czytników poczty elektronicznej, posiada wspomaganie dla MIME i 
-IMAP, mo¿na w ³atwy sposób tworzyæ ksi±¿ki adresowe i skonfigurowaæ go do 
-wspó³pracy z aplikacj± PGP.
 
 %description -l de
 Pine ist ein kompletter textbasierender Mail- und New-Client, der sich 
@@ -53,6 +46,14 @@ utiliser, pico, pour composer les messages. pico est devenu populaire comme
 éditeur de texte par lui-même. Il reconnait la gestion MIME, les carnets
 d'adresse et la gestion IMAP, mail et des dossiers du style MH.
 
+%description -l pl
+Pine jest doskona³ym czytnikiem poczty elektronicznej i newsów, pracuj±cym w
+trybie tekstowym. W pakiecie znajduje siê równie¿ ³atwy w u¿yciu edytor
+pico, wykorzystywany do pisania wiadomo¶ci. Pine jest obecnie jednym z
+najbardziej popularnych czytników poczty elektronicznej, posiada wspomaganie
+dla MIME i IMAP, mo¿na w ³atwy sposób tworzyæ ksi±¿ki adresowe i
+skonfigurowaæ go do wspó³pracy z aplikacj± PGP.
+
 %description -l tr
 Pine, metin tabanlý bir ileti ve haber servisi (news) istemcisidir. Hem acemi
 hem de uzman kullanýcýlar için uygundur. Ýleti yazmak için kullanýmý oldukça
@@ -64,24 +65,19 @@ IMAP, MH gibi ileti arþivi biçimlerini destekleme özelliklerini taþýr.
 %setup -q -n %{name}%{version}
 %patch0 -p1 
 %patch1 -p1 
-#%patch2 -p1 
+%patch2 -p1 
 %patch3 -p1 
 %patch4 -p1 
 %patch5 -p1 
 %patch6 -p1 
 %patch7 -p1 
+%patch8 -p1 
+%patch9 -p1 
 
 %build
-# Checking for Kerberos V
-if [ -f /etc/kerberos/krb5.conf ]; then
-patch -p1 < $RPM_SOURCE_DIR/%{name}-gssapi.patch
-install -d krb5
-ln -s /usr/lib krb5/lib
-ln -s /usr/include krb5/include
-fi
-
 ./build \
-    OPTIMIZE="$RPM_OPT_FLAGS" \
+	OPTIMIZE="$RPM_OPT_FLAGS" \
+	BASECFLAGS="$RPM_OPT_FLAGS -DNFSKLUDGE" \
     slx
 
 %install
