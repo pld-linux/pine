@@ -11,7 +11,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 Version:	%{realversion}L
-Release:	8
+Release:	11
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -239,14 +239,12 @@ cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
 
 EOF
 
-gzip -9nf README doc/*.txt doc/mailcap.unx
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc {README,doc/*.txt,doc/mailcap.unx}.gz
+%doc README doc/*.txt doc/mailcap.unx
 %doc doc/tech-notes/*.html
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
 %attr(755,root,root) %{_bindir}/pine
