@@ -4,8 +4,8 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
-Version:	4.33
-Release:	12
+Version:	4.40
+Release:	1
 License:	Distributable
 Group:		Applications/Mail
 Group(pl):	Aplikacje/Poczta
@@ -21,17 +21,15 @@ Patch4:		%{name}-nodebug.patch
 Patch5:		%{name}-unix.patch
 Patch6:		%{name}-filter.patch
 Patch7:		%{name}-quote.patch
-Patch8:		%{name}-noflock.patch
-Patch9:		%{name}-fhs.patch
-Patch10:	%{name}-maildir.patch
-Patch11:	%{name}-maildirfix.patch
-Patch12:	%{name}-time.patch
-Patch13:	%{name}-segfix.patch
-Patch14:	%{name}-whitespace.patch
-Patch15:	%{name}-ssl.patch
-Patch16:	%{name}-libc-client.patch
-Patch17:	%{name}-fixhome.patch
-Patch18:	%{name}-terminit.patch
+Patch8:		%{name}-fhs.patch
+Patch9:		%{name}-maildir.patch
+Patch10:	%{name}-maildirfix.patch
+Patch11:	%{name}-time.patch
+Patch12:	%{name}-segfix.patch
+Patch13:	%{name}-whitespace.patch
+Patch14:	%{name}-libc-client.patch
+Patch15:	%{name}-fixhome.patch
+Patch16:	%{name}-terminit.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
@@ -89,14 +87,12 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch8  -p1 
 %patch9  -p1 
 %patch10 -p1 
-%patch11 -p1 
+%patch11 -p1
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%patch16 -p1
-%patch17 -p1
-#%patch18 -p1
+#%patch16 -p1
 
 %build
 ./build slx \
