@@ -13,13 +13,13 @@ Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
-%define		realversion	4.60
+%define		realversion	4.61
 Version:	%{realversion}L
 Release:	1
-License:	distributable
+License:	not distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
-# Source0-md5:	aece91c8a857605994829ffa91d98c9f
+# Source0-md5:	885c6aa4f4f16fcb83a49ef6c025307e
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
@@ -50,6 +50,7 @@ Patch19:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
 Patch20:	%{name}-iconv-9d.patch
 Patch21:	%{name}-home_etc.patch
+Patch22:	%{name}-pwd.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.2.5}
@@ -209,6 +210,7 @@ ajuda de acordo com o contexto estА disponМvel.
 %patch19 -p1
 %{?with_utf8:%patch20 -p1}
 %{?with_home_etc:%patch21 -p1}
+%patch22 -p1
 
 %build
 ./build slx \
@@ -259,7 +261,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
+%doc CPYRIGHT README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
 %attr(755,root,root) %{_bindir}/pine
 %{_applnkdir}/Network/Mail/pine.desktop
