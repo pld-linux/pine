@@ -45,6 +45,7 @@ Patch22:	http://www.math.washington.edu/~chappa/pine/patches/pine4.44/all.patch.
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch23:	%{name}-smime.patch
 #Patch24:	http://jshin.net/i18n/pine4.44.iconv.patch
+Patch25:	pine-css.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -203,6 +204,7 @@ ajuda de acordo com o contexto está disponível.
 %patch22 -p1
 #%patch23 -p1
 #%patch24 -p1
+%patch25 -p1
 
 %build
 ./build slx \
