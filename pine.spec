@@ -8,9 +8,6 @@ Version:	4.44
 Release:	1
 License:	distributable
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
 Source1:	%{name}.desktop
 Source2:	%{name}.png
