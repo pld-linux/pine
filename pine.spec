@@ -201,7 +201,7 @@ ajuda de acordo com o contexto está disponível.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
+#%patch23 -p1
 #%patch24 -p1
 
 %build
