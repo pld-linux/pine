@@ -5,7 +5,7 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.21
-Release:	3
+Release:	4
 Copyright:	distributable
 Group:		Applications/Mail
 Group(pt):	Aplicações/Correio Eletrônico
@@ -91,13 +91,13 @@ biçimlerini destekleme özelliklerini taþýr.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/{man1,pl/man1}} \
-$RPM_BUILD_ROOT{%{_applnkdir}/Networking/Mail,%{_sysconfdir}}
+$RPM_BUILD_ROOT{%{_applnkdir}/Network/Mail,%{_sysconfdir}}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT%{_bindir}
 
 install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
-install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Networking/Mail
+install %{SOURCE1} $RPM_BUILD_ROOT%{_applnkdir}/Network/Mail
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
@@ -125,7 +125,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
 
-%{_applnkdir}/Networking/Mail/pine.desktop
+%{_applnkdir}/Network/Mail/pine.desktop
 
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
 
