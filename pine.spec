@@ -6,7 +6,9 @@ Summary(es):	Lector de mail con soporte a MIME y news
 Summary(fr):	Lecteur de courrier conforme Ю MIME avec gestion des news"
 Summary(pl):	Klient poczty elektronicznej i newsСw ze wspomaganiem dla MIME
 Summary(pt_BR):	Leitor de mail com suporte a MIME e news
+Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
+Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 Version:	%{realversion}L
 Release:	2.1
@@ -86,6 +88,15 @@ e cliente de news. Ele И dirigido tanto para novatos como para
 usuАrios experientes. Possui suporte para MIME, agendas de endereГo, e
 suporte para pastas de estilo IMAP, mail e MH.
 
+%description -l ru
+Pine - это полноценный текст-ориентированный клиент для почты и
+телеконференций. Рассчитан как на начинающих, так и на опытных
+пользователей. Включает простой в использовании редактор, pico, для
+редактирования почтовых сообщений. Имеет поддержку MIME, адресные
+книги, поддержку IMAP, может работать с почтовыми ящиками в формате
+mail и MH. Настоящая версия позволяет сконфигурировать Pine так, что
+он не будет кодировать русский текст в хедерах писем.
+
 %description -l tr
 Pine, metin tabanlЩ bir ileti ve haber servisi (news) istemcisidir.
 Hem acemi hem de uzman kullanЩcЩlar iГin uygundur. щleti yazmak iГin
@@ -93,6 +104,15 @@ kullanЩmЩ oldukГa kolay olan pico adlЩ metin dЭzenleyicisini kullanЩr.
 Pico kendi baЧЩna da bir metin dЭzenleyici olarak ilgi gЖrmЭЧtЭr.
 Pine, MIME desteПi, adres defteri ve IMAP, MH gibi ileti arЧivi
 biГimlerini destekleme Жzelliklerini taЧЩr.
+
+%description -l uk
+Pine - це повноц╕нний текст-ор╕╓нтований кл╕╓нт для пошти та
+телеконференц╕й. Розрахований як на початк╕вц╕в, так ╕ на досв╕дчених
+користувач╕в. М╕стить простий у використанн╕ редактор PICO для
+редагування поштових пов╕домлень. Ма╓ п╕дтримку MIME, адресн╕ книги,
+п╕дтримку IMAP, може працювати з поштовими скриньками в форматах mail
+та MH. Ця верс╕я дозволя╓ сконф╕гурувати Pine так, що в╕н не буде
+кодувати кирил╕чний текст в хедерах лист╕в.
 
 %package -n pico
 Summary:	Simple text editor in the style of the Pine Composer
