@@ -12,13 +12,13 @@ Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
-%define		realversion	4.56
+%define		realversion	4.58
 Version:	%{realversion}L
-Release:	0.3
+Release:	0.1
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
-# Source0-md5:	744992ab500ee265985eb078522e0604
+# Source0-md5:	6135222a12f06b2dfceea5c1b736891e
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
@@ -55,9 +55,8 @@ Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversio
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch21:	%{name}-smime.patch
 Patch22:	pine-css.patch
-Patch23:	http://www.math.washington.edu/~chappa/pine/patches/pine4.21/blank.patch.gz
 # from http://www.suse.de/~bk/pine/iconv/
-Patch24:	pine-iconv-7d-2.diff
+Patch23:	pine-iconv-7d-2.diff
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 %{!?_without_utf8:BuildRequires:	glibc-devel >= 2.3.2}
@@ -212,14 +211,13 @@ ajuda de acordo com o contexto estА disponМvel.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
-%patch18 -p1
+#%patch18 -p1
 %patch19 -p1
 %patch20 -p1
 # breaks pine
 ##%patch21 -p1
 %patch22 -p1
-%patch23 -p1
-%{!?_without_utf8:%patch24 -p1}
+%{!?_without_utf8:%patch23 -p1}
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
