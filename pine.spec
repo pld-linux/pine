@@ -5,7 +5,7 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.21
-Release:	4
+Release:	5
 Copyright:	distributable
 Group:		Applications/Mail
 Group(pt):	Aplicações/Correio Eletrônico
