@@ -88,11 +88,11 @@ install -d $RPM_BUILD_ROOT/{usr/{bin,man/{man1,pl/man1}},etc/{pine,X11/wmconfig}
 
 install -s bin/{pine,pico,pilot} $RPM_BUILD_ROOT/usr/bin
 
-install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT/usr/man/man1
+install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
 
-install %{SOURCE2} $RPM_BUILD_ROOT/usr/man/pl/man1/pine.1
+install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
 $RPM_BUILD_ROOT/usr/bin/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
@@ -108,7 +108,7 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
 
 EOF
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/{man1/*,pl/man1/*} \
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/{man1/*,pl/man1/*} \
 	README doc/*.txt doc/mailcap.unx 
 
 %clean
@@ -125,8 +125,8 @@ rm -rf $RPM_BUILD_ROOT
 %config %verify(not size mtime md5) /etc/pine/pine.conf*
 
 %attr(755,root,root) /usr/bin/pi*
-/usr/man/man1/*
-%lang(pl) /usr/man/pl/man1/*
+%{_mandir}/man1/*
+%lang(pl) %{_mandir}/pl/man1/*
 
 %changelog
 * Sun Apr 25 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
