@@ -5,7 +5,7 @@ Summary(pl):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.44
-Release:	1
+Release:	2
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{version}.tar.gz
@@ -75,6 +75,38 @@ kullanýmý oldukça kolay olan pico adlý metin düzenleyicisini kullanýr.
 Pico kendi baþýna da bir metin düzenleyici olarak ilgi görmüþtür.
 Pine, MIME desteði, adres defteri ve IMAP, MH gibi ileti arþivi
 biçimlerini destekleme özelliklerini taþýr.
+
+%package -n pico
+Summary:	Simple text editor in the style of the Pine Composer
+Summary(pl):	Prosty edytor tekstowy w stylu pine
+Group:		Applications/Editors
+
+%description -n pico
+Pico is a simple, display-oriented text editor based on the Pine
+message system composer. As with Pine, commands are displayed at the
+bottom of the screen, and context-sensitive help is provided. As
+characters are typed they are immediately inserted into the text.
+
+%description -n pico -l pl
+Pico jest prostym, zorientowanym na wy¶wietlanie edytorem bazuj±cym na
+pine. Tak jak w pine komendy s± wy¶wietlane na dole ekranu oraz
+dostêpna jest pomoc konteksowa. Wpisywane znaki s± natychmiast
+w³±czane do tekstu.
+
+%package -n pilot
+Summary:	Simple file system browser in the style of the Pine Composer
+Summary(pl):	Prosta przegl±darka plików w stylu composera pine
+Group:		Applications/Shells
+
+%description -n pilot
+Pilot is a simple, display-oriented file system browser based on the
+Pine message system composer. As with Pine, commands are displayed at
+the bottom of the screen, and context-sensitive help is provided.
+
+%description -n pilot -l pl
+Pilot jest prost±, zorientowan± na wy¶wietlanie przegl±dark± plików w
+stylu compsera pine. Podobnie jak w pine polecenia sa wy¶wietlane na
+dole ekranu oraz jest dostêpna pomoc kontekstowa.
 
 %prep
 %setup   -q -a3 -n %{name}%{version}
@@ -148,12 +180,27 @@ rm -rf $RPM_BUILD_ROOT
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
-%attr(755,root,root) %{_bindir}/pi*
+%attr(755,root,root) %{_bindir}/pine
 %{_applnkdir}/Network/Mail/pine.desktop
 %{_pixmapsdir}/*
 
-%{_mandir}/man1/*
-%lang(es) %{_mandir}/es/man1/*
-%lang(fi) %{_mandir}/fi/man1/*
-%lang(hu) %{_mandir}/hu/man1/*
-%lang(pl) %{_mandir}/pl/man1/*
+%{_mandir}/man1/pine*
+%lang(es) %{_mandir}/es/man1/pine*
+%lang(fi) %{_mandir}/fi/man1/pine*
+%lang(hu) %{_mandir}/hu/man1/pine*
+%lang(pl) %{_mandir}/pl/man1/pine*
+
+%files -n pico
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pico
+%{_mandir}/man1/pico*
+%lang(es) %{_mandir}/es/man1/pico*
+%lang(fi) %{_mandir}/fi/man1/pico*
+%lang(hu) %{_mandir}/hu/man1/pico*
+%lang(pl) %{_mandir}/pl/man1/pico*
+
+%files -n pilot
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pilot
+%{_mandir}/man1/pilot*
+%lang(es) %{_mandir}/es/man1/pilot*
