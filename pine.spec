@@ -19,11 +19,14 @@ Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}-non-english-man-pages.tar.bz2
+# Source3-md5:	7bd233708a9621f3dfd173acb20ec0bb
 Source4:	pico.desktop
 # renamed files from
 # http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/
 Source5:	%{name}-rules.c.gz
+# Source5-md5:	9380005dba3bb45db1fa24dbee459fea
 Source6:	%{name}-rules.h.gz
+# Source6-md5:	27b9833d2394b5d1826ed5f77cfa8ecb
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
