@@ -50,9 +50,10 @@ Patch19:	%{name}-overflow.patch
 Patch20:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch21:	%{name}-smime.patch
-Patch22:	pine-css.patch
+Patch22:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
-Patch23:	pine-iconv-7e.patch
+Patch23:	%{name}-iconv-7e.patch
+Patch24:	%{name}-utf_ra.patch
 URL:		http://www.washington.edu/pine/
 # icov form glibc - utf-8 support
 BuildRequires:	ncurses-devel >= 5.0
@@ -212,7 +213,8 @@ ajuda de acordo com o contexto está disponível.
 # breaks pine
 ##%patch21 -p1
 %patch22 -p1
-%{!?_without_utf8:%patch23 -p1}
+%patch23 -p1
+%patch24 -p1
 
 zcat %{SOURCE5} >pine/rules.c
 zcat %{SOURCE6} >pine/rules.h
