@@ -1,0 +1,14 @@
+--- pine4.44/pine/mailcmd.c~	Mon Sep 23 16:46:47 2002
++++ pine4.44/pine/mailcmd.c	Mon Sep 23 16:48:21 2002
+@@ -2809,8 +2809,9 @@
+ 	 * the destination folder will need...
+ 	 */
+ 	context_apply(tmp, context, save_folder, sizeof(tmp));
+-        save_stream = (stream->dtb->flags & DR_LOCAL) && !IS_REMOTE(tmp) ?
+-	  stream : context_same_stream(context, save_folder, stream);
++//        save_stream = (stream->dtb->flags & DR_LOCAL) && !IS_REMOTE(tmp) ?
++//	  stream : context_same_stream(context, save_folder, stream);
++	save_stream = context_same_stream(context, save_folder, stream);
+     }
+ 
+     /* if needed, this'll get set in mm_notify */
