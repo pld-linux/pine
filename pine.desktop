@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Pine
+Comment=The Pine Mail Reader
+Comment[pl]=Program pocztowy Pine
+Exec=xterm -e pine
+Terminal=0
+Type=Application 
