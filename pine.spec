@@ -30,8 +30,10 @@ Patch13:	%{name}-whitespace.patch
 Patch14:	%{name}-libc-client.patch
 Patch15:	%{name}-fixhome.patch
 Patch16:	%{name}-terminit.patch
+Patch17:	%{name}-ssl.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	openssl-devel
 Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -85,19 +87,21 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch6  -p1 
 %patch7  -p1 
 %patch8  -p1 
-#%patch9  -p1 
-#%patch10 -p1 
+%patch9  -p1 
+%patch10 -p1 
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
 #%patch16 -p1
+%patch17 -p1
 
 %build
 ./build slx \
 	OPTIMIZE="%{rpmcflags}" \
 	BASECFLAGS="%{rpmcflags} -DNFSKLUDGE" \
+	SSLTYPE="unix" \
 	DEBUG="" \
 	CC="%{__cc}"
 
