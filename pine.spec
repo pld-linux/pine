@@ -11,7 +11,7 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Summary(uk):	óÕÍ¦ÓÎÉÊ Ú MIME ÐÏÞÔÏ×ÉÊ ÒÅÄÁËÔÏÒ Ú Ð¦ÄÔÒÉÍËÏÀ ÔÅÌÅËÏÎÆÅÒÅÎÃ¦Ê
 Name:		pine
 Version:	%{realversion}L
-Release:	2.1
+Release:	7
 License:	distributable
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.gz
@@ -39,6 +39,7 @@ Patch17:	%{name}-ssl.patch
 Patch18:	%{name}-non_english_man_path_fix.patch
 Patch19:	%{name}-no_1777_warning.patch
 Patch20:	%{name}-L_on_version.patch
+Patch21:	%{name}-overflow.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel
@@ -193,6 +194,7 @@ ajuda de acordo com o contexto está disponível.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 
 %build
 ./build slx \
