@@ -5,7 +5,7 @@ Summary(fr):	Lecteur de courrier conforme à MIME avec gestion des news"
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Name:		pine
 Version:	4.10
-Release:	2
+Release:	3
 Copyright:	distributable
 URL:		http://www.washington.edu/pine
 Group:		Applications/Mail
@@ -114,7 +114,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc {README,doc/*.txt,doc/mailcap.unx}.gz
 %doc doc/tech-notes/*.html
-%config(missingok) /etc/X11/wmconfig/pine
+/etc/X11/wmconfig/pine
 
 %dir /etc/pine
 
@@ -124,6 +124,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man1/*
 
 %changelog
+* Thu Apr 22 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [4.10-3]
+- removed %config from /etc/X11/wmconfig/pine,
+- recompiles on new rpm.
+
 * Sun Apr  4 1999 Piotr Czerwiñski <pius@pld.org.pl>
   [4.10-2]
 - gzipping documentation instead bzipping,
