@@ -235,7 +235,7 @@ ustawiona).
 .if n .ta 2.8i
 .if t .ta 2.1i
 
-/var/spool/mail/xxxx	Domy¶lny folder dla przychodz±cej poczty.
+/var/mail/xxxx		Domy¶lny folder dla przychodz±cej poczty.
 .br
 ~/mail	Domy¶lny katalog dla folderów.
 .br
@@ -259,13 +259,13 @@ ustawiona).
 .br
 /etc/mime.types	Systemowe opis rozpoznawanych typów MIME
 .br
-/usr/lib/pine.info	Lokalny wska¼nik do administratora systemu
+/usr/share/info/pine.info	Lokalny wska¼nik do administratora systemu
 .br
-/usr/lib/pine.conf	Systemowy plik konfiguracyjny
+/etc/pine/pine.conf	Systemowy plik konfiguracyjny
 .br
-/usr/lib/pine.conf.fixed	 Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
+/etc/pine/pine.conf.fixed  Plik konfiguracyjny, którego ustawienia nie mog± byæ zmieniane
 .br
-/tmp/.\\var\\spool\\mail\\xxxx	Pliki blokuj±ce dla ka¿dego folderu
+/tmp/.\\var\\mail\\xxxx		Pliki blokuj±ce dla ka¿dego folderu
 .br
 ~/.pine-interrupted-mail	Wiadomo¶æ, której tworzenie zosta³o przerwane
 .br

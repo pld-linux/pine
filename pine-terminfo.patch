@@ -34,7 +34,7 @@ diff -Nur pine4.10/pico/osdep/os-lnx.h pine4.10.pld/pico/osdep/os-lnx.h
   * Place where mail gets delivered (for pico's new mail checking)
   */
 -#define MAILDIR		"/usr/spool/mail"
-+#define MAILDIR		"/var/spool/mail"
++#define MAILDIR		"/var/mail"
  
  /*
   * What and where the tool that checks spelling is located.  If this is
@@ -69,7 +69,7 @@ diff -Nur pine4.10/pico/osdep/os-lyn.h pine4.10.pld/pico/osdep/os-lyn.h
   * Place where mail gets delivered (for pico's new mail checking)
   */
 -#define MAILDIR		"/usr/spool/mail"
-+#define MAILDIR		"/var/spool/mail"
++#define MAILDIR		"/var/mail"
  
  /*
   * What and where the tool that checks spelling is located.  If this is

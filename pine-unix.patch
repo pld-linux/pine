@@ -14,7 +14,7 @@
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
 -	 BASECFLAGS="-g -fno-omit-frame-pointer -O6 -DNFSKLUDGE" \
-+	 BASECFLAGS="-O2 -mpentium -fomit-frame-pointer -DNFSKLUDGE" \
++	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE" \
  	 BASELDFLAGS="-lcrypt"
  
  sl4:	# Secure Linux using libc4

@@ -7,7 +7,7 @@ diff -Nur pine4.10/imap/src/osdep/unix/Makefile pine4.10.pld/imap/src/osdep/unix
  	 RSHPATH=/usr/bin/rsh \
 -	 BASECFLAGS="-g -O -DNFSKLUDGE"
 -
-+	 BASECFLAGS="-O2 -fomit-frame-pointer -DNFSKLUDGE"
++	 BASECFLAGS="-O2 -mpentium -DNFSKLUDGE"
 +	 CC=gcc
 +	 
  lnp:	# Linux Pluggable Authentication modules
