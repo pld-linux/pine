@@ -85,8 +85,8 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch6  -p1 
 %patch7  -p1 
 %patch8  -p1 
-%patch9  -p1 
-%patch10 -p1 
+#%patch9  -p1 
+#%patch10 -p1 
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
