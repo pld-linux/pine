@@ -109,15 +109,15 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/pine/pine.conf.fixed
 EOF
 
 gzip -9fn $RPM_BUILD_ROOT/usr/man/man1/* \
-	README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
+	README doc/*.txt doc/mailcap.unx 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc {README,doc/*.txt,doc/tech-notes/*.html,doc/mailcap.unx}.gz
-
+%doc {README,doc/*.txt,doc/mailcap.unx}.gz
+%doc doc/tech-notes/*.html
 %config(missingok) /etc/X11/wmconfig/pine
 
 %dir /etc/pine
