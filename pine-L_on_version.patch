@@ -5,8 +5,8 @@ diff -ur pine/pine/pine.h pine-patched/pine/pine.h
  #ifndef _PINE_INCLUDED
  #define _PINE_INCLUDED
  
--#define PINE_VERSION		"4.60"
-+#define PINE_VERSION		"4.60L"
+-#define PINE_VERSION		"4.61"
++#define PINE_VERSION		"4.61L"
  #define	PHONE_HOME_VERSION	"-count"
  #define	PHONE_HOME_HOST		"docserver.cac.washington.edu"
  

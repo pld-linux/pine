@@ -1,6 +1,6 @@
-diff -urN pine4.60/doc/iconv.txt pine-patched/doc/iconv.txt
---- pine4.60/doc/iconv.txt	Thu Jan  1 00:00:00 1970
-+++ pine-patched/doc/iconv.txt	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/doc/iconv.txt pine4.61/doc/iconv.txt
+--- pine4.61.orig/doc/iconv.txt	1970-01-01 01:00:00.000000000 +0100
++++ pine4.61/doc/iconv.txt	2004-07-21 01:53:21.386532584 +0200
 @@ -0,0 +1,41 @@
 +Relaease Notes for pine iconv/UTF-8 patch version 9d - Feb 04 2004
 +------------------------------------------------------------------
@@ -43,9 +43,9 @@ diff -urN pine4.60/doc/iconv.txt pine-patched/doc/iconv.txt
 +iconv-aliases=x-windows-949:mscp949,
 +        euc-kr:mscp949
 +
-diff -urN pine4.60/doc/tech-notes/config.html pine-patched/doc/tech-notes/config.html
---- pine4.60/doc/tech-notes/config.html	Mon May 10 18:01:08 2004
-+++ pine-patched/doc/tech-notes/config.html	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/doc/tech-notes/config.html pine4.61/doc/tech-notes/config.html
+--- pine4.61.orig/doc/tech-notes/config.html	2004-07-15 19:38:11.000000000 +0200
++++ pine4.61/doc/tech-notes/config.html	2004-07-21 01:53:21.408529240 +0200
 @@ -285,12 +285,14 @@
  
  <DT> <A NAME="char-set"><EM>character-set</EM></A>
@@ -67,9 +67,9 @@ diff -urN pine4.60/doc/tech-notes/config.html pine-patched/doc/tech-notes/config
  
  <DT> <A NAME="color-style"><EM>color-style</EM></A>
  
-diff -urN pine4.60/doc/tech-notes/low-level.html pine-patched/doc/tech-notes/low-level.html
---- pine4.60/doc/tech-notes/low-level.html	Fri Nov  1 19:35:48 2002
-+++ pine-patched/doc/tech-notes/low-level.html	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/doc/tech-notes/low-level.html pine4.61/doc/tech-notes/low-level.html
+--- pine4.61.orig/doc/tech-notes/low-level.html	2002-11-01 20:35:48.000000000 +0100
++++ pine4.61/doc/tech-notes/low-level.html	2004-07-21 01:53:21.472519512 +0200
 @@ -708,14 +708,23 @@
  changed in the personal or system-wide configuration file with the
  variable <A HREF="config.html#char-set"><EM>character-set</EM></A>.  <P>
@@ -183,9 +183,9 @@ diff -urN pine4.60/doc/tech-notes/low-level.html pine-patched/doc/tech-notes/low
  
  <HR>
  
-diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
---- pine4.60/pico/composer.c	Sat Jun  5 17:47:07 2004
-+++ pine-patched/pico/composer.c	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pico/composer.c pine4.61/pico/composer.c
+--- pine4.61.orig/pico/composer.c	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pico/composer.c	2004-07-21 01:53:21.486517384 +0200
 @@ -344,7 +344,188 @@
        return(TRUE);
  }
@@ -276,7 +276,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
 +    utf_seq[0] = 0; // init in case there was an invalid UTF-8 sequence
 +    return c; // single-byte NON-UTF-8 char, process it as usual.
 +}
- 
++
 +/*
 + * wrapper of check_utf8 for pico, if not in UTF-8 mode, do not check UTF-8
 + */
@@ -316,7 +316,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
 +	}
 +	return w;
 +}
-+
+ 
 +/*
 + * Get the offset in screen positions which must be subsctracted from the
 + * byte count in the LineEdit line in order to reach the line position on
@@ -384,7 +384,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  
      (*term.t_flush)();
      return(TRUE);
-@@ -1521,6 +1702,7 @@
+@@ -1584,6 +1765,7 @@
  	     int	skipmove = 0;
               char	*strng;
      int      last_key;				/* last keystroke  */
@@ -392,7 +392,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  
      strng   = ods.cur_l->text;			/* initialize offsets */
      ods.p_len = strlen(strng);
-@@ -1603,7 +1785,7 @@
+@@ -1666,7 +1848,7 @@
  	    }
  
  	    clearcursor();
@@ -401,7 +401,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  	    if(ch == NODATA)			/* GetKey timed out */
  	      continue;
  
-@@ -1613,7 +1795,7 @@
+@@ -1676,7 +1858,7 @@
          if(mpresf){				/* blast old messages */
  	    if(mpresf++ > NMMESSDELAY){		/* every few keystrokes */
  		mlerase();
@@ -410,7 +410,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  	    }
          }
  
-@@ -1659,12 +1841,38 @@
+@@ -1722,12 +1904,38 @@
  
  		/*
  		 * then find out where things fit...
@@ -450,7 +450,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  		    if(pinsert(c)){		/* add char to str */
  			skipmove++;		/* must'a been optimal */
  			continue; 		/* on to the next! */
-@@ -1701,6 +1909,7 @@
+@@ -1764,6 +1972,7 @@
              } 
          }
          else {					/* interpret ch as a command */
@@ -458,7 +458,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
              switch (ch = normalize_cmd(ch, ckm, 2)) {
  	      case (CTRL|'\\') :
  		if (ch = GetAccent())
-@@ -1793,9 +2002,7 @@
+@@ -1856,9 +2065,7 @@
  	      case (CTRL|'F') :
  	      case KEY_RIGHT:			/* move character right */
  		if(ods.p_off < ods.p_len){
@@ -469,7 +469,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  		    continue;
  		}
  		else if(gmode & MDHDRONLY)
-@@ -1807,7 +2014,7 @@
+@@ -1870,7 +2077,7 @@
  	      case (CTRL|'B') :
  	      case KEY_LEFT	:		/* move character left */
  		if(ods.p_off > 0){
@@ -478,7 +478,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  		    continue;
  		}
  		if(ods.p_line != COMPOSER_TOP_LINE)
-@@ -1842,7 +2049,8 @@
+@@ -1905,7 +2112,8 @@
  		    continue;
  		}
  
@@ -488,7 +488,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  
  	      case DEL        :			/* blast previous char */
  	      case (CTRL|'H') :
-@@ -1856,20 +2064,27 @@
+@@ -1919,20 +2127,27 @@
  		    continue;
  		}
  
@@ -521,7 +521,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  		}
  		else{				/* may have work to do */
  		    if(ods.cur_l->prev == NULL){  
-@@ -1880,18 +2095,16 @@
+@@ -1943,18 +2158,16 @@
  		    ods.p_line--;
  		    ods.cur_l = ods.cur_l->prev;
  		    strng = ods.cur_l->text;
@@ -546,7 +546,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  		if((status = FormatLines(ods.cur_l, "", LINELEN(), 
  				   headents[ods.cur_e].break_on_comma,0))==-1){
  		    (*term.t_beep)();
-@@ -1916,7 +2129,7 @@
+@@ -1979,7 +2192,7 @@
  		      PaintBody(1);
  		}
  
@@ -555,7 +555,7 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  
  		if(skipmove)
  		  continue;
-@@ -1941,7 +2154,8 @@
+@@ -2004,7 +2217,8 @@
  void
  HeaderPaintCursor()
  {
@@ -565,9 +565,9 @@ diff -urN pine4.60/pico/composer.c pine-patched/pico/composer.c
  }
  
  
-diff -urN pine4.60/pico/display.c pine-patched/pico/display.c
---- pine4.60/pico/display.c	Sat Jun  5 17:47:07 2004
-+++ pine-patched/pico/display.c	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pico/display.c pine4.61/pico/display.c
+--- pine4.61.orig/pico/display.c	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pico/display.c	2004-07-21 01:53:21.490516776 +0200
 @@ -1089,7 +1089,22 @@
      }
  }
@@ -591,10 +591,10 @@ diff -urN pine4.60/pico/display.c pine-patched/pico/display.c
  
  /*
   * Send a command to the terminal to move the hardware cursor to row "row"
-diff -urN pine4.60/pico/efunc.h pine-patched/pico/efunc.h
---- pine4.60/pico/efunc.h	Sat Jun  5 17:47:07 2004
-+++ pine-patched/pico/efunc.h	Sat Jun  5 17:48:48 2004
-@@ -115,6 +115,7 @@
+diff -urN pine4.61.orig/pico/efunc.h pine4.61/pico/efunc.h
+--- pine4.61.orig/pico/efunc.h	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pico/efunc.h	2004-07-21 01:53:21.493516320 +0200
+@@ -118,6 +118,7 @@
  extern	VARS_TO_SAVE *save_pico_state PROTO((void));
  extern	void restore_pico_state PROTO((VARS_TO_SAVE *));
  extern	void free_pico_state PROTO((VARS_TO_SAVE *));
@@ -602,9 +602,9 @@ diff -urN pine4.60/pico/efunc.h pine-patched/pico/efunc.h
  extern	void HeaderPaintCursor PROTO((void));
  extern	void PaintBody PROTO((int));
  
-diff -urN pine4.60/pico/pico.h pine-patched/pico/pico.h
---- pine4.60/pico/pico.h	Sat Jun  5 17:47:07 2004
-+++ pine-patched/pico/pico.h	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pico/pico.h pine4.61/pico/pico.h
+--- pine4.61.orig/pico/pico.h	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pico/pico.h	2004-07-21 01:53:21.495516016 +0200
 @@ -373,7 +373,7 @@
  #define P_HICTRL	0x80000000	/* overwrite mode		*/
  #define	P_CHKPTNOW	0x40000000	/* do the checkpoint on entry      */
@@ -614,9 +614,9 @@ diff -urN pine4.60/pico/pico.h pine-patched/pico/pico.h
  #define	P_BODY		0x08000000	/* start composer in body	   */
  #define	P_HEADEND	0x04000000	/* start composer at end of header */
  #define	P_VIEW		MDVIEW		/* read-only			   */
-diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
---- pine4.60/pine/filter.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/filter.c	Sat Jun  5 17:51:47 2004
+diff -urN pine4.61.orig/pine/filter.c pine4.61/pine/filter.c
+--- pine4.61.orig/pine/filter.c	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pine/filter.c	2004-07-21 03:05:27.500863240 +0200
 @@ -65,6 +65,9 @@
  
  
@@ -627,28 +627,30 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  
  
  /*
-@@ -707,6 +710,7 @@
- #define	FL_QLEV	15
+@@ -708,7 +711,7 @@
  #define	FL_STF	16
  #define	FL_SIG	17
-+#define	UTF8	18
+ #define	STOP_DECODING	18
+-
++#define	UTF8	19
  
  
+ /*
+@@ -738,6 +741,13 @@
+ 			unsigned char *GF_IP_INIT(FO);  \
+ 			unsigned char *GF_EIB_INIT(FO);
  
-@@ -733,6 +737,12 @@
- 			register unsigned char *GF_EOB_INIT(FI); \
- 			register unsigned char *GF_IP_INIT(FO);  \
- 			register unsigned char *GF_EIB_INIT(FO);
 +#ifdef HAVE_ICONV
-+#define	GF_ICINIT(I, O)	unsigned char *GF_OP_INIT(I);  \
++#define	GF_ICINIT(I, O) unsigned char *GF_OP_INIT(I);  \
 +			unsigned char *GF_EOB_INIT(I); \
 +			unsigned char *GF_IP_INIT(O);  \
 +			unsigned char *GF_EIB_INIT(O);
 +#endif
- 
++
  #define	GF_CH_RESET(F)	(op = eob = GF_QUE_START(F), \
  					    (F)->queueout = (F)->queuein = 0)
-@@ -2251,6 +2261,110 @@
+ 
+@@ -2274,6 +2284,110 @@
      }
  }
  
@@ -759,7 +761,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  
  /*
   * This filter converts characters in UTF-8 to an 8-bit or 16-bit charset.
-@@ -2354,6 +2468,7 @@
+@@ -2377,6 +2491,7 @@
  	 f->n = 0L;
      }
  }
@@ -767,7 +769,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  
  
  /*
-@@ -2881,6 +2996,7 @@
+@@ -2904,6 +3019,7 @@
      unsigned   strip:1;			/* Hilite TAGs allowed */
      unsigned   handles_loc:1;		/* Local handles requested? */
      unsigned   outputted:1;		/* any */
@@ -775,7 +777,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  } HTML_OPT_S;
  
  
-@@ -2892,6 +3008,7 @@
+@@ -2915,6 +3031,7 @@
  #define	HTML_WROTE(X)	(HD(X)->wrote)
  #define	HTML_BASE(X)	((X)->opt ? ((HTML_OPT_S *)(X)->opt)->base : NULL)
  #define	STRIP(X)	((X)->opt && ((HTML_OPT_S *)(X)->opt)->strip)
@@ -783,7 +785,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  #define	HANDLESP(X)	(((HTML_OPT_S *)(X)->opt)->handlesp)
  #define	DO_HANDLES(X)	((X)->opt && HANDLESP(X))
  #define	HANDLES_LOC(X)	((X)->opt && ((HTML_OPT_S *)(X)->opt)->handles_loc)
-@@ -4619,8 +4736,6 @@
+@@ -4642,8 +4759,6 @@
  	    
  	CENTER_BIT(hd->html_data) = 0;
  	hd->y = html_indent(hd->html_data, 0, HTML_ID_SET);
@@ -792,7 +794,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	html_blank(hd->html_data, 1);
      }
      else if(cmd == GF_EOD){
-@@ -4633,7 +4748,6 @@
+@@ -4656,7 +4771,6 @@
  	html_indent(hd->html_data, hd->y, HTML_ID_SET);
  	html_blank(hd->html_data, 1);
  	CENTER_BIT(hd->html_data)  = (hd->x & HTML_HX_CENTER) != 0;
@@ -800,7 +802,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      }
  
      return(1);				/* get linked */
-@@ -4669,8 +4783,6 @@
+@@ -4692,8 +4806,6 @@
  	hd->x |= HTML_HX_ULINE;
  	CENTER_BIT(hd->html_data) = 0;
  	hd->y = html_indent(hd->html_data, 2, HTML_ID_SET);
@@ -809,7 +811,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	html_blank(hd->html_data, 1);
      }
      else if(cmd == GF_EOD){
-@@ -4683,7 +4795,6 @@
+@@ -4706,7 +4818,6 @@
  	html_indent(hd->html_data, hd->y, HTML_ID_SET);
  	html_blank(hd->html_data, 1);
  	CENTER_BIT(hd->html_data)  = (hd->x & HTML_HX_CENTER) != 0;
@@ -817,7 +819,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      }
  
      return(1);				/* get linked */
-@@ -4709,8 +4820,6 @@
+@@ -4732,8 +4843,6 @@
  	hd->x = CENTER_BIT(hd->html_data); /* stop centering for now */
  	CENTER_BIT(hd->html_data) = 0;
  	hd->y = html_indent(hd->html_data, 4, HTML_ID_SET);
@@ -826,7 +828,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	html_blank(hd->html_data, 1);
      }
      else if(cmd == GF_EOD){
-@@ -4720,7 +4829,6 @@
+@@ -4743,7 +4852,6 @@
  	html_indent(hd->html_data, (int) hd->y, HTML_ID_SET);
  	html_blank(hd->html_data, 1);
  	CENTER_BIT(hd->html_data)  = hd->x;
@@ -834,7 +836,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      }
  
      return(1);				/* get linked */
-@@ -4746,8 +4854,6 @@
+@@ -4769,8 +4877,6 @@
  	hd->x = CENTER_BIT(hd->html_data); /* stop centering for now */
  	CENTER_BIT(hd->html_data) = 0;
  	hd->y = html_indent(hd->html_data, 6, HTML_ID_SET);
@@ -843,7 +845,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	html_blank(hd->html_data, 1);
      }
      else if(cmd == GF_EOD){
-@@ -4783,8 +4889,6 @@
+@@ -4806,8 +4912,6 @@
  	hd->x = CENTER_BIT(hd->html_data); /* stop centering for now */
  	CENTER_BIT(hd->html_data) = 0;
  	hd->y = html_indent(hd->html_data, 8, HTML_ID_SET);
@@ -852,7 +854,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	html_blank(hd->html_data, 1);
      }
      else if(cmd == GF_EOD){
-@@ -4794,7 +4898,6 @@
+@@ -4817,7 +4921,6 @@
  	html_indent(hd->html_data, (int) hd->y, HTML_ID_SET);
  	html_blank(hd->html_data, 1);
  	CENTER_BIT(hd->html_data)  = hd->x;
@@ -860,7 +862,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      }
  
      return(1);				/* get linked */
-@@ -5746,7 +5849,7 @@
+@@ -5769,7 +5872,7 @@
  	f->data  = (HTML_DATA_S *) fs_get(sizeof(HTML_DATA_S));
  	memset(f->data, 0, sizeof(HTML_DATA_S));
  	HD(f)->wrapstate = 1;		/* start with flowing text */
@@ -869,7 +871,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	f->f1    = DFL;			/* state */
  	f->f2    = 0;			/* chars in wrap buffer */
  	f->n     = 0L;			/* chars on line so far */
-@@ -5906,7 +6009,7 @@
+@@ -5929,7 +6032,7 @@
  		if(HD(f)->prefix)
  		  html_a_prefix(f);
  
@@ -878,7 +880,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  		    HTML_LINEP_PUTC(f, ch & 0xff);
  		    HTML_FLUSH(f);
  		    html_newline(f);
-@@ -6149,7 +6252,7 @@
+@@ -6172,7 +6275,7 @@
  
  	/* ch is start of next word */
  	HD(f)->centered->space = 0;
@@ -887,7 +889,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	  html_centered_flush(f);
  
  	html_centered_putc(&HD(f)->centered->word, ch);
-@@ -6538,6 +6641,7 @@
+@@ -6561,6 +6664,7 @@
      op->columns	    = columns - (margin_l + margin_r);
      op->strip	    = ((flags & GFHP_STRIPPED) == GFHP_STRIPPED);
      op->handlesp    = handlesp;
@@ -895,7 +897,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      op->handles_loc = ((flags & GFHP_LOCAL_HANDLES) == GFHP_LOCAL_HANDLES);
      return((void *) op);
  }
-@@ -6745,9 +6849,11 @@
+@@ -6768,9 +6872,11 @@
  		state,
  		wrap_col,
  		wrap_max,
@@ -907,7 +909,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
      char	special[256];
      long	curlinenum;	/* current line number */
      int		curqstrpos;	/* current position in quote string */
-@@ -6759,8 +6865,9 @@
+@@ -6781,8 +6887,9 @@
  
  #define	WRAP_MARG_L(F)	(((WRAP_S *)(F)->opt)->margin_l)
  #define	WRAP_MARG_R(F)	(((WRAP_S *)(F)->opt)->margin_r)
@@ -919,7 +921,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  #define	WRAP_INDENT(F)	(((WRAP_S *)(F)->opt)->indent)
  #define	WRAP_DO_IND(F)	(((WRAP_S *)(F)->opt)->do_indent)
  #define	WRAP_COMMA(F)	(((WRAP_S *)(F)->opt)->on_comma)
-@@ -7109,7 +7216,8 @@
+@@ -6874,7 +6981,8 @@
      GF_INIT(f, f->next);
  
      if(flg == GF_DATA){
@@ -929,7 +931,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  	register int state = f->f1;
  	register int x;
  
-@@ -7470,8 +7578,42 @@
+@@ -7309,8 +7417,42 @@
  
  		break;
  
@@ -941,9 +943,9 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
 +              if(f->n + f->f2 + WRAP_SPC_LEN(f)
 +                    > WRAP_COL(f) - (*chp == ' '?2:1)) {
 +                dprint(8, (debugfile, "UTF8: newline\n"));
-+                WRAP_FLUSH(f);   /* make sure we write everything we've  */
-+                WRAP_EOL(f, 1);  /* end of line, double-with doesn't fit */
-+                WRAP_BOL(f,1,1); /* write any prefix */
++		wrap_flush(f, &ip, &eib, &op, &eob); /* make sure we write everything we've  */
++		wrap_eol(f, 1, &ip, &eib, &op, &eob); /* end of line, double-with doesn't fit */
++		wrap_bol(f, 1, 1, &ip, &eib, &op, &eob); /* write any prefix */
 +              }
 +              f->n++;
 +              if(*chp == ' ') {  /* double-wide UTF-8 char, check space  */
@@ -957,12 +959,12 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
 +              while(*chp)
 +                WRAP_PUTC(f, *chp++, 1);
 +              if(*chp2 == ' ')
-+    		WRAP_FLUSH(f);
++		wrap_flush(f, &ip, &eib, &op, &eob);
 +        	break;
 +              }
 +              WRAP_PUTC(f, '?', 1);   /* in place of invalid sequence    */
 +                                   /* fall thru to process new char   */
-+    	      WRAP_FLUSH(f);
++	      wrap_flush(f, &ip, &eib, &op, &eob);
  	      case_dfl :
  	      case DFL :
 +                if (!pine_check_utf8(&c, WRAP_UTF_SEQ(f))) {
@@ -972,7 +974,7 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  		if(WRAP_SPEC(f, c)){
  		    switch(c){
  		      default :
-@@ -7696,9 +7838,10 @@
+@@ -7541,9 +7683,10 @@
  	while(WRAP_INDENT(f) >= WRAP_MAX_COL(f))
  	  WRAP_INDENT(f) /= 2;
  
@@ -985,10 +987,10 @@ diff -urN pine4.60/pine/filter.c pine-patched/pine/filter.c
  
  	for(i = 0; i < 256; i++)
  	  ((WRAP_S *) f->opt)->special[i] = ((i == '\"' && WRAP_COMMA(f))
-diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
---- pine4.60/pine/init.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/init.c	Sat Jun  5 17:48:48 2004
-@@ -251,6 +251,16 @@
+diff -urN pine4.61.orig/pine/init.c pine4.61/pine/init.c
+--- pine4.61.orig/pine/init.c	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pine/init.c	2004-07-21 01:53:21.555506896 +0200
+@@ -253,6 +253,16 @@
  
  CONF_TXT_T cf_text_character_set[] =	"Reflects capabilities of the display you have. Default: US-ASCII.\n# Typical alternatives include ISO-8859-x, (x is a number between 1 and 9).";
  
@@ -1005,7 +1007,7 @@ diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
  CONF_TXT_T cf_text_editor[] =		"Specifies the program invoked by ^_ in the Composer,\n# or the \"enable-alternate-editor-implicitly\" feature.";
  
  CONF_TXT_T cf_text_speller[] =		"Specifies the program invoked by ^T in the Composer.";
-@@ -591,6 +601,18 @@
+@@ -599,6 +609,18 @@
  				cf_text_startup_rules},
  {"character-set",			0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
  				cf_text_character_set},
@@ -1024,7 +1026,7 @@ diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
  {"editor",				0, 1, 0, 1, 1, 1, 0, 0, 0, 1,
  				cf_text_editor},
  {"speller",				0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
-@@ -2164,6 +2186,9 @@
+@@ -2193,6 +2215,9 @@
      set_current_val(&vars[V_OLD_STYLE_REPLY], TRUE, TRUE);
      obs_old_style_reply = !strucmp(VAR_OLD_STYLE_REPLY, "yes");
  
@@ -1034,7 +1036,7 @@ diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
      set_feature_list_current_val(&vars[V_FEATURE_LIST]);
      process_feature_list(ps, VAR_FEATURE_LIST,
             (obs_feature_level == Seasoned) ? 1 : 0,
-@@ -2171,7 +2196,12 @@
+@@ -2200,7 +2225,12 @@
  
      set_current_val(&vars[V_SIGNATURE_FILE], TRUE, TRUE);
      set_current_val(&vars[V_LITERAL_SIG], TRUE, TRUE);
@@ -1048,7 +1050,7 @@ diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
      set_current_val(&vars[V_GLOB_ADDRBOOK], TRUE, TRUE);
      set_current_val(&vars[V_ADDRESSBOOK], TRUE, TRUE);
      set_current_val(&vars[V_FORCED_ABOOK_ENTRY], TRUE, TRUE);
-@@ -3194,6 +3224,9 @@
+@@ -3230,6 +3260,9 @@
  #else
      ps->pass_ctrl_chars = F_ON(F_PASS_CONTROL_CHARS,ps_global) ? 1 : 0;
      ps->pass_c1_ctrl_chars = F_ON(F_PASS_C1_CONTROL_CHARS,ps_global) ? 1 : 0;
@@ -1058,10 +1060,10 @@ diff -urN pine4.60/pine/init.c pine-patched/pine/init.c
  
      if(F_ON(F_QUELL_BEZERK_TIMEZONE,ps_global))
        mail_parameters(NULL, SET_NOTIMEZONES, (void *) 1);
-diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
---- pine4.60/pine/mailindx.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/mailindx.c	Sat Jun  5 17:48:48 2004
-@@ -2248,10 +2248,11 @@
+diff -urN pine4.61.orig/pine/mailindx.c pine4.61/pine/mailindx.c
+--- pine4.61.orig/pine/mailindx.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/mailindx.c	2004-07-21 02:48:43.996419104 +0200
+@@ -2257,10 +2257,11 @@
  		drew_X++;
  	    }
  
@@ -1077,7 +1079,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  
  	    if(h->offs[0].offset < 0 || h->offs[0].offset >= cols){
  		/* no special color, draw from 0 to end */
-@@ -2358,6 +2359,10 @@
+@@ -2367,6 +2368,10 @@
  		      EndInverse();
  		}
  	    }
@@ -1088,7 +1090,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  
  done_drawing:
  	    if(drew_X)
-@@ -2369,8 +2374,6 @@
+@@ -2378,8 +2383,6 @@
  	    if(cur)
  	      EndInverse();
  
@@ -1097,7 +1099,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  	}
  
  	if(base_color && base_color != lastc && base_color != &h->linecolor)
-@@ -4465,6 +4468,58 @@
+@@ -4469,6 +4472,58 @@
      return(doy);
  }
  
@@ -1156,7 +1158,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  
  
  /*----------------------------------------------------------------------
-@@ -4481,7 +4536,8 @@
+@@ -4485,7 +4540,8 @@
  format_index_index_line(idata)
      INDEXDATA_S	*idata;
  {
@@ -1166,7 +1168,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  		 *buffer, *s_tmp, *p, *str, *newsgroups;
      int		  width, offsets_set = 0, i, j, smallest, which_array = 0;
      int           plus_off = -1, imp_off = -1, del_off = -1, ans_off = -1,
-@@ -4791,7 +4847,7 @@
+@@ -4794,7 +4850,7 @@
  	      case iFrom:
  	      case iAddress:
  	      case iMailbox:
@@ -1175,7 +1177,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  	        break;
  
  	      case iTo:
-@@ -5110,11 +5166,11 @@
+@@ -5111,11 +5167,11 @@
  		break;
  
  	      case iSubject:
@@ -1189,23 +1191,22 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  		break;
  
  	      case iNews:
-@@ -5246,8 +5302,6 @@
- 	cdesc->ctype != iNothing;
+@@ -5248,7 +5304,6 @@
+ 	cdesc->ctype != iNothing && which_array < MAXIFLDS;
  	cdesc++)
        if(width = cdesc->width){
 -	  char *q;
--
- 	  /* space between columns */
- 	  if(p > buffer){
- 	      *p++ = ' ';
-@@ -5255,34 +5309,11 @@
+ 
+ 	  str = str_buf[which_array++];
+ 
+@@ -5259,34 +5314,11 @@
  	  }
  
  	  if(cdesc->adjustment == Left)
--	    sprintf(p, "%-*.*s", width, width, cdesc->string);
-+	    charset_istrncpy(p, cdesc->string, width, 1);
+-	    sprintf(p, "%-*.*s", width, width, str);
++	    charset_istrncpy(p, str, width, 1);
  	  else
- 	    sprintf(p, "%*.*s", width, width, cdesc->string);
+ 	    sprintf(p, "%*.*s", width, width, str);
  
 -	  /*
 -	   * Make sure there are no nulls in the part we were supposed to
@@ -1235,7 +1236,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
        }
  
      for(i = 0; i < OFFS; i++)
-@@ -5384,7 +5415,7 @@
+@@ -5388,7 +5420,7 @@
      }
  
      /* Truncate it to be sure not too wide */
@@ -1244,7 +1245,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
      hline->id = line_hash(buffer);
      dprint(9, (debugfile, "INDEX(%p) -->%s<-- (%d), 0x%lx>\n",
  	       hline,
-@@ -6232,21 +6263,12 @@
+@@ -6236,21 +6268,12 @@
      if(addr && !addr->next		/* only one address */
         && addr->host			/* not group syntax */
         && addr->personal && addr->personal[0]){	/* there is a personal name */
@@ -1267,7 +1268,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  	
  	if(*(s+l))
  	  return(TRUE);
-@@ -6267,8 +6289,13 @@
+@@ -6271,8 +6294,13 @@
  	if(l = prefix ? strlen(prefix) : 0)
  	  strcpy(s, prefix);
  
@@ -1283,7 +1284,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  
  	fs_give((void **)&a_string);
  	return(TRUE);
-@@ -6850,7 +6877,6 @@
+@@ -6854,7 +6882,6 @@
      char          *subject, *origsubj, *sptr = NULL;
      char          *p, *border, *q = NULL, *free_subj = NULL;
      unsigned char *tmp;
@@ -1291,7 +1292,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
      int            depth = 0, mult = 2, collapsed, we_clear = 0;
      PINETHRD_S    *thd, *thdorig;
      HLINE_S       *hline;
-@@ -7067,24 +7093,14 @@
+@@ -7068,24 +7095,14 @@
  
  	    if(do_subj){
  		width = (str + width) - sptr;
@@ -1318,7 +1319,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
      }
  
      if(free_subj)
-@@ -9898,7 +9914,7 @@
+@@ -9924,7 +9941,7 @@
  {
      long j;
      size_t  newsize = sizeof(HLINE_S)
@@ -1327,7 +1328,7 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  
      if(j = (newsize % sizeof(long)))		/* alignment hack */
        newsize += (sizeof(long) - (size_t)j);
-@@ -9976,7 +9992,7 @@
+@@ -10002,7 +10019,7 @@
  
  	dprint(2, (debugfile, "Called get_index_cache with msgno=%ld\n",
  		msgno));
@@ -1336,10 +1337,10 @@ diff -urN pine4.60/pine/mailindx.c pine-patched/pine/mailindx.c
  		     + sizeof(long);
  	if(!dummy_to_protect_ourselves)
  	  dummy_to_protect_ourselves = (HLINE_S *) fs_get(big_enough);
-diff -urN pine4.60/pine/mailpart.c pine-patched/pine/mailpart.c
---- pine4.60/pine/mailpart.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/mailpart.c	Sat Jun  5 17:48:48 2004
-@@ -4082,7 +4082,8 @@
+diff -urN pine4.61.orig/pine/mailpart.c pine4.61/pine/mailpart.c
+--- pine4.61.orig/pine/mailpart.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/mailpart.c	2004-07-21 01:53:21.602499752 +0200
+@@ -4127,7 +4127,8 @@
  		    fs_give((void **) &p);
  		}
  		else
@@ -1349,10 +1350,10 @@ diff -urN pine4.60/pine/mailpart.c pine-patched/pine/mailpart.c
  	    }
  	    else
  	      dprint(1, (debugfile,
-diff -urN pine4.60/pine/mailview.c pine-patched/pine/mailview.c
---- pine4.60/pine/mailview.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/mailview.c	Sat Jun  5 17:48:48 2004
-@@ -377,6 +377,7 @@
+diff -urN pine4.61.orig/pine/mailview.c pine4.61/pine/mailview.c
+--- pine4.61.orig/pine/mailview.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/mailview.c	2004-07-21 01:53:21.625496256 +0200
+@@ -396,6 +396,7 @@
  int	    url_bogus PROTO((char *, char *));
  long        doubleclick_handle PROTO((SCROLL_S *, HANDLE_S *, 
  				      int *, int *));
@@ -1360,7 +1361,7 @@ diff -urN pine4.60/pine/mailview.c pine-patched/pine/mailview.c
  #ifdef	_WINDOWS
  int	    format_message_popup PROTO((SCROLL_S *, int));
  int	    simple_text_popup PROTO((SCROLL_S *, int));
-@@ -5700,7 +5701,7 @@
+@@ -6100,7 +6101,7 @@
      int		    flags;
  {
      FILTLIST_S	filters[13];
@@ -1369,7 +1370,7 @@ diff -urN pine4.60/pine/mailview.c pine-patched/pine/mailview.c
      int		filtcnt = 0, error_found = 0, column, wrapit;
      int         is_in_sig = OUT_SIG_BLOCK;
      int         is_flowed_msg = 0;
-@@ -5733,15 +5734,24 @@
+@@ -6136,15 +6137,24 @@
       * as ascii or nothing.
       */
      if(F_OFF(F_DISABLE_2022_JP_CONVERSIONS, ps_global)
@@ -1395,9 +1396,9 @@ diff -urN pine4.60/pine/mailview.c pine-patched/pine/mailview.c
  	    if(ct && ct->convert && ct->table){
  		filters[filtcnt].filter = ct->convert;
  		/* we could call an _opt routine here, but why bother? */
-@@ -5838,16 +5848,12 @@
-     }
-     else if(!strucmp(att->body->subtype, "html") && !ps_global->full_header){
+@@ -6243,16 +6253,12 @@
+     else if(!strucmp(att->body->subtype, "html")
+ 	    && ps_global->full_header < 2){
  /*BUG:	    sniff the params for "version=2.0" ala draft-ietf-html-spec-01 */
 -	int opts = 0;
 +	/* html-internal wrap isn't aware of UTF-8, let gf_wrap do wrapping */
@@ -1415,9 +1416,9 @@ diff -urN pine4.60/pine/mailview.c pine-patched/pine/mailview.c
  	filters[filtcnt].filter = gf_html2plain;
  	filters[filtcnt++].data = gf_html2plain_opt(NULL, column,
  						    format_view_margin(),
-diff -urN pine4.60/pine/osdep/os-lnx.h pine-patched/pine/osdep/os-lnx.h
---- pine4.60/pine/osdep/os-lnx.h	Sat Jun  5 17:47:07 2004
-+++ pine-patched/pine/osdep/os-lnx.h	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pine/osdep/os-lnx.h pine4.61/pine/osdep/os-lnx.h
+--- pine4.61.orig/pine/osdep/os-lnx.h	2004-07-21 01:52:33.000000000 +0200
++++ pine4.61/pine/osdep/os-lnx.h	2004-07-21 01:53:21.627495952 +0200
 @@ -214,6 +214,9 @@
   ----*/
  #define DF_DEFAULT_PRINTER        ANSI_PRINTER
@@ -1428,9 +1429,9 @@ diff -urN pine4.60/pine/osdep/os-lnx.h pine-patched/pine/osdep/os-lnx.h
  
  
  /*----- The usual sendmail configuration for sending mail on Unix ------*/
-diff -urN pine4.60/pine/osdep/termout.unx pine-patched/pine/osdep/termout.unx
---- pine4.60/pine/osdep/termout.unx	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/osdep/termout.unx	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pine/osdep/termout.unx pine4.61/pine/osdep/termout.unx
+--- pine4.61.orig/pine/osdep/termout.unx	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/osdep/termout.unx	2004-07-21 01:53:21.629495648 +0200
 @@ -743,7 +743,17 @@
       register unsigned int ch;
       int      new_esc_len;
@@ -1495,10 +1496,10 @@ diff -urN pine4.60/pine/osdep/termout.unx pine-patched/pine/osdep/termout.unx
          _col = 0;
          if(_line + 1 < ps_global->ttyo->screen_rows)
  	  _line++;
-diff -urN pine4.60/pine/other.c pine-patched/pine/other.c
---- pine4.60/pine/other.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/other.c	Sat Jun  5 17:48:48 2004
-@@ -7428,6 +7428,16 @@
+diff -urN pine4.61.orig/pine/other.c pine4.61/pine/other.c
+--- pine4.61.orig/pine/other.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/other.c	2004-07-21 01:53:21.665490176 +0200
+@@ -7446,6 +7446,16 @@
  	return(h_config_startup_rules);
        case V_CHAR_SET :
  	return(h_config_char_set);
@@ -1515,7 +1516,7 @@ diff -urN pine4.60/pine/other.c pine-patched/pine/other.c
        case V_EDITOR :
  	return(h_config_editor);
        case V_SPELLER :
-@@ -11958,6 +11968,9 @@
+@@ -11974,6 +11984,9 @@
        case F_PASS_C1_CONTROL_CHARS :
  	ps->pass_c1_ctrl_chars = F_ON(F_PASS_C1_CONTROL_CHARS,ps_global)
  								    ? 1 : 0;
@@ -1525,9 +1526,9 @@ diff -urN pine4.60/pine/other.c pine-patched/pine/other.c
  	break;
  #endif
  #ifdef	MOUSE
-diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
---- pine4.60/pine/pine.h	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/pine.h	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pine/pine.h pine4.61/pine/pine.h
+--- pine4.61.orig/pine/pine.h	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/pine.h	2004-07-21 01:53:21.685487136 +0200
 @@ -68,6 +68,7 @@
  #define	PHONE_HOME_HOST		"docserver.cac.washington.edu"
  
@@ -1536,8 +1537,8 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  
  #define OUR_HDRS_LIST		"X-Our-Headers"
  
-@@ -169,7 +170,7 @@
- #define GE_IS_IMPORT		0x08	/* No writing of file           */
+@@ -175,7 +176,7 @@
+ #define GER_ALLPARTS		0x04	/* AllParts toggle is on            */
  
  #define GFHP_STRIPPED		0x01
 -#define GFHP_HANDLES		0x02
@@ -1545,7 +1546,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  #define GFHP_LOCAL_HANDLES	0x04
  
  #define	GFW_HANDLES		0x01
-@@ -627,6 +628,14 @@
+@@ -647,6 +648,14 @@
  		, V_SORT_RULES
  		, V_STARTUP_RULES
  		, V_CHAR_SET
@@ -1560,7 +1561,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  		, V_EDITOR
  		, V_SPELLER
  		, V_FILLCOL
-@@ -912,6 +921,12 @@
+@@ -934,6 +943,12 @@
  #define USR_STARTUP_RULES	     vars[V_STARTUP_RULES].user_val.l
  #define VAR_CHAR_SET		     vars[V_CHAR_SET].current_val.p
  #define GLO_CHAR_SET		     vars[V_CHAR_SET].global_val.p
@@ -1573,7 +1574,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  #define VAR_EDITOR		     vars[V_EDITOR].current_val.l
  #define GLO_EDITOR		     vars[V_EDITOR].global_val.l
  #define VAR_SPELLER		     vars[V_SPELLER].current_val.p
-@@ -3546,6 +3561,7 @@
+@@ -3587,6 +3602,7 @@
      } data;
  } REPLY_S;
  
@@ -1581,7 +1582,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  #define	REPLY_PSEUDO	1
  #define	REPLY_FORW	2	/* very similar to REPLY_PSEUDO */
  #define	REPLY_MSGNO	3
-@@ -4026,7 +4042,6 @@
+@@ -4068,7 +4084,6 @@
  } ATABLE_S;
  
  
@@ -1589,7 +1590,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  #define	TAG_INVON	'\001'	/* Supported character attributes	  */
  #define	TAG_INVOFF	'\002'
  #define	TAG_BOLDON	'\003'
-@@ -4036,6 +4051,7 @@
+@@ -4078,6 +4093,7 @@
  #define	TAG_FGCOLOR	'\010'	/* Change to this foreground color	  */
  #define	TAG_BGCOLOR	'\011'	/* Change to this background color	  */
  #define	TAG_HANDLE	'\020'	/* indicate's a handle to an action	  */
@@ -1597,7 +1598,7 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  #define	TAG_HANDLEOFF	'\030'	/* indicate's end of handle text	  */
  
  
-@@ -5441,6 +5457,9 @@
+@@ -5494,6 +5510,9 @@
  int	    rfc2369_parse_fields PROTO((char *, RFC2369_S *));
  unsigned char *trans_euc_to_2022_jp PROTO((unsigned char *));
  unsigned char *trans_2022_jp_to_euc PROTO((unsigned char *));
@@ -1607,18 +1608,16 @@ diff -urN pine4.60/pine/pine.h pine-patched/pine/pine.h
  
  
  /*-- takeaddr.c --*/
-diff -urN pine4.60/pine/pine.hlp pine-patched/pine/pine.hlp
---- pine4.60/pine/pine.hlp	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/pine.hlp	Sat Jun  5 17:48:48 2004
-@@ -182,7 +182,17 @@
- <H2>New in Pine <!--#echo var="PINE_VERSION"--></H2>
+diff -urN pine4.61.orig/pine/pine.hlp pine4.61/pine/pine.hlp
+--- pine4.61.orig/pine/pine.hlp	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/pine.hlp	2004-07-21 02:23:49.198662904 +0200
+@@ -227,6 +227,17 @@
+   <LI> The command to Replicate a rule did not copy the &quot;not&quot; parts of the rule correctly
+ </UL>
  
- Version <!--#echo var="PINE_VERSION"--> 
--is an evolutionary release which introduces some new functionality.
-+is an evolutionary release which introduces some new functionality
-+and includes the charset translation patch 9a by Bernhard Kaindl.
++This version includes the charset translation patch 9d by Bernhard Kaindl.
 +
-+<p>
++<P>
 +You need to enable the options
 +<A HREF="h_config_disable_2022_jp_conv">Disable-2022-JP-Conversions</A> and
 +<A HREF="h_config_pass_c1_control">Pass-C1-Control-Characters-as-is</A>
@@ -1626,14 +1625,14 @@ diff -urN pine4.60/pine/pine.hlp pine-patched/pine/pine.hlp
 +
 +For more information, see the file doc/iconv.txt provided by the patch and
 +<A HREF="http://www.suse.de/~bk/pine/iconv/">http://www.suse.de/~bk/pine/iconv/</A>
- 
++
  <P>
- Additions include:
-@@ -20183,6 +20193,110 @@
- </UL><P>
+ 
+ Version 4.60
+@@ -20735,6 +20746,110 @@
  &lt;End of help on this topic&gt;
  </BODY>
-+</HTML>
+ </HTML>
 +====== h_config_charset_aliases =====
 +<HTML>
 +<HEAD>
@@ -1737,13 +1736,14 @@ diff -urN pine4.60/pine/pine.hlp pine-patched/pine/pine.hlp
 +</UL><P>
 +&lt;End of help on this topic&gt;
 +</BODY>
- </HTML>
++</HTML>
  ====== h_config_editor =====
  <HTML>
-diff -urN pine4.60/pine/reply.c pine-patched/pine/reply.c
---- pine4.60/pine/reply.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/reply.c	Sat Jun  5 17:48:48 2004
-@@ -1614,18 +1614,30 @@
+ <HEAD>
+diff -urN pine4.61.orig/pine/reply.c pine4.61/pine/reply.c
+--- pine4.61.orig/pine/reply.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/reply.c	2004-07-21 02:25:37.184246600 +0200
+@@ -1615,18 +1615,30 @@
         && (decoded[0] == 'R' || decoded[0] == 'r')
         && (decoded[1] == 'E' || decoded[1] == 'e')){
  
@@ -1781,7 +1781,7 @@ diff -urN pine4.60/pine/reply.c pine-patched/pine/reply.c
  
      fs_give((void **) &tmp);
      return(buf);
-@@ -4819,6 +4831,7 @@
+@@ -4825,6 +4837,7 @@
      ENVELOPE *outgoing;
      BODY     *body = NULL;
      MESSAGECACHE *mc;
@@ -1789,25 +1789,26 @@ diff -urN pine4.60/pine/reply.c pine-patched/pine/reply.c
  
      outgoing		 = mail_newenvelope();
      outgoing->message_id = generate_message_id();
-@@ -4902,6 +4915,17 @@
+@@ -4908,6 +4921,18 @@
  
      gf_clear_so_writec((STORE_S *) msgtext);
  
 +#ifdef HAVE_ICONV
 +    /*
-+     * reset VAR_SEND_CHAR_SET to '' temporarily NOT to 
++     * reset VAR_SEND_CHAR_SET to '' temporarily NOT to
 +     * apply  the charset conversion to a bounced message.
 +     */
 +    if (ps_global->VAR_SEND_CHAR_SET && *(ps_global->VAR_SEND_CHAR_SET)){
-+	temp_send_cset = (char *)fs_get(strlen(ps_global->VAR_SEND_CHAR_SET)+1);
-+	strcpy(temp_send_cset, ps_global->VAR_SEND_CHAR_SET);
-+	(ps_global->VAR_SEND_CHAR_SET)[0] = '\0'; 
-+    }
++      temp_send_cset = (char *)fs_get(strlen(ps_global->VAR_SEND_CHAR_SET)+1);
++      strcpy(temp_send_cset, ps_global->VAR_SEND_CHAR_SET);
++      (ps_global->VAR_SEND_CHAR_SET)[0] = '\0';
++ }
 +#endif
-     if(pine_simple_send(outgoing, &body, pmt_who, pmt_cnf, to,
++
+     if(pine_simple_send(outgoing, &body, role, pmt_who, pmt_cnf, to,
  			!(to && *to) ? SS_PROMPTFORTO : 0) < 0){
  	errstr = "";		/* p_s_s() better have explained! */
-@@ -4912,6 +4936,12 @@
+@@ -4918,6 +4943,12 @@
  	  mail_flag(stream, long2string(rawno), "\\SEEN", 0);
      }
  
@@ -1820,7 +1821,7 @@ diff -urN pine4.60/pine/reply.c pine-patched/pine/reply.c
      /* Just for good measure... */
      mail_free_envelope(&outgoing);
      pine_free_body(&body);
-@@ -6580,6 +6610,9 @@
+@@ -6590,6 +6621,9 @@
  	       && ps_global->VAR_EDITOR[0]
  	       && ps_global->VAR_EDITOR[0][0]))
  							? P_ADVANCED	: 0L)
@@ -1830,9 +1831,9 @@ diff -urN pine4.60/pine/reply.c pine-patched/pine/reply.c
         | ((!ps_global->VAR_CHAR_SET
             || !strucmp(ps_global->VAR_CHAR_SET, "US-ASCII"))
  							? P_HIBITIGN	: 0L));
-diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
---- pine4.60/pine/send.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/send.c	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pine/send.c pine4.61/pine/send.c
+--- pine4.61.orig/pine/send.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/send.c	2004-07-21 01:53:21.829465248 +0200
 @@ -95,6 +95,9 @@
  CustomType set_default_hdrval PROTO((PINEFIELD *, PINEFIELD *));
  int	   filter_message_text PROTO((char *, ENVELOPE *, BODY *, STORE_S **,
@@ -1843,7 +1844,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  void	   post_compose_filters PROTO((BODY *));
  void	   pine_send_newsgroup_name PROTO((char *, char*, size_t));
  long	   message_format_for_pico PROTO((long, int (*)(int)));
-@@ -6480,6 +6483,54 @@
+@@ -6574,6 +6577,54 @@
      }
  }
  
@@ -1898,7 +1899,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  
  /*----------------------------------------------------------------------
      Pass the first text segment of the message thru the "send filter"
-@@ -7749,7 +7800,8 @@
+@@ -7843,7 +7894,8 @@
  		src = pf->scratch ? pf->scratch
  				  : (*pf->text) ? *pf->text : "";
  
@@ -1908,7 +1909,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  		p = (char *)fs_get(len * sizeof(char));
  		if(rfc1522_decode((unsigned char *)p, len, src, &charset)
  						   == (unsigned char *) p){
-@@ -7881,10 +7933,18 @@
+@@ -7975,10 +8027,18 @@
  		    fs_give((void **)pf->text);
  
  		  if(*pf->scratch){
@@ -1927,7 +1928,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  		      else
  		        *pf->text = cpystr(pf->scratch);
  		  }
-@@ -7899,6 +7959,35 @@
+@@ -7993,6 +8053,35 @@
      if(bod && *bod)
        post_compose_filters(*bod);
  
@@ -1963,7 +1964,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
      create_message_body(bod, attach, charset, flow_it);
      pine_encode_body(*bod);
  
-@@ -7934,15 +8023,25 @@
+@@ -8028,15 +8117,25 @@
  	      p = (char *) rfc1522_decode((unsigned char *)tmp_20k_buf,
  					  SIZEOF_20KBUF, buftmp, &charset);
  
@@ -1989,7 +1990,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  		  /*
  		   * Convert EUC (unix Pine) or Shift-JIS (PC-Pine) into
  		   * ISO-2022-JP.
-@@ -8059,7 +8158,13 @@
+@@ -8153,7 +8252,13 @@
  			   rfc1522_encode(tmp_20k_buf,
  					  SIZEOF_20KBUF,
  					  (unsigned char *) pa->description,
@@ -2003,7 +2004,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  	      }
  	      if(charset)
  		fs_give((void **)&charset);
-@@ -8123,7 +8228,13 @@
+@@ -8217,7 +8322,13 @@
          p->body.description = cpystr(rfc1522_encode(tmp_20k_buf,
  					   SIZEOF_20KBUF,
  				           (unsigned char *) pa->description,
@@ -2017,7 +2018,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  
  	/* Add name attribute for backward compatibility */
  	for(parmp = &p->body.parameter; *parmp; )
-@@ -8533,6 +8644,22 @@
+@@ -8627,6 +8738,22 @@
  	    if(new_encoding != ENCBINARY)
  	      new_encoding = ENC8BIT;  /* short lines, < 30% 8 bit chars */
  	}
@@ -2040,7 +2041,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  	else{
  	    can_be_ascii--;
  	    if(body->type == TYPEOTHER){
-@@ -8596,7 +8723,7 @@
+@@ -8690,7 +8817,7 @@
  	else
  	  set_mime_charset(pm,
  			   can_be_ascii > 0,
@@ -2049,7 +2050,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
      }
  
      if(body->encoding == ENCOTHER)
-@@ -8681,7 +8808,7 @@
+@@ -8775,7 +8902,7 @@
  
      set_mime_charset(pm,
  		     can_be_ascii > 0,
@@ -2058,7 +2059,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  
      if(we_cancel)
        cancel_busy_alarm(-1);
-@@ -8712,6 +8839,13 @@
+@@ -8806,6 +8933,13 @@
      if(pm->value && (!*pm->value || strucmp(pm->value, us_ascii) == 0))
        fs_give((void **)&pm->value);
  
@@ -2072,7 +2073,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
      /* see if cs is a special non_ascii charset */
      for(excl = non_ascii; cs && *excl && strucmp(*excl, cs); excl++)
        ;
-@@ -8796,9 +8930,19 @@
+@@ -8890,9 +9024,19 @@
      char *value, *folded = NULL;
  
  
@@ -2092,7 +2093,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
  				encode_whole_header(field, header));
      
      if(value && value == text){	/* no encoding was done, have to fold */
-@@ -8862,6 +9006,11 @@
+@@ -8956,6 +9100,11 @@
  	  fs_give((void **)&folded);
      }
      
@@ -2104,7 +2105,7 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
      return(ret);
  }
  
-@@ -10939,3 +11088,16 @@
+@@ -11033,3 +11182,16 @@
  {
      return(0L);
  }
@@ -2121,9 +2122,9 @@ diff -urN pine4.60/pine/send.c pine-patched/pine/send.c
 +	ps_global->VAR_ASSUMED_CHAR_SET = assumed_save;
 +	return ret;
 +}
-diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
---- pine4.60/pine/strings.c	Sat Jun  5 17:47:08 2004
-+++ pine-patched/pine/strings.c	Sat Jun  5 17:48:48 2004
+diff -urN pine4.61.orig/pine/strings.c pine4.61/pine/strings.c
+--- pine4.61.orig/pine/strings.c	2004-07-21 01:52:34.000000000 +0200
++++ pine4.61/pine/strings.c	2004-07-21 01:53:21.856461144 +0200
 @@ -82,6 +82,9 @@
  
  #include "headers.h"
@@ -2134,7 +2135,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
  typedef struct role_args {
      char    *ourcharset;
-@@ -669,6 +672,150 @@
+@@ -668,6 +671,150 @@
        (*d)++;
  }
  
@@ -2285,7 +2286,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
  /*----------------------------------------------------------------------
    copy at most n chars of the source string onto the destination string
-@@ -686,6 +833,10 @@
+@@ -685,6 +832,10 @@
      if(!d || !s)
        return(NULL);
      
@@ -2296,7 +2297,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
      do
        if(*s && FILTER_THIS(*s)
  	 && !(*(s+1) && *s == ESCAPE && match_escapes(s+1))){
-@@ -710,6 +861,204 @@
+@@ -709,6 +860,204 @@
  
  
  /*
@@ -2501,7 +2502,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
   * Copies the source string into allocated space with the 8-bit EUC codes
   * (on Unix) or the Shift-JIS (on PC) converted into ISO-2022-JP.
   * Caller is responsible for freeing the result.
-@@ -3017,12 +3366,35 @@
+@@ -3052,12 +3401,35 @@
  				    char **));
  int	       rfc1522_valtok PROTO((int));
  int	       rfc1522_valenc PROTO((int));
@@ -2538,7 +2539,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
  /*
   * rfc1522_decode - try to decode the given source string ala RFC 2047
-@@ -3065,6 +3437,7 @@
+@@ -3100,6 +3472,7 @@
      unsigned long  l;
      int		   i, described_charset_once = 0;
      int            translate_2022_jp = 0;
@@ -2546,7 +2547,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
      *d = '\0';					/* init destination */
      if(charset)
-@@ -3072,7 +3445,7 @@
+@@ -3107,7 +3480,7 @@
  
      while(s && (sw = strstr(s, RFC1522_INIT))){
  	/* validate the rest of the encoded-word */
@@ -2555,7 +2556,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  	    if(!rv)
  	      rv = d;				/* remember start of dest */
  
-@@ -3091,6 +3464,8 @@
+@@ -3126,6 +3499,8 @@
  	    if(lang = strchr(cset, '*'))
  	      *lang++ = '\0';
  
@@ -2564,7 +2565,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  	    /* Insert text explaining charset if we don't know what it is */
  	    if(F_OFF(F_DISABLE_2022_JP_CONVERSIONS, ps_global)
  	       && !strucmp((char *) cset, "iso-2022-jp")){
-@@ -3103,7 +3478,7 @@
+@@ -3138,7 +3513,7 @@
  			if(!*charset)		/* only write first charset */
  			  *charset = cpystr(cset);
  		    }
@@ -2573,7 +2574,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  			if(d-rv<len-1)
  			  *d++ = '[';
  
-@@ -3116,7 +3491,9 @@
+@@ -3151,7 +3526,9 @@
  		}
  		/* else, just translate it silently */
  	    }
@@ -2584,7 +2585,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  		     || strucmp((char *) cset, ps_global->VAR_CHAR_SET))
  	            && strucmp((char *) cset, "US-ASCII")){
  		dprint(5, (debugfile, "RFC1522_decode: charset mismatch: %s\n",
-@@ -3163,12 +3540,8 @@
+@@ -3198,12 +3575,8 @@
  		  q = NULL;
  
  		if(p = rfc822_qprint((unsigned char *)txt, strlen(txt), &l)){
@@ -2598,7 +2599,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  		}
  		else{
  		    if(q)
-@@ -3189,12 +3562,8 @@
+@@ -3224,12 +3597,8 @@
  	      case 'B' :			/* 'B' encoding */
  	      case 'b' :
  		if(p = rfc822_base64((unsigned char *) txt, strlen(txt), &l)){
@@ -2612,7 +2613,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  		}
  		else
  		  goto bogus;
-@@ -3219,30 +3588,31 @@
+@@ -3254,30 +3623,31 @@
  	      lang[-1] = '*';
  	}
  	else{
@@ -2663,7 +2664,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
      if(translate_2022_jp){
  	unsigned char *trans;
  
-@@ -3304,6 +3674,7 @@
+@@ -3339,6 +3709,7 @@
  	    }
  	}
      }
@@ -2671,7 +2672,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
      if(cs)
        fs_give((void **) &cs);
-@@ -3367,16 +3738,20 @@
+@@ -3402,16 +3773,20 @@
  rfc1522_valenc(c)
      int c;
  {
@@ -2694,7 +2695,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
      char **charset;
      char **enc;
      char **txt;
-@@ -3388,7 +3763,11 @@
+@@ -3423,7 +3798,11 @@
      rv = rfc1522_token(c = s+RFC1522_INIT_L, rfc1522_valtok, RFC1522_DLIM, &e)
  	   && rfc1522_token(++e, rfc1522_valtok, RFC1522_DLIM, &t)
  	   && rfc1522_token(++t, rfc1522_valenc, RFC1522_TERM, &p)
@@ -2707,7 +2708,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  
      if(charset)
        *charset = c;
-@@ -3439,7 +3818,7 @@
+@@ -3474,7 +3853,7 @@
        }
        else if(*p == RFC1522_INIT[0]
  	      && !strncmp((char *) p, RFC1522_INIT, RFC1522_INIT_L)){
@@ -2716,7 +2717,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  	    p = q + RFC1522_TERM_L - 1;		/* advance past encoded gunk */
        }
        else if(*p == ESCAPE && match_escapes((char *)(p+1))){
-@@ -3616,6 +3995,27 @@
+@@ -3651,6 +4030,27 @@
      CHARSET          *from, *to;
      static CONV_TABLE null_tab;
  
@@ -2744,7 +2745,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
      if(!(from_cs && *from_cs && to_cs && *to_cs) || !strucmp(from_cs, to_cs)){
  	memset(&null_tab, 0, sizeof(null_tab));
  	null_tab.quality = CV_NO_TRANSLATE_NEEDED;
-@@ -3647,6 +4047,10 @@
+@@ -3682,6 +4082,10 @@
      if(ct){
  	if(ct->table && (ct->convert != gf_convert_utf8_charset))
  	  fs_give((void **) &ct->table);
@@ -2755,7 +2756,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
  	
  	if(ct->from_charset)
  	  fs_give((void **) &ct->from_charset);
-@@ -3661,6 +4065,16 @@
+@@ -3696,6 +4100,16 @@
  
      ct->from_charset = cpystr(from_cs);
      ct->to_charset   = cpystr(to_cs);
@@ -2772,7 +2773,7 @@ diff -urN pine4.60/pine/strings.c pine-patched/pine/strings.c
      ct->quality = CV_NO_TRANSLATE_POSSIBLE;
  
      /*
-@@ -3795,6 +4209,7 @@
+@@ -3829,6 +4243,7 @@
  	    }
  	}
      }
