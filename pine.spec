@@ -101,7 +101,7 @@ install doc/{pine,pico,pilot}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/X11/wmconfig/pine
 install %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/pl/man1/pine.1
 
-$RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine/pine.conf
+$RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT/etc/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT/etc/pine.conf.fixed
 #
 # Pine system-wide enforced configuration file - customize as needed
@@ -111,7 +111,7 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/pine.conf.fixed
 # system-wide default configuration file (/etc/pine/pine.conf) and
 # the user's own configuration file (~/.pinerc).
 # For more information on the format of this file, read the
-# comments at the top of /etc/pine/pine.conf
+# comments at the top of /etc/pine.conf
 
 EOF
 
@@ -135,6 +135,10 @@ rm -rf $RPM_BUILD_ROOT
 %lang(pl) %{_mandir}/pl/man1/*
 
 %changelog
+* Mon Jul  5 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [4.10-8]
+- config files moved to /etc.
+
 * Sat Jun 05 1999 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
 - misc fixes 
 
