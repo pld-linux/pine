@@ -25,7 +25,6 @@ Patch8:		%{name}-noflock.patch
 Patch9:		%{name}-fhs.patch
 Patch10:	%{name}-maildir.patch
 Patch11:	%{name}-maildirfix.patch
-Patch12:	%{name}-timezone.patch
 URL:		http://www.washington.edu/pine/
 BuildRequires:	ncurses-devel >= 5.0
 Requires:	mailcap
@@ -84,7 +83,6 @@ biçimlerini destekleme özelliklerini taþýr.
 %patch9  -p1 
 %patch10 -p1 
 %patch11 -p1 
-%patch12 -p1 
 
 %build
 ./build slx \
