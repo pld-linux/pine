@@ -1,7 +1,8 @@
 #
 # Conditional build:
-%bcond_without utf8		# build without utf-8 support
-%bcond_without home_etc		# build without home-etc support
+%bcond_without	distributable	# build distributable package with license included
+%bcond_without	utf8		# build without utf-8 support
+%bcond_without	home_etc	# build without home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
 Summary(de):	MIME-konformer Mail-Reader mit News-Support
@@ -14,9 +15,13 @@ Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteði de vardýr)
 Summary(uk):	óÕÍ¦ÓÎÉÊ Ú MIME ÐÏÞÔÏ×ÉÊ ÒÅÄÁËÔÏÒ Ú Ð¦ÄÔÒÉÍËÏÀ ÔÅÌÅËÏÎÆÅÒÅÎÃ¦Ê
 Name:		pine
 %define		realversion	4.63
-Version:	%{realversion}L
-Release:	0.1
-License:	not distributable
+Version:	%{realversion}N
+Release:	0.2
+%if %{with distributable}
+License:	Distributable for PLD
+%else
+License:	Not distributable
+%endif
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
 # Source0-md5:	e881f439f38039b310d22554ab08feb4
@@ -25,6 +30,7 @@ Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source3-md5:	7bd233708a9621f3dfd173acb20ec0bb
 Source4:	pico.desktop
+Source5:	%{name}-PLD-LICENSE
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-doc.patch
 Patch2:		%{name}-makefile.patch
@@ -36,23 +42,22 @@ Patch7:		%{name}-fhs.patch
 Patch8:		%{name}-segfix.patch
 Patch9:		%{name}-libc-client.patch
 Patch10:	%{name}-fixhome.patch
-#Patch11:	%{name}-terminit.patch
-Patch12:	%{name}-ssl.patch
-Patch13:	%{name}-non_english_man_path_fix.patch
-Patch14:	%{name}-no_1777_warning.patch
-Patch15:	%{name}-L_on_version.patch
-Patch16:	%{name}-overflow.patch
+Patch11:	%{name}-ssl.patch
+Patch12:	%{name}-non_english_man_path_fix.patch
+Patch13:	%{name}-no_1777_warning.patch
+Patch14:	%{name}-N_on_version.patch
+Patch15:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch17:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
+Patch16:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
-Patch18:	%{name}-smime.patch
-Patch19:	%{name}-css.patch
+Patch17:	%{name}-smime.patch
+Patch18:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
-Patch20:	%{name}-iconv-9d.patch
-Patch21:	%{name}-home_etc.patch
-Patch22:	%{name}-pwd.patch
+Patch19:	%{name}-iconv-9d.patch
+Patch20:	%{name}-home_etc.patch
+Patch21:	%{name}-pwd.patch
 URL:		http://www.washington.edu/pine/
-# icov form glibc - utf-8 support
+# iconv form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
@@ -194,24 +199,26 @@ ajuda de acordo com o contexto está disponível.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%{!?with_distributable:%patch5 -p1}
+%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-# breaks keys on some terminals
-##%patch11 -p1
+%patch11 -p1
 %patch12 -p1
-%patch13 -p1
+%{!?with_distributable:%patch13 -p1}
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch17 -p1
 # breaks pine
-##%patch18 -p1
-%patch19 -p1
-%{?with_utf8:%patch20 -p1}
-%{?with_home_etc:%patch21 -p1}
-%patch22 -p1
+#%{!?with_distributable:%patch17 -p1}
+%patch18 -p1
+%if ! %{with distributable}
+%{?with_utf8:%patch19 -p1}
+%endif
+%{?with_home_etc:%patch20 -p1}
+%patch21 -p1
 
 %build
 ./build slx \
@@ -246,6 +253,7 @@ install pl/man1/*.1 $RPM_BUILD_ROOT%{_mandir}/pl/man1
 install %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
 install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
+%{?with_distributable:cp %{SOURCE5} .}
 
 $RPM_BUILD_ROOT%{_bindir}/pine -conf > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf
 cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/pine.conf.fixed
@@ -267,6 +275,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc CPYRIGHT README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
+%{?with_distributable:%doc %{name}-PLD-LICENSE}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
 %attr(755,root,root) %{_bindir}/pine
 %{_desktopdir}/pine.desktop
@@ -280,6 +289,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n pico
 %defattr(644,root,root,755)
+%{?with_distributable:%doc %{name}-PLD-LICENSE}
 %attr(755,root,root) %{_bindir}/pico
 %{_desktopdir}/pico.desktop
 %{_mandir}/man1/pico*
@@ -290,6 +300,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n pilot
 %defattr(644,root,root,755)
+%{?with_distributable:%doc %{name}-PLD-LICENSE}
 %attr(755,root,root) %{_bindir}/pilot
 %{_mandir}/man1/pilot*
 %lang(es) %{_mandir}/es/man1/pilot*
