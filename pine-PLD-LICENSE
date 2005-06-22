@@ -1,0 +1,194 @@
+The University of Washington
+Pine MESSAGING SOFTWARE Distribution License
+
+1.  GRANT.  Subject to the conditions stated below, the University
+of Washington ("UW") grants permission to the PLD Linux Distribution
+("Licensee"):  (1) to modify Pine messaging software ("the Software")
+in the ways listed on Appendix A solely in order to create a modified
+version of the Software appropriate for inclusion and integration with
+Licensee's PLD Linux Distributions ("PLDs"); and (2) to distribute the
+Software with PLDs.
+
+2.  CONDITIONS.  This grant of license is contingent on the following
+conditions:
+
+2.1.  The Pine and Pico copyright and trademark notices shall appear in
+all copies.
+
+2.2.  Both the above copyright notice and this permission notice shall
+appear in all supporting documentation for the PLD Pine distribution.
+
+2.3.  The name of the University of Washington shall not be used in
+advertising or publicity pertaining to distribution of the Software,
+or any PLD containing the Software, without specific, prior written
+permission from the University of Washington.
+
+2.4.  Licensee shall note that Licenseee is distributing a modified
+version of the Software by appending the letter "N" to the current Pine
+software version number.
+
+2.5.  Licensee shall enumerate the modifications in the integral release
+notes and associated documentation.
+
+2.6.  Licensee shall distribute the Software only with the Pine
+User Agreement, which is attached here as Appendix B.  Alternatively,
+Licensee may create Licensee's own license that includes all the clauses
+as identified on the Pine User Agreement.
+
+3.  DISCLAIMER OF WARRANTIES.  The Software is provided "as is."  THE
+UNIVERSITY OF WASHINGTON DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED,
+WITH REGARD TO THIS SOFTWARE, INCLUDING WITHOUT LIMITATION ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
+IN NO EVENT SHALL THE UNIVERSITY OF WASHINGTON BE LIABLE FOR ANY SPECIAL,
+INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+TORT (INCLUDING NEGLIGENCE) OR STRICT LIABILITY, ARISING OUT OF OR IN
+CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+4.  TERMINATION RIGHTS ON BREACH.  Should Licensee be in breach of this
+Pine Distribution License, UW may terminate this license and all rights
+Licensee holds to distribute Pine shall cease.
+
+Appendix A
+List of Authorized Changes (with our comments included)
+
+          pine-config.patch - changes paths to distribution specific ones,
+          enables USE_QUOTAS, sets NUMDEBUGFILES to 0
+
+          pine-makefile.patch - small adjustments in makefile
+
+          pine-unix.patch - another small makefile adjustment
+
+          pine-quote.patch - security fipine-fhs.patch yet another
+          makefile adjustment
+
+          pine-segfix.patch - possible segmentation fault fix from
+          rawhide.  We would like to know more about this.  If it really
+          is a bug we would like to fix it.
+
+      ===>**pine-L_on_version.patch -
+          adds L to Pine version number (this must change to an "N"
+          if this is for the PLD version,
+           as specified in this license)**
+
+          pine-libc-client.patch - libc-client security patch taken
+          from Debian.  We would like to know more about this.  If it
+          really is a bug we would like to fix it.  ** If this is the
+          change in rfc822.c to add a test for !i in a \015 case, this
+          is already fixed with a different patch (in the \012 case
+          which is dropped in from the \015 case).
+
+          pine-ssl.patch - fixes path to openssl header filesx
+
+          pine-non_english_man_path_fix.patch - changes paths in
+          non-english doc to distribution specific ones
+
+          pine-home_etc.patch - adds support for home-etc idea of keeping
+          configuration files in a subdirectory specified by user,
+          instead of his home directory
+
+          pine-fixhome - The home and end keys that this patch adds are
+          already in there.
+
+        pine-doc -
+          All of the path changes here are unnecessary, as those get
+          changed at build-time, except for the change of /usr/spool
+          to /var.  We change it to the standard /var/spool.
+
+          pine-pwd - This can be done as an option to the build command,
+          by setting it in EXTRACFLAGS.
+
+          pine-terminfo - This changes os-lyn.h, however the file that
+          would be used in a linux build is os-lnx.h.  It's safe to
+          leave this patch out regardless, because we believe nothing
+          is done with this particular setting anymore.
+
+          pine-overflow - long ago overtaken by events.
+
+          pine-css.patch - fix based on
+          http://hico.fphil.uniba.sk/pine-patches.html, idea to allow
+          save when maildir folders are in use.
+
+          all.patch - All of Eduardo's patches, one of which adds
+          maildir support.  Eduardo's patches have not been thoroughly
+          audited or considered by us, since there are so many of them.
+          However, there is a link to his patches on our web site.
+
+Appendix B
+Pine License and Legal Notices
+
+Pine and Pico are registered trademarks of the University of
+Washington. No commercial use of these trademarks may be made without
+prior written permission of the University of Washington.
+
+Pine, Pico, and Pilot software and its included text are Copyright
+1989-2005 by the University of Washington.
+
+Use of Pine/Pico/Pilot: You may compile and execute these programs
+for any purpose, including commercial, without paying anything to the
+University of Washington, provided that the legal notices are maintained
+intact and honored.
+
+Local modification of this release is permitted as follows, or by
+mutual agreement: In order to reduce confusion and facilitate debugging,
+we request that locally modified versions be denoted by appending the
+letter "L" to the current version number (appended in addition to the
+"N" which in included in the version number), and that the local changes
+be enumerated in the integral release notes and associated documentation.
+
+Redistribution of this release is permitted as follows, or by mutual
+agreement: (a) In free-of-charge or at-cost distributions by non-profit
+concerns; (b) In free-of-charge distributions by for-profit concerns;
+(c) Inclusion in a CD-ROM collection of free-of-charge, shareware,
+or non-proprietary software for which a fee may be charged for the
+packaged distribution.
+
+Redistribution of binary versions is further constrained by license
+agreements for incorporated libraries from third parties, e.g. LDAP,
+GSSAPI.
+
+The University of Washington encourages unrestricted distribution of
+individual patches to the Pine system. By "patches" we mean "difference"
+files that can be applied to the University of Washington Pine source
+distribution in order to accomplish bug fixes, minor enhancements,
+or adaptation to new operating systems. Submission of these patches to
+University of Washington for possible inclusion in future Pine versions
+is also encouraged, with the understanding that they would be treated
+the same as all other Pine code in terms of licensing and the submission
+does not include any software which infringes third party rights.
+
+The above permissions are hereby granted, provided that the Pine and Pico
+copyright and trademark notices appear in all copies and that both the
+above copyright notice and this permission notice appear in supporting
+documentation, and that the name of the University of Washington not
+be used in advertising or publicity pertaining to distribution of the
+software without specific, prior written permission, and provided you
+acknowledge that pursuant to U.S. laws, Pine, Pico & Pilot software may
+not be downloaded, acquired or otherwise exported or re-exported (i)
+into, or to a national or resident of any country to which the U.S. has
+embargoed goods; or (ii) to anyone on the U.S. Treasury Department's
+list of Specially Designated Nations or the U.S. Commerce Department's
+Table of Denial Orders.
+
+By downloading the software, you represent that: 1) you are not located
+in or under the control of a national or resident of any such country or
+on any such list; and 2) you will not export or re-export the software to
+any prohibited country, or to any prohibited person, entity, or end-user
+as specified by U.S. export controls.
+
+This software is made available "as is", and
+
+THE UNIVERSITY OF WASHINGTON DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED,
+WITH REGARD TO THIS SOFTWARE, INCLUDING WITHOUT LIMITATION ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
+IN NO EVENT SHALL THE UNIVERSITY OF WASHINGTON BE LIABLE FOR ANY SPECIAL,
+INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+TORT (INCLUDING NEGLIGENCE) OR STRICT LIABILITY, ARISING OUT OF OR IN
+CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Other licensing terms are available by mutual agreement.
+
+Please see the Pine FAQ for more information on Pine Legal Issues.
+
+End of Pine License and Legal Notices
