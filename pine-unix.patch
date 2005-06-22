@@ -14,7 +14,7 @@ diff -Nru pine4.30/imap/src/osdep/unix/Makefile pine4.30.new/imap/src/osdep/unix
  	 SPOOLDIR=/var/spool \
  	 ACTIVEFILE=/var/lib/news/active \
  	 RSHPATH=/usr/bin/rsh \
--	 BASECFLAGS="-g -fno-omit-frame-pointer -O6" \
+-	 BASECFLAGS="-g -fno-omit-frame-pointer $(GCCOPTLEVEL)" \
 +	 BASECFLAGS="$(OPTIMIZE) -DNFSKLUDGE" \
  	 BASELDFLAGS="-lcrypt"
  
