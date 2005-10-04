@@ -14,9 +14,9 @@ Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
 Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
 Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
-%define		realversion	4.63
+%define		realversion	4.64
 Version:	%{realversion}N
-Release:	2
+Release:	0.1
 %if %{with distributable}
 License:	Distributable for PLD
 %else
@@ -24,7 +24,7 @@ License:	Not distributable
 %endif
 Group:		Applications/Mail
 Source0:	ftp://ftp.cac.washington.edu/pine/%{name}%{realversion}.tar.bz2
-# Source0-md5:	e881f439f38039b310d22554ab08feb4
+# Source0-md5:	39ca07b3d305b4cd0d6aaf4585123275
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
