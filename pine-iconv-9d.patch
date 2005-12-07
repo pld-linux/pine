@@ -1643,7 +1643,7 @@ diff -urN pine4.63.orig/pine/pine.h pine4.63/pine/pine.h
 @@ -5700,6 +5716,9 @@
  int	    rfc2369_parse_fields PROTO((char *, RFC2369_S *));
  unsigned char *trans_euc_to_2022_jp PROTO((unsigned char *));
- unsigned char *trans_2022_jp_to_euc PROTO((unsigned char *));
+ unsigned char *trans_2022_jp_to_euc PROTO((unsigned char *, unsigned int *));
 +unsigned char *resolve_charset_alias PROTO((char *, char **));
 +char          *pine_check_utf8 PROTO((char *, char *));
 +unsigned char *trans_with_iconv PROTO((unsigned char *, char *, char *));
@@ -2336,9 +2336,9 @@ diff -urN pine4.63.orig/pine/strings.c pine4.63/pine/strings.c
 +       && !strucmp(ps_global->VAR_CHAR_SET, "UTF-8"))
 +      return utf8_istrncpy(d, s, n);
 +
-     do
-       if(*s && FILTER_THIS(*s)
- 	 && !(*(s+1) && *s == ESCAPE && match_escapes(s+1))){
+     /*
+      * Check to see if we can skip the translation thing.
+      */
 @@ -714,6 +865,204 @@
  
  
