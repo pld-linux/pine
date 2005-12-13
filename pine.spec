@@ -48,7 +48,7 @@ Patch13:	%{name}-no_1777_warning.patch
 Patch14:	%{name}-N_on_version.patch
 Patch15:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
-Patch16:	http://www.math.washington.edu/~chappa/pine/patches/%{name}%{realversion}/all.patch.gz
+Patch16:	http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch17:	%{name}-smime.patch
 Patch18:	%{name}-css.patch
@@ -61,10 +61,10 @@ URL:		http://www.washington.edu/pine/
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openldap-devel
-Requires:	mailcap
+BuildRequires:	openssl-devel >= 0.9.7d
 %{?with_home_etc:Requires:	home-etc >= 1.0.8}
+Requires:	mailcap
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -276,7 +276,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CPYRIGHT README doc/*.txt doc/mailcap.unx doc/tech-notes/*.html
 %{?with_distributable:%doc %{name}-PLD-LICENSE}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pine.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pine.conf
 %attr(755,root,root) %{_bindir}/pine
 %{_desktopdir}/pine.desktop
 %{_pixmapsdir}/*
