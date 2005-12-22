@@ -16,7 +16,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
-Release:	2
+Release:	3
 %if %{with distributable}
 License:	Distributable for PLD
 %else
