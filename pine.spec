@@ -16,7 +16,7 @@ Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
-Release:	3
+Release:	4
 %if %{with distributable}
 License:	Distributable for PLD
 %else
@@ -61,7 +61,7 @@ URL:		http://www.washington.edu/pine/
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
 %{?with_home_etc:BuildRequires:	home-etc-devel >= 1.0.8}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openldap-devel
+BuildRequires:	openldap-devel >= 2.3.0
 BuildRequires:	openssl-devel >= 0.9.7d
 %{?with_home_etc:Requires:	home-etc >= 1.0.8}
 Requires:	mailcap
