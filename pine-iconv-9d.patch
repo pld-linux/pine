@@ -458,14 +458,14 @@ diff -urN pine4.63.orig/pico/composer.c pine4.63/pico/composer.c
              switch (ch = normalize_cmd(ch, ckm, 2)) {
  	      case (CTRL|'\\') :
  		if (ch = GetAccent())
-@@ -1868,9 +2077,7 @@
- 	      case (CTRL|'F') :
+@@ -2078,9 +2078,7 @@
  	      case KEY_RIGHT:			/* move character right */
- 		if(ods.p_off < ods.p_len){
+ 		if(ods.p_off < ods.p_len 
+ 		   && ods.p_off + headents[ods.cur_e].prlen < term.t_ncol){
 -		    pputc(pscr(ods.p_line, 
 -			       (ods.p_off++)+headents[ods.cur_e].prlen)->c,0);
 -		    skipmove++;
-+		    LineEditCharRight();
++			LineEditCharRight();
  		    continue;
  		}
  		else if(gmode & MDHDRONLY)
