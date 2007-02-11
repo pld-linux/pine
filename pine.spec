@@ -217,10 +217,10 @@ ajuda de acordo com o contexto está disponível.
 %patch18 -p1
 %if ! %{with distributable}
 %{?with_utf8:%patch19 -p1}
+%{?with_utf8:%patch22 -p1}
 %endif
 %{?with_home_etc:%patch20 -p1}
 %patch21 -p1
-%{?with_utf8:%patch22 -p1}
 
 %build
 ./build slx \
