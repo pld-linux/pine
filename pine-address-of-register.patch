@@ -1,0 +1,22 @@
+--- pine4.64/pico/composer.c~	2007-02-10 22:08:25.000000000 +0100
++++ pine4.64/pico/composer.c	2007-02-10 22:29:31.000000000 +0100
+@@ -1771,7 +1771,7 @@
+ {
+     register struct	hdr_line   *lp;		/* temporary line pointer    */
+     register int	i;
+-    register int	ch = 0;
++    int	ch = 0;
+     register int	status;			/* various func's return val */
+     register char	*tbufp;			/* temporary buffer pointers */
+ 	     int	skipmove = 0;
+--- pine4.64/pine/osdep/termout.unx~	2007-02-10 23:45:22.000000000 +0100
++++ pine4.64/pine/osdep/termout.unx	2007-02-10 23:47:03.000000000 +0100
+@@ -747,7 +747,7 @@
+   ----*/
+ void
+ Writechar(ch, new_esc_len)
+-     register unsigned int ch;
++     unsigned int ch;
+      int      new_esc_len;
+ {
+     static   int esc_len = 0, seq = 0;

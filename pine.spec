@@ -56,6 +56,7 @@ Patch18:	%{name}-css.patch
 Patch19:	%{name}-iconv-9d.patch
 Patch20:	%{name}-home_etc.patch
 Patch21:	%{name}-pwd.patch
+Patch22:	%{name}-address-of-register.patch
 URL:		http://www.washington.edu/pine/
 # iconv form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
@@ -219,6 +220,7 @@ ajuda de acordo com o contexto está disponível.
 %endif
 %{?with_home_etc:%patch20 -p1}
 %patch21 -p1
+%{?with_utf8:%patch22 -p1}
 
 %build
 ./build slx \
