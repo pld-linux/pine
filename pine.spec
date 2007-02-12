@@ -5,14 +5,14 @@
 %bcond_without	home_etc	# build without home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
-Summary(de):	MIME-konformer Mail-Reader mit News-Support
-Summary(es):	Lector de mail con soporte a MIME y news
-Summary(fr):	Lecteur de courrier conforme Ю MIME avec gestion des news"
-Summary(pl):	Klient poczty elektronicznej i newsСw ze wspomaganiem dla MIME
-Summary(pt_BR):	Leitor de mail com suporte a MIME e news
-Summary(ru):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
-Summary(tr):	MIME uyumlu ileti okuyucusu (haber servisi desteПi de vardЩr)
-Summary(uk):	Сум╕сний з MIME почтовий редактор з п╕дтримкою телеконференц╕й
+Summary(de.UTF-8):   MIME-konformer Mail-Reader mit News-Support
+Summary(es.UTF-8):   Lector de mail con soporte a MIME y news
+Summary(fr.UTF-8):   Lecteur de courrier conforme ц═ MIME avec gestion des news"
+Summary(pl.UTF-8):   Klient poczty elektronicznej i newsцЁw ze wspomaganiem dla MIME
+Summary(pt_BR.UTF-8):   Leitor de mail com suporte a MIME e news
+Summary(ru.UTF-8):   п║п╬п╡п╪п╣я│я┌п╦п╪я▀п╧ я│ MIME п©п╬я┤я┌п╬п╡я▀п╧ я─п╣п╢п╟п╨я┌п╬я─ я│ п©п╬п╢п╢п╣я─п╤п╨п╬п╧ я┌п╣п╩п╣п╨п╬п╫я└п╣я─п╣п╫я├п╦п╧
+Summary(tr.UTF-8):   MIME uyumlu ileti okuyucusu (haber servisi desteд÷i de vardд╠r)
+Summary(uk.UTF-8):   п║я┐п╪я√я│п╫п╦п╧ п╥ MIME п©п╬я┤я┌п╬п╡п╦п╧ я─п╣п╢п╟п╨я┌п╬я─ п╥ п©я√п╢я┌я─п╦п╪п╨п╬я▌ я┌п╣п╩п╣п╨п╬п╫я└п╣я─п╣п╫я├я√п╧
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
@@ -75,73 +75,73 @@ editor, pico, for composing messages. Pico has gained popularity as a
 stand alone text editor in it's own right. It features MIME support,
 address books, and support for IMAP, mail, and MH style folders.
 
-%description -l de
+%description -l de.UTF-8
 Pine ist ein kompletter textbasierender Mail- und New-Client, der sich
-sowohl an Neueinsteiger als auch an Experten richtet. Er umfaъt einen
+sowohl an Neueinsteiger als auch an Experten richtet. Er umfaц÷t einen
 einfachen Editor (Pico), der zum Verfassen der Nachrichten dient, sich
 jedoch inzwischen einen Namen als autonomer Texteditor gemacht hat.
-Pine unterstЭtzt MIME, AdreъbЭcher, IMAP, Mail- und HM-Ordner.
+Pine unterstц╪tzt MIME, Adreц÷bц╪cher, IMAP, Mail- und HM-Ordner.
 
-%description -l es
+%description -l es.UTF-8
 Pine es un programa cliente de mail ("lector de mail") basado en texto
-y cliente de news. EstА orientado tanto a principiantes como a
-usuarios mАs expertos. Posee soporte para MINE, agendas de direcciСn,
+y cliente de news. Estц║ orientado tanto a principiantes como a
+usuarios mц║s expertos. Posee soporte para MINE, agendas de direcciцЁn,
 y soporte para folders de estilo IMAP, mail y MH.
 
-%description -l fr
-pine est un client courrier et news trХs complet en mode texte. Il est
-destinИ aux dИbutants comme aux experts. Il comprend un Иditeur simple
-Ю utiliser, pico, pour composer les messages. pico est devenu
-populaire comme Иditeur de texte par lui-mЙme. Il reconnait la gestion
+%description -l fr.UTF-8
+pine est un client courrier et news trц╗s complet en mode texte. Il est
+destinц╘ aux dц╘butants comme aux experts. Il comprend un ц╘diteur simple
+ц═ utiliser, pico, pour composer les messages. pico est devenu
+populaire comme ц╘diteur de texte par lui-mц╙me. Il reconnait la gestion
 MIME, les carnets d'adresse et la gestion IMAP, mail et des dossiers
 du style MH.
 
-%description -l pl
-Pine jest doskonaЁym czytnikiem poczty elektronicznej i newsСw,
-pracuj╠cym w trybie tekstowym. W pakiecie znajduje siЙ rСwnie© Ёatwy w
-u©yciu edytor pico, wykorzystywany do pisania wiadomo╤ci. Pine jest
-obecnie jednym z najbardziej popularnych czytnikСw poczty
-elektronicznej, posiada wspomaganie dla MIME i IMAP, mo©na w Ёatwy
-sposСb tworzyФ ksi╠©ki adresowe i skonfigurowaФ go do wspСЁpracy z
-aplikacj╠ PGP.
+%description -l pl.UTF-8
+Pine jest doskonaе┌ym czytnikiem poczty elektronicznej i newsцЁw,
+pracujд┘cym w trybie tekstowym. W pakiecie znajduje siд≥ rцЁwnieе╪ е┌atwy w
+uе╪yciu edytor pico, wykorzystywany do pisania wiadomoе⌡ci. Pine jest
+obecnie jednym z najbardziej popularnych czytnikцЁw poczty
+elektronicznej, posiada wspomaganie dla MIME i IMAP, moе╪na w е┌atwy
+sposцЁb tworzyд┤ ksiд┘е╪ki adresowe i skonfigurowaд┤ go do wspцЁе┌pracy z
+aplikacjд┘ PGP.
 
-%description -l pt_BR
-Pine И um programa cliente de mail ("leitor de mail") baseado em texto
-e cliente de news. Ele И dirigido tanto para novatos como para
-usuАrios experientes. Possui suporte para MIME, agendas de endereГo, e
+%description -l pt_BR.UTF-8
+Pine ц╘ um programa cliente de mail ("leitor de mail") baseado em texto
+e cliente de news. Ele ц╘ dirigido tanto para novatos como para
+usuц║rios experientes. Possui suporte para MIME, agendas de endereц╖o, e
 suporte para pastas de estilo IMAP, mail e MH.
 
-%description -l ru
-Pine - это полноценный текст-ориентированный клиент для почты и
-телеконференций. Рассчитан как на начинающих, так и на опытных
-пользователей. Включает простой в использовании редактор, pico, для
-редактирования почтовых сообщений. Имеет поддержку MIME, адресные
-книги, поддержку IMAP, может работать с почтовыми ящиками в формате
-mail и MH. Настоящая версия позволяет сконфигурировать Pine так, что
-он не будет кодировать русский текст в хедерах писем.
+%description -l ru.UTF-8
+Pine - я█я┌п╬ п©п╬п╩п╫п╬я├п╣п╫п╫я▀п╧ я┌п╣п╨я│я┌-п╬я─п╦п╣п╫я┌п╦я─п╬п╡п╟п╫п╫я▀п╧ п╨п╩п╦п╣п╫я┌ п╢п╩я▐ п©п╬я┤я┌я▀ п╦
+я┌п╣п╩п╣п╨п╬п╫я└п╣я─п╣п╫я├п╦п╧. п═п╟я│я│я┤п╦я┌п╟п╫ п╨п╟п╨ п╫п╟ п╫п╟я┤п╦п╫п╟я▌я┴п╦я┘, я┌п╟п╨ п╦ п╫п╟ п╬п©я▀я┌п╫я▀я┘
+п©п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩п╣п╧. п▓п╨п╩я▌я┤п╟п╣я┌ п©я─п╬я│я┌п╬п╧ п╡ п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫п╦п╦ я─п╣п╢п╟п╨я┌п╬я─, pico, п╢п╩я▐
+я─п╣п╢п╟п╨я┌п╦я─п╬п╡п╟п╫п╦я▐ п©п╬я┤я┌п╬п╡я▀я┘ я│п╬п╬п╠я┴п╣п╫п╦п╧. п≤п╪п╣п╣я┌ п©п╬п╢п╢п╣я─п╤п╨я┐ MIME, п╟п╢я─п╣я│п╫я▀п╣
+п╨п╫п╦пЁп╦, п©п╬п╢п╢п╣я─п╤п╨я┐ IMAP, п╪п╬п╤п╣я┌ я─п╟п╠п╬я┌п╟я┌я▄ я│ п©п╬я┤я┌п╬п╡я▀п╪п╦ я▐я┴п╦п╨п╟п╪п╦ п╡ я└п╬я─п╪п╟я┌п╣
+mail п╦ MH. п²п╟я│я┌п╬я▐я┴п╟я▐ п╡п╣я─я│п╦я▐ п©п╬п╥п╡п╬п╩я▐п╣я┌ я│п╨п╬п╫я└п╦пЁя┐я─п╦я─п╬п╡п╟я┌я▄ Pine я┌п╟п╨, я┤я┌п╬
+п╬п╫ п╫п╣ п╠я┐п╢п╣я┌ п╨п╬п╢п╦я─п╬п╡п╟я┌я▄ я─я┐я│я│п╨п╦п╧ я┌п╣п╨я│я┌ п╡ я┘п╣п╢п╣я─п╟я┘ п©п╦я│п╣п╪.
 
-%description -l tr
-Pine, metin tabanlЩ bir ileti ve haber servisi (news) istemcisidir.
-Hem acemi hem de uzman kullanЩcЩlar iГin uygundur. щleti yazmak iГin
-kullanЩmЩ oldukГa kolay olan pico adlЩ metin dЭzenleyicisini kullanЩr.
-Pico kendi baЧЩna da bir metin dЭzenleyici olarak ilgi gЖrmЭЧtЭr.
-Pine, MIME desteПi, adres defteri ve IMAP, MH gibi ileti arЧivi
-biГimlerini destekleme Жzelliklerini taЧЩr.
+%description -l tr.UTF-8
+Pine, metin tabanlд╠ bir ileti ve haber servisi (news) istemcisidir.
+Hem acemi hem de uzman kullanд╠cд╠lar iц╖in uygundur. д╟leti yazmak iц╖in
+kullanд╠mд╠ oldukц╖a kolay olan pico adlд╠ metin dц╪zenleyicisini kullanд╠r.
+Pico kendi baе÷д╠na da bir metin dц╪zenleyici olarak ilgi gц╤rmц╪е÷tц╪r.
+Pine, MIME desteд÷i, adres defteri ve IMAP, MH gibi ileti arе÷ivi
+biц╖imlerini destekleme ц╤zelliklerini taе÷д╠r.
 
-%description -l uk
-Pine - це повноц╕нний текст-ор╕╓нтований кл╕╓нт для пошти та
-телеконференц╕й. Розрахований як на початк╕вц╕в, так ╕ на досв╕дчених
-користувач╕в. М╕стить простий у використанн╕ редактор PICO для
-редагування поштових пов╕домлень. Ма╓ п╕дтримку MIME, адресн╕ книги,
-п╕дтримку IMAP, може працювати з поштовими скриньками в форматах mail
-та MH. Ця верс╕я дозволя╓ сконф╕гурувати Pine так, що в╕н не буде
-кодувати кирил╕чний текст в хедерах лист╕в.
+%description -l uk.UTF-8
+Pine - я├п╣ п©п╬п╡п╫п╬я├я√п╫п╫п╦п╧ я┌п╣п╨я│я┌-п╬я─я√я■п╫я┌п╬п╡п╟п╫п╦п╧ п╨п╩я√я■п╫я┌ п╢п╩я▐ п©п╬я┬я┌п╦ я┌п╟
+я┌п╣п╩п╣п╨п╬п╫я└п╣я─п╣п╫я├я√п╧. п═п╬п╥я─п╟я┘п╬п╡п╟п╫п╦п╧ я▐п╨ п╫п╟ п©п╬я┤п╟я┌п╨я√п╡я├я√п╡, я┌п╟п╨ я√ п╫п╟ п╢п╬я│п╡я√п╢я┤п╣п╫п╦я┘
+п╨п╬я─п╦я│я┌я┐п╡п╟я┤я√п╡. п°я√я│я┌п╦я┌я▄ п©я─п╬я│я┌п╦п╧ я┐ п╡п╦п╨п╬я─п╦я│я┌п╟п╫п╫я√ я─п╣п╢п╟п╨я┌п╬я─ PICO п╢п╩я▐
+я─п╣п╢п╟пЁя┐п╡п╟п╫п╫я▐ п©п╬я┬я┌п╬п╡п╦я┘ п©п╬п╡я√п╢п╬п╪п╩п╣п╫я▄. п°п╟я■ п©я√п╢я┌я─п╦п╪п╨я┐ MIME, п╟п╢я─п╣я│п╫я√ п╨п╫п╦пЁп╦,
+п©я√п╢я┌я─п╦п╪п╨я┐ IMAP, п╪п╬п╤п╣ п©я─п╟я├я▌п╡п╟я┌п╦ п╥ п©п╬я┬я┌п╬п╡п╦п╪п╦ я│п╨я─п╦п╫я▄п╨п╟п╪п╦ п╡ я└п╬я─п╪п╟я┌п╟я┘ mail
+я┌п╟ MH. п╕я▐ п╡п╣я─я│я√я▐ п╢п╬п╥п╡п╬п╩я▐я■ я│п╨п╬п╫я└я√пЁя┐я─я┐п╡п╟я┌п╦ Pine я┌п╟п╨, я┴п╬ п╡я√п╫ п╫п╣ п╠я┐п╢п╣
+п╨п╬п╢я┐п╡п╟я┌п╦ п╨п╦я─п╦п╩я√я┤п╫п╦п╧ я┌п╣п╨я│я┌ п╡ я┘п╣п╢п╣я─п╟я┘ п╩п╦я│я┌я√п╡.
 
 %package -n pico
 Summary:	Simple text editor in the style of the Pine Composer
-Summary(es):	Simple, easy-to-use text-based editor
-Summary(pl):	Prosty edytor tekstowy w stylu pine
-Summary(pt_BR):	Editor de textos para terminal simples e fАcil de usar
+Summary(es.UTF-8):   Simple, easy-to-use text-based editor
+Summary(pl.UTF-8):   Prosty edytor tekstowy w stylu pine
+Summary(pt_BR.UTF-8):   Editor de textos para terminal simples e fц║cil de usar
 Group:		Applications/Editors
 
 %description -n pico
@@ -150,27 +150,27 @@ message system composer. As with Pine, commands are displayed at the
 bottom of the screen, and context-sensitive help is provided. As
 characters are typed they are immediately inserted into the text.
 
-%description -n pico -l es
+%description -n pico -l es.UTF-8
 Pico is a simple, display-oriented text editor based on the Pine
 message system composer. As with Pine, commands are displayed at the
 bottom of the screen, and context- sensitive help is provided.
 
-%description -n pico -l pl
-Pico jest prostym, zorientowanym na wy╤wietlanie edytorem bazuj╠cym na
-pine. Tak jak w pine komendy s╠ wy╤wietlane na dole ekranu oraz
-dostЙpna jest pomoc konteksowa. Wpisywane znaki s╠ natychmiast
-wЁ╠czane do tekstu.
+%description -n pico -l pl.UTF-8
+Pico jest prostym, zorientowanym na wyе⌡wietlanie edytorem bazujд┘cym na
+pine. Tak jak w pine komendy sд┘ wyе⌡wietlane na dole ekranu oraz
+dostд≥pna jest pomoc konteksowa. Wpisywane znaki sд┘ natychmiast
+wе┌д┘czane do tekstu.
 
-%description -n pico -l pt_BR
-Pico И um editor de texto baseado no compositor de mensagens do Pine.
-Assim como no Pine, comandos sЦo mostrados na parte de baixo da tela,
-e ajuda de acordo com o contexto estА disponМvel.
+%description -n pico -l pt_BR.UTF-8
+Pico ц╘ um editor de texto baseado no compositor de mensagens do Pine.
+Assim como no Pine, comandos sцёo mostrados na parte de baixo da tela,
+e ajuda de acordo com o contexto estц║ disponц╜vel.
 
 %package -n pilot
 Summary:	Simple file system browser in the style of the Pine Composer
-Summary(es):	Simple filesystem browser in the style of the Pine Composer
-Summary(pl):	Prosta przegl╠darka plikСw w stylu composera pine
-Summary(pt_BR):	Navegador de sistemas de arquivos no estilo do compositor do Pine
+Summary(es.UTF-8):   Simple filesystem browser in the style of the Pine Composer
+Summary(pl.UTF-8):   Prosta przeglд┘darka plikцЁw w stylu composera pine
+Summary(pt_BR.UTF-8):   Navegador de sistemas de arquivos no estilo do compositor do Pine
 Group:		Applications/Shells
 
 %description -n pilot
@@ -178,20 +178,20 @@ Pilot is a simple, display-oriented file system browser based on the
 Pine message system composer. As with Pine, commands are displayed at
 the bottom of the screen, and context-sensitive help is provided.
 
-%description -n pilot -l es
+%description -n pilot -l es.UTF-8
 Pilot is a simple, display-oriented file system browser based on the
 Pine message system composer. As with Pine, commands are displayed at
 the bottom of the screen, and context-sensitive help is provided.
 
-%description -n pilot -l pl
-Pilot jest prost╠, zorientowan╠ na wy╤wietlanie przegl╠dark╠ plikСw w
-stylu compsera pine. Podobnie jak w pine polecenia sa wy╤wietlane na
-dole ekranu oraz jest dostЙpna pomoc kontekstowa.
+%description -n pilot -l pl.UTF-8
+Pilot jest prostд┘, zorientowanд┘ na wyе⌡wietlanie przeglд┘darkд┘ plikцЁw w
+stylu compsera pine. Podobnie jak w pine polecenia sa wyе⌡wietlane na
+dole ekranu oraz jest dostд≥pna pomoc kontekstowa.
 
-%description -n pilot -l pt_BR
-Pilot И um navegador de sistemas de arquivos baseado no Pine. Assim
-como no Pine, comandos sЦo apresentados na parte de baixo da tela, e
-ajuda de acordo com o contexto estА disponМvel.
+%description -n pilot -l pt_BR.UTF-8
+Pilot ц╘ um navegador de sistemas de arquivos baseado no Pine. Assim
+como no Pine, comandos sцёo apresentados na parte de baixo da tela, e
+ajuda de acordo com o contexto estц║ disponц╜vel.
 
 %prep
 %setup -q -a3 -n %{name}%{realversion}
