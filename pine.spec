@@ -5,14 +5,14 @@
 %bcond_without	home_etc	# build without home-etc support
 
 Summary:	MIME compliant mail reader w/ news support as well
-Summary(de.UTF-8):   MIME-konformer Mail-Reader mit News-Support
-Summary(es.UTF-8):   Lector de mail con soporte a MIME y news
-Summary(fr.UTF-8):   Lecteur de courrier conforme à MIME avec gestion des news"
-Summary(pl.UTF-8):   Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
-Summary(pt_BR.UTF-8):   Leitor de mail com suporte a MIME e news
-Summary(ru.UTF-8):   Совместимый с MIME почтовый редактор с поддержкой телеконференций
-Summary(tr.UTF-8):   MIME uyumlu ileti okuyucusu (haber servisi desteği de vardır)
-Summary(uk.UTF-8):   Сумісний з MIME почтовий редактор з підтримкою телеконференцій
+Summary(de.UTF-8):	MIME-konformer Mail-Reader mit News-Support
+Summary(es.UTF-8):	Lector de mail con soporte a MIME y news
+Summary(fr.UTF-8):	Lecteur de courrier conforme à MIME avec gestion des news"
+Summary(pl.UTF-8):	Klient poczty elektronicznej i newsów ze wspomaganiem dla MIME
+Summary(pt_BR.UTF-8):	Leitor de mail com suporte a MIME e news
+Summary(ru.UTF-8):	Совместимый с MIME почтовый редактор с поддержкой телеконференций
+Summary(tr.UTF-8):	MIME uyumlu ileti okuyucusu (haber servisi desteği de vardır)
+Summary(uk.UTF-8):	Сумісний з MIME почтовий редактор з підтримкою телеконференцій
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
@@ -139,9 +139,9 @@ Pine - це повноцінний текст-орієнтований кліє�
 
 %package -n pico
 Summary:	Simple text editor in the style of the Pine Composer
-Summary(es.UTF-8):   Simple, easy-to-use text-based editor
-Summary(pl.UTF-8):   Prosty edytor tekstowy w stylu pine
-Summary(pt_BR.UTF-8):   Editor de textos para terminal simples e fácil de usar
+Summary(es.UTF-8):	Simple, easy-to-use text-based editor
+Summary(pl.UTF-8):	Prosty edytor tekstowy w stylu pine
+Summary(pt_BR.UTF-8):	Editor de textos para terminal simples e fácil de usar
 Group:		Applications/Editors
 
 %description -n pico
@@ -168,9 +168,9 @@ e ajuda de acordo com o contexto está disponível.
 
 %package -n pilot
 Summary:	Simple file system browser in the style of the Pine Composer
-Summary(es.UTF-8):   Simple filesystem browser in the style of the Pine Composer
-Summary(pl.UTF-8):   Prosta przeglądarka plików w stylu composera pine
-Summary(pt_BR.UTF-8):   Navegador de sistemas de arquivos no estilo do compositor do Pine
+Summary(es.UTF-8):	Simple filesystem browser in the style of the Pine Composer
+Summary(pl.UTF-8):	Prosta przeglądarka plików w stylu composera pine
+Summary(pt_BR.UTF-8):	Navegador de sistemas de arquivos no estilo do compositor do Pine
 Group:		Applications/Shells
 
 %description -n pilot
