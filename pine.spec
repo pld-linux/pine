@@ -16,7 +16,7 @@ Summary(uk.UTF-8):	Сумісний з MIME почтовий редактор з
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
-Release:	5
+Release:	6
 %if %{with distributable}
 License:	Distributable for PLD
 %else
@@ -51,7 +51,6 @@ Patch15:	%{name}-overflow.patch
 Patch16:	http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch17:	%{name}-smime.patch
-Patch18:	%{name}-css.patch
 # from http://www.suse.de/~bk/pine/iconv/
 Patch19:	%{name}-iconv-9d.patch
 Patch20:	%{name}-home_etc.patch
@@ -214,7 +213,6 @@ ajuda de acordo com o contexto está disponível.
 %patch16 -p1
 # breaks pine
 #%{!?with_distributable:%patch17 -p1}
-%patch18 -p1
 %if ! %{with distributable}
 %{?with_utf8:%patch19 -p1}
 %{?with_utf8:%patch22 -p1}
