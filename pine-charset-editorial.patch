@@ -1,0 +1,27 @@
+--- pine/mailview.c	2004/08/21 01:23:41	1.1
++++ pine/mailview.c	2004/08/21 01:28:01
+@@ -192,6 +192,8 @@
+ #define	CHARSET_DISCLAIMER_2	"display is set"
+ #define	CHARSET_DISCLAIMER_3	\
+        " for the \"%.40s\" character set. \015\012Some %.40scharacters may be displayed incorrectly."
++#define	CHARSET_DISCLAIMER_4	\
++       " for the \"%.40s\" character set. \015\012Error: character set unkown or conversion not supported."
+ #define ENCODING_DISCLAIMER      \
+         "The following text contains the unknown encoding type \"%.20s\". \015\012Some or all of the text may be displayed incorrectly."
+ 
+@@ -2143,9 +2145,14 @@
+ 	*p = '\0';
+     }
+ 
+-    sprintf(p, CHARSET_DISCLAIMER_3,
++    if (quality == CV_NO_TRANSLATE_POSSIBLE)
++	sprintf(p, CHARSET_DISCLAIMER_4,
++	    ps_global->VAR_CHAR_SET ? ps_global->VAR_CHAR_SET : "US-ASCII");
++    else {
++	sprintf(p, CHARSET_DISCLAIMER_3,
+ 	    ps_global->VAR_CHAR_SET ? ps_global->VAR_CHAR_SET : "US-ASCII",
+ 	    (quality == CV_LOSES_SPECIAL_CHARS) ? "special " : "");
++    }
+ 
+     return(format_editorial(buf, width, pc) == NULL
+ 	   && gf_puts(NEWLINE, pc) && gf_puts(NEWLINE, pc));

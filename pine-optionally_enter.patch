@@ -1,0 +1,380 @@
+--- pine4.64/pine/osdep/termin.gen
++++ pine4.64/pine/osdep/termin.gen
+@@ -139,14 +139,93 @@
+ static struct display_line {
+     int   row, col;			/* where display starts		 */
+     int   dlen;				/* length of display line	 */
+-    char *dl;				/* line on display		 */
+-    char *vl;				/* virtual line 		 */
++    int  *dl;				/* line on display		 */
++    int  *vl;				/* virtual line 		 */
+     int   vlen;				/* length of virtual line        */
+     int   vused;			/* length of virtual line in use */
+     int   vbase;			/* first virtual char on display */
+ } dline;
+ 
++/*
++ * In UTF-8 mode, decode byte sequencies and if a sequence is complete,
++ * insert the resulting Unicode(UCS4) value as cell value into the buffer.
++ */
++static int insert_byte(offset, c)
++unsigned int offset, c;
++{
++    static char linsert_buf[6], linsert_buf_count = 0;
++    if (gmode & P_UNICODE && c & 0x80) {
++	if (linsert_buf_count >= sizeof(linsert_buf))
++	    linsert_buf_count = 0;
++	linsert_buf[linsert_buf_count++] = c;
++	c = 0;
++	if (linsert_buf_count > 1)
++	    c = utf8_get_ucs(linsert_buf, linsert_buf_count);
++	if (!c)
++	    return 0;
++    }
++    linsert_buf_count = 0;
++	int *s2;
++    for(s2 = &dline.vl[++dline.vused]; s2 - dline.vl > offset; s2--)
++	*s2 = *(s2-1);
++    dline.vl[offset] = c;
++    return 1;
++}
+ 
++/*----------------------------------------------------------------------
++    Write a character to the screen, keeping track of cursor position
++
++   Args: ch -- character to output
++
++ Result: character output
++         cursor position variables updated
++  ----*/
++void
++Writechar_UCS4(c)
++     register unsigned int c;
++{
++    if (gmode & P_UNICODE && c > 127) {
++	if (c & 0xf800) {
++	    Writechar(0xe0 | (c >> 12), 0);
++	    Writechar(0x80 | ((c >> 6) & 0x3f), 0);
++	}
++	else
++	    Writechar(0xc0 | ((c >> 6) & 0x3f), 0);
++	Writechar(0x80 | (c & 0x3f), 0);
++	return;
++    }
++    Writechar(c, 0);
++}
++
++/*----------------------------------------------------------------------
++  ----*/
++void
++UCS4vektor_to_UTF8string(c, inchars, utf8, ospace)
++int *c;
++size_t inchars;
++unsigned char *utf8;
++int ospace;
++{
++    for(;inchars > 0 && ospace > 3 && *c; c++) {
++	    if (gmode & P_UNICODE && *c > 127) {
++		if (*c & 0xf800) {
++		    *utf8++ = 0xe0 | (*c >> 12);
++		    *utf8++ = 0x80 | ((*c >> 6) & 0x3f);
++			ospace -= 3;
++		}
++		else {
++			ospace -= 2;
++		    *utf8++ = 0xc0 | ((*c >> 6) & 0x3f);
++		}
++		*utf8++ = 0x80 | (*c & 0x3f);
++	    }
++	    else {
++		    *utf8++ = *c;
++			ospace--;
++		}
++    }
++    *utf8 = '\0';
++}
+ 
+ static struct key oe_keys[] =
+        {{"^G","Help",KS_SCREENHELP},	{"^C","Cancel",KS_NONE},
+@@ -217,12 +296,13 @@
+      int         x_base, y_base, field_len;
+      int	*flags;
+ {
+-    register char *s2;
++    register int  *s2;
+     register int   field_pos;
+     int            i, j, return_v, cols, ch, prompt_len, too_thin,
+                    real_y_base, km_popped, passwd;
+     char          *saved_original = NULL, *k, *kb;
+-    char          *kill_buffer = NULL;
++    int           *kill_buffer = NULL;
++    size_t         kb_len;
+     char         **help_text;
+     int		   fkey_table[12];
+     struct	   key_menu *km;
+@@ -383,11 +463,14 @@
+ 	dline.dlen  = 5;
+     }
+ 
+-    dline.dl    = fs_get((size_t)dline.dlen + 1);
+-    memset((void *)dline.dl, 0, (size_t)(dline.dlen + 1) * sizeof(char));
++    dline.dl    = fs_get((size_t)dline.dlen*4 + 4);
++    memset((void *)dline.dl, 0, (size_t)(dline.dlen*4 + 4) * sizeof(char));
+     dline.row   = real_y_base;
+     dline.col   = x_base + prompt_len;
+-    dline.vl    = string;
++
++    dline.vl    = fs_get((size_t)field_len*4 + 4);
++    memset((void *)dline.vl, 0, (size_t)(field_len*4 + 4) * sizeof(char));
++
+     dline.vlen  = --field_len;		/* -1 for terminating NULL */
+     dline.vbase = field_pos = 0;
+ 
+@@ -399,12 +482,12 @@
+     /* make sure passed in string is shorter than field_len */
+     /* and adjust field_pos..                               */
+ 
+-    while((flags && *flags & OE_APPEND_CURRENT) &&
+-          field_pos < field_len && string[field_pos] != '\0')
+-      field_pos++;
++    if(flags && *flags & OE_APPEND_CURRENT)
++	for(kb = string; (i=strlen(kb)) > 0 && field_pos < field_len;)
++	    dline.vl[field_pos++] = utf8_get_ucs_string(&kb, i);
+ 
+     string[field_pos] = '\0';
+-    dline.vused = (int)(&string[field_pos] - string);
++    dline.vused = field_pos;
+     passwd = (flags && *flags & OE_PASSWD) ? 1 : 0;
+     line_paint(field_pos, &passwd);
+ 
+@@ -475,7 +558,7 @@
+ 	    /*--------------- KEY RIGHT ---------------*/
+           case ctrl('F'):  
+ 	  case KEY_RIGHT:
+-	    if(field_pos >= field_len || string[field_pos] == '\0')
++	    if(field_pos >= field_len || dline.vl[field_pos] == 0)
+               goto bleep;
+ 
+ 	    line_paint(++field_pos, &passwd);
+@@ -499,13 +582,13 @@
+ 	     */
+ 
+ 	    /* skip thru current word */
+-	    while(string[field_pos]
+-		  && isalnum((unsigned char) string[field_pos]))
++	    while(dline.vl[field_pos]
++		  && isalnum((unsigned char) dline.vl[field_pos]))
+ 	      field_pos++;
+ 
+ 	    /* skip thru current white space to next word */
+-	    while(string[field_pos]
+-		  && !isalnum((unsigned char) string[field_pos]))
++	    while(dline.vl[field_pos]
++		  && !isalnum((unsigned char) dline.vl[field_pos]))
+ 	      field_pos++;
+ 
+ 	    line_paint(field_pos, &passwd);
+@@ -535,11 +618,11 @@
+           /*-------------------- Delete char --------------------*/
+ 	  case ctrl('D'): 
+ 	  case KEY_DEL: 
+-            if(field_pos >= field_len || !string[field_pos])
++            if(field_pos >= field_len || !dline.vl[field_pos])
+ 	      goto bleep;
+ 
+ 	    dline.vused--;
+-	    for(s2 = &string[field_pos]; *s2 != '\0'; s2++)
++	    for(s2 = &dline.vl[field_pos]; *s2 != 0; s2++)
+ 	      *s2 = s2[1];
+ 
+ 	    *s2 = '\0';			/* Copy last NULL */
+@@ -555,14 +638,15 @@
+             if(kill_buffer != NULL)
+               fs_give((void **)&kill_buffer);
+ 
+-	    if(field_pos != 0 || string[0]){
+-		if(!passwd && F_ON(F_DEL_FROM_DOT, ps_global))
+-		  dline.vused -= strlen(&string[i = field_pos]);
+-		else
+-		  dline.vused = i = 0;
++	    if(field_pos != 0 || dline.vl[0]){
++		if(passwd || !F_ON(F_DEL_FROM_DOT, ps_global))
++			field_pos = 0;
++		kb_len = (dline.vused - field_pos)*4+4;
++		kill_buffer = fs_get(kb_len);
++		dline.vused = field_pos;
+ 
+-		kill_buffer = cpystr(&string[field_pos = i]);
+-		string[field_pos] = '\0';
++		memcpy(kill_buffer, &dline.vl[field_pos], kb_len);
++		dline.vl[field_pos] = 0;
+ 		line_paint(field_pos, &passwd);
+ 		if(flags)		/* record change if requested  */
+ 		  *flags |= OE_USER_MODIFIED;
+@@ -576,7 +660,7 @@
+             if(kill_buffer == NULL)
+               goto bleep;
+ 
+-            /* Make string so it will fit */
++            /* Make string so it will fit
+             kb = cpystr(kill_buffer);
+             dprint(2, (debugfile,
+ 		       "Undelete: %d %d\n", strlen(string), field_len));
+@@ -584,24 +668,24 @@
+                 kb[field_len - strlen(string)] = '\0';
+             dprint(2, (debugfile,
+ 		       "Undelete: %d %d\n", field_len - strlen(string),
+-		       strlen(kb)));
++		       strlen(kb))); */
+                        
+-            if(string[field_pos] == '\0') {
++            if(dline.vl[field_pos] == 0) {
+                 /*--- adding to the end of the string ----*/
+-                for(k = kb; *k; k++)
+-		  string[field_pos++] = *k;
+-
+-                string[field_pos] = '\0';
++		if ((field_len-field_pos)*4 < kb_len)
++		     goto bleep;
++		memcpy(&dline.vl[field_pos], kill_buffer, kb_len);
++		field_pos = kb_len/4-1;
++		dline.vl[field_pos] = 0;
+             } else {
+                 goto bleep;
+                 /* To lazy to do insert in middle of string now */
+             }
+ 
+-	    if(*kb && flags)		/* record change if requested  */
++	    if(flags)		/* record change if requested  */
+ 	      *flags |= OE_USER_MODIFIED;
+ 
+-	    dline.vused = strlen(string);
+-            fs_give((void **)&kb);
++	    dline.vused = field_pos;
+ 	    line_paint(field_pos, &passwd);
+             break;
+             
+@@ -667,8 +748,8 @@
+ 		y_base = -3;
+ 		dline.row = real_y_base = y_base + ps_global->ttyo->screen_rows;
+ 		PutLine0(real_y_base, x_base, prompt);
+-		fs_resize((void **)&dline.dl, (size_t)dline.dlen + 1);
+-		memset((void *)dline.dl, 0, (size_t)(dline.dlen + 1));
++		fs_resize((void **)&dline.dl, (size_t)dline.dlen*4 + 4);
++		memset((void *)dline.dl, 0, (size_t)(dline.dlen*4 + 4));
+ 		line_paint(field_pos, &passwd);
+ 		break;
+ 	    }
+@@ -765,8 +846,8 @@
+             } else {
+ 		dline.col   = x_base + prompt_len;
+ 		dline.dlen  = cols - (x_base + prompt_len + 1);
+-		fs_resize((void **)&dline.dl, (size_t)dline.dlen + 1);
+-		memset((void *)dline.dl, 0, (size_t)(dline.dlen + 1));
++		fs_resize((void **)&dline.dl, (size_t)dline.dlen*4 + 4);
++		memset((void *)dline.dl, 0, (size_t)(dline.dlen*4 + 4));
+ 		line_paint(field_pos, &passwd);
+             }
+             fflush(stdout);
+@@ -802,7 +883,7 @@
+ 		  break;
+ 	    }
+ 
+-	    if(iscntrl(ch & 0x7f)){
++	    if(iscntrl(ch)){
+        bleep:
+ 		putc(BELL, stdout);
+ 		continue;
+@@ -813,14 +894,11 @@
+ 	    if(dline.vused >= field_len)
+ 	      goto bleep;
+ 
+-	    /*---- extending the length of the string ---*/
+-	    for(s2 = &string[++dline.vused]; s2 - string > field_pos; s2--)
+-	      *s2 = *(s2-1);
+-
+-	    string[field_pos++] = ch;
+-	    line_paint(field_pos, &passwd);
+-	    if(flags)		/* record change if requested  */
+-	      *flags |= OE_USER_MODIFIED;
++	    if (insert_byte(field_pos, ch)) {
++		    line_paint(++field_pos, &passwd);
++		    if(flags)		/* record change if requested  */
++		      *flags |= OE_USER_MODIFIED;
++	    }
+ 		    
+ 	}   /*---- End of switch on char ----*/
+     }
+@@ -830,6 +908,10 @@
+       mswin_showcaret(0);
+ #endif
+ 
++    UCS4vektor_to_UTF8string(dline.vl, dline.vused, string, field_len);
++    dprint(10, (debugfile, "converted: '%s'\n", string));
++
++    fs_give((void **)&dline.vl);
+     fs_give((void **)&dline.dl);
+     if(saved_original) 
+       fs_give((void **)&saved_original);
+@@ -874,8 +955,8 @@
+     int   offset;			/* current dot offset into line */
+     int  *passwd;			/* flag to hide display of chars */
+ {
+-    register char *pfp, *pbp;
+-    register char *vfp, *vbp;
++    register int  *pfp, *pbp;
++    register int  *vfp, *vbp;
+     int            extra = 0;
+ #define DLEN	(dline.vbase + dline.dlen)
+ 
+@@ -992,15 +992,15 @@
+     if(dline.vbase){				/* off screen cue left */
+ 	vfp = &dline.vl[dline.vbase+1];
+ 	pfp = &dline.dl[1];
+-	if(dline.dl[0] != '<'){
++	if(dline.dl[0] != 60 /* '<' */ ){
+ 	    MoveCursor(dline.row, dline.col);
+-	    Writechar(dline.dl[0] = '<', 0);
++	    Writechar(dline.dl[0] = 60 /* '<' */ , 0);
+ 	}
+     }
+     else{
+ 	vfp = dline.vl;
+ 	pfp = dline.dl;
+-	if(dline.dl[0] == '<'){
++	if(dline.dl[0] == 60 /* '<' */ ){
+ 	    MoveCursor(dline.row, dline.col);
+ 	    Writechar(dline.dl[0] = ' ', 0);
+ 	}
+@@ -1009,16 +1009,16 @@
+     if(dline.vused > DLEN){			/* off screen right... */
+ 	vbp = vfp + (long)(dline.dlen-(dline.vbase ? 2 : 1));
+ 	pbp = pfp + (long)(dline.dlen-(dline.vbase ? 2 : 1));
+-	if(pbp[1] != '>'){
++	if(pbp[1] != 62 /* '>' */ ){
+ 	    MoveCursor(dline.row, dline.col+dline.dlen);
+-	    Writechar(pbp[1] = '>', 0);
++	    Writechar(pbp[1] = 62 /* '>' */ , 0);
+ 	}
+     }
+     else{
+ 	extra = dline.dlen - (dline.vused - dline.vbase);
+ 	vbp = &dline.vl[max(0, dline.vused-1)];
+ 	pbp = &dline.dl[dline.dlen];
+-	if(pbp[0] == '>'){
++	if(pbp[0] == 62 /* '>' */ ){
+ 	    MoveCursor(dline.row, dline.col+dline.dlen);
+ 	    Writechar(pbp[0] = ' ', 0);
+ 	}
+@@ -966,9 +1047,9 @@
+ 	MoveCursor(dline.row, dline.col + (int)(pfp - dline.dl));
+ 
+ 	do
+-	  Writechar((unsigned char)((vfp <= vbp && *vfp)
++	  Writechar_UCS4(((vfp <= vbp && *vfp)
+ 		      ? ((*pfp = *vfp++) == TAB) ? ' ' : *pfp
+-		      : (*pfp = ' ')), 0);
++		      : (*pfp = ' ')));
+ 	while(++pfp <= pbp);
+     }
+ 

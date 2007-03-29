@@ -1,0 +1,31 @@
+# The charset label which is inserted before decoding the first RFC2047
+# encoded word could be done much in a much better way: it should be added
+# only when we know that we might have a bad conversion result
+# and it should be turned off with the quell-charset-waring config
+# flag. UTF-8 as ps_global->VAR_CHAR_SET should turn it off also.
+#
+# As a quick measure, at least when iconv is available for transliteration,
+# it can be turned off when a destination charset (ps_global->VAR_CHAR_SET)
+# is available, because the conversion should be reasonable and if the
+# charset is wanted, users can always look at the header and in addition,
+# there is the charset editoral which also generally displays the charset
+# of the mail:
+--- pine4.58/pine/strings.c	2003-08-28 00:28:42.000000000 +0200
++++ pine4.7l/pine/strings.c	2004-01-23 21:14:29.000000000 +0100
+@@ -2992,6 +3391,8 @@ rfc1522_decode(d, len, s, charset)
+ 		if(!cs)
+ 		  cs = cpystr(cset);
+ 
++	       if (!ps_global->VAR_CHAR_SET) {
++		/* We don't know where to convert to, so do a charset tag: */
+ 		if(charset){
+ 		    if(!*charset)		/* only write first charset */
+ 		      *charset = cpystr(cset);
+@@ -3014,6 +3417,7 @@ rfc1522_decode(d, len, s, charset)
+ 		    if(d-rv<len-1)
+ 		      *d++ = SPACE;
+ 		}
++	       }
+ 	    }
+ 
+ 	    /* based on encoding, write the encoded text to output buffer */

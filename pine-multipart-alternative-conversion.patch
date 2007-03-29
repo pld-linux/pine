@@ -1,0 +1,27 @@
+--- pine4.64/pine/reply.c
++++ pine4.64/pine/reply.c
+@@ -4598,6 +4599,11 @@
+ 	body			 =  mail_newbody();
+ 	body->type		 = TYPETEXT;
+ 	body->contents.text.data = msgtext;
++	/*
++	 * For giving get_body_part_text the charset from which it has
++	 * to convert from, reset afterwards to prevent double free!
++	 */
++	body->parameter		 = part->body.parameter;
+ 
+ 	if(!(flags & FWD_ANON)){
+ 	    forward_delimiter(pc);
+@@ -4609,6 +4611,12 @@
+ 		sect_prefix ? "." : "", flags & FWD_NESTED ? "1." : "",
+ 		partnum);
+ 	get_body_part_text(stream, body, msgno, tmp_buf, pc, NULL);
++	/*
++	 * Reset it, otherwise send thinks it's not converted, and since
++	 * the parameter list was not copied, only the pointer to it, it
++	 * it needed to be reset to prevent a second, double free later!
++	 */
++	body->parameter = NULL;
+     }
+     else
+       q_status_message(SM_ORDER | SM_DING, 3, 3,
