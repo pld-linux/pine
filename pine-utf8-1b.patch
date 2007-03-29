@@ -1,0 +1,687 @@
+Submission of this patch with documentation:
+================================================================================
+--- pine4.64/pico/composer.c
++++ pine4.64/pico/composer.c
+@@ -344,7 +344,189 @@
+       return(TRUE);
+ }
+ 
++/*
++ * check_utf8 - check for UTF-8 bytes 
++ * Takes two arguments:
++ *   char *c		- a byte of the stream
++ *   char *utf_seq	- a status array holding the function's state
++ * utf_seq must be provided by the caller this way:
++ *  (static) char utf_seq[7] = ""; (content must be retained over calls)
++ *  and must be initialized at start using: utf_seq[0] = 0;
++ *
++ * Returns NULL if an UTF-8 sequence has been started and is not completed.
++ * If an UTF-8 sequence is complete, it returns a pointer to a static string
++ * which is valid until the next use of the function.
++ * If the character is a double width character, a space(' ') is prepended
++ * to the returned string.
++ * If a character < 128 is passed, the UTF-8 state in utf_seq[] is cleared,
++ * because a valid UTF-8 sequence only consists of bytes >= 0x80. The pointer
++ * returned points to the address of the passed character to indicate this.
++ * Features: Supports UTF-8 seqencies up to 4 bytes.
++ * Todo: Instead of passing a pointer to the char and comparing the returned
++ *       pointer to this address afterwards, the Interface could be changed
++ *       to just pass the character as simple char(thus not requesting the
++ *       address of a variable which might be declared as register) and replace
++ *       the check of the return value with a check of (c & 0x80) and if this
++ *       is not the case, assuming that (utf_seq[0] == 0) means that this last
++ *       non-ASCII byte completed the UTF-8 sequence, while having
++ *       utf_seq[0] != 0 means having an incomplete UTF-8 sequence.
++ */
++char *
++check_utf8(c, utf_seq, sizeof_utf_seq)
++     char *c;
++     char *utf_seq;
++     size_t sizeof_utf_seq;
++{
++    static   char char_string[8]; /* (six UTF-8 sequence bytes + ' ' + '\0') */
++    int      ix;
++    unsigned char dbl_wide[7][2][4] = {0xe1,0x84,0x80,0x00, 0xe1,0x85,0x9F,0x00,
++				       0xe2,0x8c,0xa9,0x00, 0xe2,0x8c,0xaa,0x00,
++				       0xe2,0xba,0x80,0x00, 0xed,0x9e,0xa3,0x00,
++				       0xef,0xa4,0x80,0x00, 0xef,0xa9,0xaa,0x00,
++				       0xef,0xb8,0xb0,0x00, 0xef,0xb9,0xa8,0x00,
++				       0xef,0xbc,0x81,0x00, 0xef,0xbd,0xad,0x00,
++				       0xef,0xbf,0xa0,0x00, 0xef,0xbf,0xa6,0x00};
++    if (*c & 0x80) {
++       char_string[0] = *c;
++       char_string[1] = 0;
++       if (strlen(utf_seq) == sizeof_utf_seq - 1)
++	  utf_seq[0] = 0;          /* don't allow a overlong UTF-8 sequence   */
++       if ((*c & 0xF0) >= 0xC0) {
++	  strncpy(utf_seq, char_string, sizeof_utf_seq);
++	  return NULL;		   /* possible UTF-8 sequence, need next byte */
++       } else if (utf_seq[0]) {
++	  strncat(utf_seq, char_string, sizeof_utf_seq); /* append to string */
++	  switch (utf_seq[0] & 0xF0) {
++	     case 0xC0 :
++	     case 0xD0 :
++		 strncpy(char_string, utf_seq, sizeof(char_string));
++		 utf_seq[0] = 0;	 /* sequence complete, clear for next */
++		 return char_string;     /* pass the new UTF-8 sequence on    */
++	     case 0xE0 :
++		 if (strlen(utf_seq) < 3)
++		    return NULL; // 3-byte UTF-8, need next byte
++		 char_string[0] = '\0'; // init
++		 for (ix = 0; ix < 7; ix++)
++		       if (strcmp(utf_seq, &dbl_wide[ix][0][0]) >= 0
++			&& strcmp(utf_seq, &dbl_wide[ix][1][0]) <= 0) {
++			  char_string[0] = ' ';  /* flag as double-width char */
++		 	  break;
++		 }
++		 strncat(char_string, utf_seq, sizeof(char_string));
++		 utf_seq[0] = 0; // this sequence is over, clear for restart
++		 return char_string; // process this UTF-8 char...
++	     case 0xF0 :
++		 if (strlen(utf_seq) < 4)
++		    return NULL;     /* 4-byte UTF-8 sequence, need next byte */
++		 char_string[0] = '\0';            /* init the sequence space */
++		 if ((utf_seq[1] & 0xF0) == 0xA0)
++		    char_string[0] = ' ';  /* flag as double-width UTF-8 char */
++		 strncat(char_string, utf_seq, sizeof(char_string));
++		 utf_seq[0] = 0;	 /* sequence complete, clear for next */
++		 return char_string;	 /* pass the new UTF-8 sequence on    */
++	  }
++       }
++    }
++    utf_seq[0] = 0;  /* clear sequence buffer in case of an invalid sequence */
++    return c;        /* single-byte, NON-UTF-8 chars are process it as usual */
++}
++
++/*
++ * wrapper to check_utf8 for pico, if not in UTF-8 mode, do not check UTF-8
++ */
++char *
++pico_check_utf8(c, utf_seq, sizeof_utf_seq)
++     char *c;
++     char *utf_seq;
++     size_t sizeof_utf_seq;
++{
++    if(!(Pmaster->pine_flags & P_UNICODE))
++	return c;
++    return check_utf8(c, utf_seq, sizeof_utf_seq);
++}
++
++/*
++ * Get the number of columns which are filled by the text in the current
++ * line of LineEdit(from the start of the line to the current position)
++ */
++static int
++count_screencols(void)
++{
++ 	char utf_seq[7] = "", *cp, *r;
++	int seq = 0, w = 0;
++
++	for(cp = ods.cur_l->text; *cp && cp < ods.cur_l->text + ods.p_off;
++			cp++) {
++		if (!(r = pico_check_utf8(cp, utf_seq, sizeof(utf_seq)))) {
++			seq = 1;
++			continue;
++		}
++		if (seq)
++			w++;
++		seq = 0;
++		if (r == cp)
++			w++;
++		else if (*r == ' ')
++			w++;
++	}
++	return w;
++}
+ 
++/*
++ * Get the offset in screen positions which must be subsctracted from the
++ * byte count in the LineEdit line in order to reach the line position on
++ * screen(because of double wide characters and multible UTF-8 bytes)
++ */
++static int
++offset_on_screen(void)
++{
++	return ods.p_off - count_screencols();
++}
++
++/*
++ * Move current position in LineEdit one character left, return the number
++ * of byte positons which were neccesary to jump left in order to
++ * arrive at the start of the previous multibyte character(UTF-8).
++ */
++static int
++LineEditCharLeft()
++{
++    int col_right = ods.p_off, cols = count_screencols();
++
++    do
++	if (--ods.p_off < 0)
++		break;
++    while (count_screencols() - cols == -1);
++
++    ods.p_off++;
++	
++    if (col_right - ods.p_off > 0)
++    	return col_right - ods.p_off;
++
++    do
++	if (--ods.p_off < 0)
++		break;
++    while (count_screencols() - cols == -2);
++
++    ods.p_off++;
++	
++    return col_right - ods.p_off;
++}
++
++/*
++ * Move current position in LineEdit one character right, if UTF-8
++ * mode is active, the ods.p_off is assumed to be at the start of
++ * a UTF-8 sequence or at a normal ASCII character. It is moved to
++ * the next character, jumping past the end of the current UTF-8
++ * sequence, if UTF8 mode is active.
++ */
++static void
++LineEditCharRight()
++{
++    char utf_seq[7] = "";
++    while(ods.p_off < ods.p_len && ods.cur_l->text[ods.p_off] &&
++	!pico_check_utf8(ods.cur_l->text + ods.p_off++, utf_seq, sizeof(utf_seq)));
++}
+ 
+ /*
+  *  ResizeHeader - Handle resizing display when SIGWINCH received.
+@@ -397,7 +579,7 @@
+     PaintBody(0);
+ 
+     if(ComposerEditing)
+-      movecursor(ods.p_line, ods.p_off+headents[ods.cur_e].prlen);
++      HeaderPaintCursor();
+ 
+     (*term.t_flush)();
+     return(TRUE);
+@@ -1596,6 +1778,7 @@
+ 	     int	skipmove = 0;
+              char	*strng;
+     int      last_key;				/* last keystroke  */
++    unsigned char	utf_seq[7] = "";
+ 
+     strng   = ods.cur_l->text;			/* initialize offsets */
+     ods.p_len = strlen(strng);
+@@ -1678,7 +1861,7 @@
+ 	    }
+ 
+ 	    clearcursor();
+-	    movecursor(ods.p_line, ods.p_off+headents[ods.cur_e].prlen);
++	    HeaderPaintCursor();
+ 	    if(ch == NODATA)			/* GetKey timed out */
+ 	      continue;
+ 
+@@ -1688,7 +1871,7 @@
+         if(mpresf){				/* blast old messages */
+ 	    if(mpresf++ > NMMESSDELAY){		/* every few keystrokes */
+ 		mlerase();
+-		movecursor(ods.p_line, ods.p_off+headents[ods.cur_e].prlen);
++		HeaderPaintCursor();
+ 	    }
+         }
+ 
+@@ -1734,12 +1917,40 @@
+ 
+ 		/*
+ 		 * then find out where things fit...
++		 *
++		 * For UTF-8, the < LINELEN check should need to do it's
++		 * calculation based on count_screencols() plus the width
++		 * of the new char as provided by pico_check_utf8.
++		 * The buffer size may need to be increased for this.
+ 		 */
+ 		if(ods.p_len < LINELEN()){
+ 		    CELL c;
++		    char tmp;
+ 
+-		    c.c = ch;
+ 		    c.a = 0;
++		    if(Pmaster->pine_flags & P_UNICODE) {
++		        tmp = ch;
++		    	char * chp = pico_check_utf8(&tmp, utf_seq, sizeof(utf_seq));
++			if (chp == NULL)
++			    continue; 		/* on to the next! */
++			if (chp != &tmp && *chp == ' ')
++			    chp++;
++			if (*chp & 0x80) {
++			    while (*chp && ods.p_len < LINELEN()) {
++				c.c = *chp++;
++		    		pinsert(c);	/* add char to str */
++			    }
++			    /* update the display: */
++			    PaintHeader(COMPOSER_TOP_LINE, TRUE);
++			    /* If end char was inserted, set physical .. */
++			    if (ods.p_off == ods.p_len)
++			        /* cursor pos on next movecursor_offset: */
++				movecursor_offset(-1, 0, 0);
++			    continue; 		/* on to the next! */
++			}
++		    }
++
++		    c.c = ch;
+ 		    if(pinsert(c)){		/* add char to str */
+ 			skipmove++;		/* must'a been optimal */
+ 			continue; 		/* on to the next! */
+@@ -1776,6 +1987,7 @@
+             } 
+         }
+         else {					/* interpret ch as a command */
++	    utf_seq[0] = '\0';
+             switch (ch = normalize_cmd(ch, ckm, 2)) {
+ 	      case (CTRL|'\\') :
+ 		if (ch = GetAccent())
+@@ -1869,9 +1869,7 @@
+ 	      case KEY_RIGHT:			/* move character right */
+ 		if(ods.p_off < ods.p_len 
+ 		   && ods.p_off + headents[ods.cur_e].prlen < term.t_ncol){
+-		    pputc(pscr(ods.p_line, 
+-			       (ods.p_off++)+headents[ods.cur_e].prlen)->c,0);
+-		    skipmove++;
++		    LineEditCharRight();
+ 		    continue;
+ 		}
+ 		else if(gmode & MDHDRONLY)
+@@ -1882,7 +2092,7 @@
+ 	      case (CTRL|'B') :
+ 	      case KEY_LEFT	:		/* move character left */
+ 		if(ods.p_off > 0){
+-		    ods.p_off--;
++		    LineEditCharLeft();
+ 		    continue;
+ 		}
+ 		if(ods.p_line != COMPOSER_TOP_LINE)
+@@ -1917,7 +2127,8 @@
+ 		    continue;
+ 		}
+ 
+-		pputc(strng[ods.p_off++], 0); 	/* drop through and rubout */
++		LineEditCharRight(); /* jump to next char */
++		/* and fall thru */
+ 
+ 	      case DEL        :			/* blast previous char */
+ 	      case (CTRL|'H') :
+@@ -1931,20 +2142,27 @@
+ 		    continue;
+ 		}
+ 
+-		if(ods.p_off > 0){		/* just shift left one char */
+-		    ods.p_len--;
++		if(ods.p_off > 0){		/* shift left one char */
++		    int todelete = LineEditCharLeft();
++
++		    ods.p_len -= todelete;
++
+ 		    headents[ods.cur_e].dirty  = 1;
+ 		    if(ods.p_len == 0)
+ 		      headents[ods.cur_e].sticky = 0;
+ 		    else
+ 		      headents[ods.cur_e].sticky = 1;
+ 
+-		    tbufp = &strng[--ods.p_off];
+-		    while(*tbufp++ != '\0')
+-		      tbufp[-1] = *tbufp;
+ 		    tbufp = &strng[ods.p_off];
++
++		    while(*tbufp++ != '\0')
++		      tbufp[-1] = tbufp[todelete-1];
++
+ 		    if(pdel())			/* physical screen delete */
+ 		      skipmove++;		/* must'a been optimal */
++
++		    /* needed if pine bgcolor != terminal background color */
++		    PaintHeader(ods.p_line, TRUE);
+ 		}
+ 		else{				/* may have work to do */
+ 		    if(ods.cur_l->prev == NULL){  
+@@ -1955,18 +2173,16 @@
+ 		    ods.p_line--;
+ 		    ods.cur_l = ods.cur_l->prev;
+ 		    strng = ods.cur_l->text;
+-		    if((i=strlen(strng)) > 0){
+-			strng[i-1] = '\0';	/* erase the character */
+-			ods.p_off = i-1;
++		    if((ods.p_off=strlen(strng)) > 0){
++		        ods.p_off -= LineEditCharLeft() - 1;
++			strng[ods.p_off] = '\0'; /* erase the character */
+ 		    }
+-		    else{
++		    else
+ 			headents[ods.cur_e].sticky = 0;
+-			ods.p_off = 0;
+-		    }
+-		    
+-		    tbufp = &strng[ods.p_off];
+ 		}
+ 
++		tbufp = &strng[ods.p_off];
++
+ 		if((status = FormatLines(ods.cur_l, "", LINELEN(), 
+ 				   headents[ods.cur_e].break_on_comma,0))==-1){
+ 		    (*term.t_beep)();
+@@ -1991,7 +2207,7 @@
+ 		      PaintBody(1);
+ 		}
+ 
+-		movecursor(ods.p_line, ods.p_off+headents[ods.cur_e].prlen);
++		HeaderPaintCursor();
+ 
+ 		if(skipmove)
+ 		  continue;
+@@ -2016,7 +2232,8 @@
+ void
+ HeaderPaintCursor()
+ {
+-    movecursor(ods.p_line, ods.p_off+headents[ods.cur_e].prlen);
++    movecursor_offset(ods.p_line, ods.p_off + headents[ods.cur_e].prlen,
++		offset_on_screen());
+ }
+ 
+ 
+--- pine4.64/pico/display.c
++++ pine4.64/pico/display.c
+@@ -1295,7 +1295,22 @@
+     }
+ }
+ 
++void
++movecursor_offset(row, col, offs)
++int row, col, offs;
++{
++    static int force_next = 0;
+ 
++    if(row == -1) {
++   	force_next = row;
++	return;
++    }
++    if(row!=ttrow || col!=ttcol || force_next) {
++        (*term.t_move)(row, col - offs);
++        ttrow = row;
++        ttcol = col;
++    }
++}
+ 
+ /*
+  * Send a command to the terminal to move the hardware cursor to row "row"
+--- pine4.64/pico/efunc.h
++++ pine4.64/pico/efunc.h
+@@ -118,6 +118,7 @@
+ extern	VARS_TO_SAVE *save_pico_state PROTO((void));
+ extern	void restore_pico_state PROTO((VARS_TO_SAVE *));
+ extern	void free_pico_state PROTO((VARS_TO_SAVE *));
++extern  char *check_utf8 PROTO((char *, char *, size_t));
+ extern	void HeaderPaintCursor PROTO((void));
+ extern	void PaintBody PROTO((int));
+ 
+--- pine4.64/pine/osdep/termout.unx
++++ pine4.64/pine/osdep/termout.unx
+@@ -750,7 +750,8 @@
+      register unsigned int ch;
+      int      new_esc_len;
+ {
+-    static   int esc_len = 0;
++    static   int esc_len = 0, seq = 0;
++    static   unsigned char utf_seq[7] = "";
+ 
+     if(ps_global->in_init_seq				/* silent */
+        || (F_ON(F_BLANK_KEYMENU, ps_global)		/* or bottom, */
+@@ -759,6 +768,35 @@
+ 	   && _col + 1 == ps_global->ttyo->screen_cols))
+       return;
+ 
++    /* Treat UTF-8 sequences if we are not in a special escape sequence */
++    if(esc_len <= 0) {
++	unsigned char *chp;
++	char tmp;
++	tmp = (char)ch;
++	if ((chp = pine_check_utf8(&tmp, utf_seq, sizeof(utf_seq))) == NULL) {
++	    seq = 1; /* flag that we are in a open UTF-8 sequence   */
++	    return;  /* UTF-8 sequence not complete, need next char */
++	}
++	if (chp != (unsigned char*)&tmp) {
++	    seq = 0; /* flag that we are not in a open UTF-8 sequence */
++	    _col++;
++	    if (*chp == ' ') {
++		if(++_col > ps_global->ttyo->screen_cols) {
++		    printf("\342\200\246"); /* UTF-8 points... */
++		    goto wrap;
++		}
++		chp++;
++	    }
++	    while(*chp)
++		putchar(*chp++);
++	    return;
++	}
++	if (seq) {	/* incomplete UTF-8 sequence */
++	   seq = 0;	/* flag that we are not in a open UTF-8 sequence */
++	   putchar('?');     /* print question mark at place of sequence */
++	}
++    }
++
+     if(ch == LINE_FEED || ch == RETURN || ch == BACKSPACE || ch == BELL
+        || ch == TAB || ch == ESCAPE){
+ 	switch(ch){
+@@ -836,7 +874,9 @@
+        like case 1. A little expensive but worth it to avoid problems
+        with terminals configured so they don't match termcap
+        */
+-    if(_col == ps_global->ttyo->screen_cols) {
++    if(_col >= ps_global->ttyo->screen_cols) {
++wrap:
++	dprint(9, (debugfile, "%d,%02d, wrap(%x)\n",_line,_col,ch));
+         _col = 0;
+         if(_line + 1 < ps_global->ttyo->screen_rows)
+ 	  _line++;
+--- pine4.64/pine/reply.c
++++ pine4.64/pine/reply.c
+@@ -1566,18 +1566,32 @@
+        && (decoded[0] == 'R' || decoded[0] == 'r')
+        && (decoded[1] == 'E' || decoded[1] == 'e')){
+ 
+-        if(decoded[2] == ':')
+-	  sprintf(buf, "%.*s", buflen-1, subject);
++	if(decoded[2] == ':'){
++	    strncpy(buf, subject, l);  
++	    buf[l]='\0';
++	}
+ 	else if((decoded[2] == '[') && (p = strchr(decoded, ']'))){
+ 	    p++;
+ 	    while(*p && isspace((unsigned char)*p)) p++;
+-	    if(p[0] == ':')
+-	      sprintf(buf, "%.*s", buflen-1, subject);
++	    if(p[0] == ':'){
++		strncpy(buf, subject, l);  
++		buf[l]='\0';
++	    }   
+ 	}
+     }
+-    if(!buf[0])
+-      sprintf(buf, "Re: %.*s", buflen-1,
+-	      (subject && *subject) ? subject : "your mail");
++    if(!buf[0]) {
++	/*
++	 * Used to be 
++	 * sprintf(buf, "Re: %.200s", (subject && *subject) ? subject : 
++	 * 	"your mail"); 		 
++	 * Some implementations of sprintf() are locale-dependent and
++	 * don't pass through an invalid sequence of bytes blindly. 
++	 * Use strncpy() instead:
++	 */
++	strcpy(buf,"Re: ");
++	strncpy(buf+4, (subject && *subject) ? subject : "your mail", l);  
++	buf[l+4]='\0';
++    }
+ 
+     fs_give((void **) &tmp);
+     return(buf);
+--- pine4.64/pine/strings.c
++++ pine4.64/pine/strings.c
+@@ -682,6 +682,151 @@
+       (*d)++;
+ }
+ 
++/* ------------------------- UTF-8 functions -------------------------- */
++
++char *
++pine_check_utf8(c, utf_seq, sizeof_utf_seq)
++    char *c;
++    char *utf_seq;
++    size_t sizeof_utf_seq;
++{
++    if(!ps_global->VAR_CHAR_SET
++       || strucmp(ps_global->VAR_CHAR_SET, "UTF-8"))
++	return c;
++    return check_utf8(c, utf_seq, sizeof_utf_seq);
++}
++
++/*
++ * Like istrncpy but since it's used in the mail index, it also converts
++ * line feed and tab to space to prevent odd effects in mail index paint.
++ *
++ * If charset is UTF-8, do not count bytes for the string width but real
++ * screen widths. The control char and escape sequence filter is also not
++ * active inside UTF-8 sequencies there because UTF-8 requires bytes in
++ * the range from 0x80 to 0x9f to be processed. If a series of not recognized
++ * characters in the range of 0x80 to 0xff is encountered, '?' is copied.
++ */
++void
++charset_istrncpy(dest, source, width, padding)
++    char *dest;
++    char *source; /* const */
++    int   width;
++    int   padding;
++{
++    char *cp, *chp, *destp = dest;
++    int seq = 0, screencols=0;
++    unsigned char utf_seq[10] = "";
++
++    for(cp = source; *cp && screencols < width; cp++){
++	if((chp = pine_check_utf8(cp, utf_seq, sizeof(utf_seq))) == NULL){
++	    seq = 1;
++	    continue;
++	}
++	if(chp != cp){
++	    seq = 0;
++	    screencols++;
++	    if(*chp == ' '){
++		if(screencols >= width){
++		    sstrcpy(&destp, "\342\200\246");
++		    break;	 /* UTF-8 points... */
++		}
++		screencols++;
++		chp++;
++	    }
++	    while(*chp)
++		*destp++ = *chp++;
++	    *destp = '\0';
++	    continue;
++	}
++	if(seq){
++	    seq = 0;
++	    screencols++;
++	    *destp++ = '?';
++	}
++	screencols++;
++        if(*cp && FILTER_THIS(*cp)
++	 && !(*(cp+1) && *cp == ESCAPE && match_escapes(cp+1))){
++	    *destp++ = '^';
++	    if(screencols < width){
++		screencols++;
++		*destp++ = (*cp & 0x7f) + '@';
++	    }
++	}
++	else if(*cp == '\n' || *cp == '\t')
++		*destp++ = ' ';
++	    else
++		*destp++ = *cp;
++	*destp = '\0';
++    }
++    if(padding == 1)
++	while(screencols < width){
++	    screencols++;
++	    *destp++ = ' ';
++	}
++    *destp = '\0';
++}
++
++/*
++ * Like istrncpy but do not remove UTF-8 sequencies.
++ *
++ * The control char and escape sequence filter is also not active inside
++ * UTF-8 sequencies because UTF-8 requires bytes in the range from 0x80
++ * to 0x9f to be processed. If a series of not recognized characters in
++ * the range of 0x80 to 0xff is encountered, '?' is copied.
++ */
++static char *
++utf8_istrncpy(dest, cp, length)
++    char *dest;
++    char *cp; /* const */
++    int   length;
++{
++    char *chp, *destp = dest;
++    int seq = 0;
++    unsigned char utf_seq[7] = "";
++
++    *destp = '\0';
++    for(; length > 0 && *cp; cp++){
++	if((chp = check_utf8(cp, utf_seq, sizeof(utf_seq))) == NULL) {
++		seq = 1;
++		continue;
++	}
++	if(chp != cp){
++	    seq = 0;
++	    if(*chp == ' ')
++		chp++;
++	    if(strlen(chp) < length){
++		while(*chp && length--)
++		    *destp++ = *chp++;
++		*destp = '\0';
++		continue;
++	    }
++	    while(length--)
++		*destp++ = '.';
++	    *destp = '\0';
++	    break;
++	}
++	if(seq){
++	    *destp++ = '?';
++	    length--;
++	    seq = 0;
++	}
++        if(*cp && FILTER_THIS(*cp)
++	   && !(*(cp+1) && *cp == ESCAPE && match_escapes(cp+1))){
++	    if(length-- > 0){
++		*destp++ = '^';
++
++		if(length-- > 0)
++		    *destp++ = (*cp & 0x7f) + '@';
++	    }
++	}
++	else if(length-- > 0)
++	    *destp++ = *cp;
++	*destp = '\0';
++    }
++
++    return dest;
++}
++
+ 
+ /*----------------------------------------------------------------------
+   copy at most n chars of the source string onto the destination string
+@@ -720,6 +865,10 @@
+     /* src is either original source or the translation string */
+     s = src;
+ 
++    if(!ps_global->pass_ctrl_chars && ps_global->VAR_CHAR_SET
++       && !strucmp(ps_global->VAR_CHAR_SET, "UTF-8"))
++      return utf8_istrncpy(d, s, n);
++
+     /* copy while escaping evil chars */
+     do
+       if(*s && FILTER_THIS(*s)){

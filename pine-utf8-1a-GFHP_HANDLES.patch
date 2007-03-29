@@ -1,0 +1,51 @@
+Changelog:
+
+The two changes are related to a development effort to
+make html2plain aware of UTF-8, but it turned out to
+be very complex and a quick hack to disable wrapping
+in it and delay wrapping to gf_warp which is aware of
+UTF-8 did not work well because html has also center
+and right oriented wrapping, which gf_wrap has no
+idea of. The removed parts cleanup the leftovers of
+this attempt:
+
+  * GFHP_NOWRAP was not evaluated, it it made no no
+    sense to set it (checked the evaluation of opts)
+
+  * Since wrapping in html2wrap was not disabled,
+    it is no longer neccessary to remove the wrapit = 0
+    which told the code to add gf_wrap to the pipe
+    to apply wrapping.
+
+  * Remove the #define of GFHP_HANDLES which is
+    is made obsolete by the remaining cleanup.
+    It can be cleaned up because the handlesp
+    flag is passed directly to html2plain, no
+    longer thru the opts bitfield and this opts
+    value is not evaluated otherwise (checked).
+    This hunk was only moved from a different
+    patch file here to consolidate this cleanup.
+
+--- pine4.59.9z/pine/mailview.c
++++ pine4.59.9d/pine/mailview.c
+@@ -5640,9 +5650,5 @@ decode_text(att, msgno, pc, handlesp, st
+ 	int opts = 0;
+ 
+-	if(flags & FM_DISPLAY){
+-	    if(handlesp)		/* pass on handles awareness */
+-	      opts |= GFHP_HANDLES;
+-	}
+-	else
++	if(!(flags & FM_DISPLAY))
+ 	  opts |= GFHP_STRIPPED;	/* don't embed anything! */
+ 
+--- pine4.59.9z/pine/pine.h
++++ pine4.59.9d/pine/pine.h
+@@ -178,7 +179,6 @@
+ #define GER_ALLPARTS		0x04	/* AllParts toggle is on            */
+ 
+ #define GFHP_STRIPPED		0x01
+-#define GFHP_HANDLES		0x02
+ #define GFHP_LOCAL_HANDLES	0x04
+ 
+ #define	GFW_HANDLES		0x01
