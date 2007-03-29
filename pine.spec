@@ -16,7 +16,7 @@ Summary(uk.UTF-8):	Сумісний з MIME почтовий редактор з
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
-Release:	6
+Release:	7
 %if %{with distributable}
 License:	Distributable for PLD
 %else
@@ -51,11 +51,32 @@ Patch15:	%{name}-overflow.patch
 Patch16:	http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/all.patch.gz
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch17:	%{name}-smime.patch
-# from http://www.suse.de/~bk/pine/iconv/
-Patch19:	%{name}-iconv-9d.patch
 Patch20:	%{name}-home_etc.patch
 Patch21:	%{name}-pwd.patch
 Patch22:	%{name}-address-of-register.patch
+## Set of patches taken from SuSE:
+## http://www.suse.de/~bk/pine/4.64/2006-04-28/RPM-source/
+Patch40:	%{name}-charset-editorial.patch
+Patch41:	%{name}-iconv-no-explain.patch
+Patch42:	%{name}-optionally_enter.patch
+Patch43:	%{name}-multipart-alternative-conversion.patch
+Patch44:	%{name}-pico-ucs4all.patch
+Patch45:	%{name}-pico-ucs4GetKey.patch
+Patch46:	%{name}-pico-ucs4doublewidthchars.diff
+Patch47:	%{name}-pico-ucs4isspace.patch
+Patch48:	%{name}-utf8-1b.patch
+Patch49:	%{name}-utf8-1a-pine.h.patch
+Patch50:	%{name}-utf8-1a-GFHP_HANDLES.patch
+Patch51:	%{name}-send-charset.patch
+Patch52:	%{name}-config-options.patch
+Patch53:	%{name}-utf8-mailindx.patch
+Patch54:	%{name}-mailindx-plusdraw.patch
+Patch55:	%{name}-gf_wrap-UTF8.patch
+Patch56:	%{name}-no-stripwhitespace.patch
+Patch57:	%{name}-strings-iconv.patch
+Patch58:	%{name}-filter-iconv.patch
+Patch59:	%{name}-rfc1522_decode.patch
+Patch60:	%{name}-rfc1522_valid.patch
 URL:		http://www.washington.edu/pine/
 # iconv form glibc - utf-8 support
 %{?with_utf8:BuildRequires:	glibc-devel >= 2.3.2}
@@ -214,8 +235,28 @@ ajuda de acordo com o contexto está disponível.
 # breaks pine
 #%{!?with_distributable:%patch17 -p1}
 %if ! %{with distributable}
-%{?with_utf8:%patch19 -p1}
 %{?with_utf8:%patch22 -p1}
+%{?with_utf8:%patch40 -p0}
+%{?with_utf8:%patch41 -p1}
+%{?with_utf8:%patch42 -p1}
+%{?with_utf8:%patch43 -p1}
+%{?with_utf8:%patch44 -p1}
+%{?with_utf8:%patch45 -p1}
+%{?with_utf8:%patch46 -p1}
+%{?with_utf8:%patch47 -p1}
+%{?with_utf8:%patch48 -p1}
+%{?with_utf8:%patch49 -p1}
+%{?with_utf8:%patch50 -p1}
+%{?with_utf8:%patch51 -p1}
+%{?with_utf8:%patch52 -p1}
+%{?with_utf8:%patch53 -p1}
+%{?with_utf8:%patch54 -p1}
+%{?with_utf8:%patch55 -p1}
+%{?with_utf8:%patch56 -p1}
+%{?with_utf8:%patch57 -p1}
+%{?with_utf8:%patch58 -p1}
+%{?with_utf8:%patch59 -p1}
+%{?with_utf8:%patch60 -p1}
 %endif
 %{?with_home_etc:%patch20 -p1}
 %patch21 -p1
