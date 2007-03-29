@@ -1,0 +1,145 @@
+%
+% This patch makes the ESC ESC <number> command working if even in
+% Unicode mode. This command is used to enter a non-ASCII code.
+% For example, ESC ESC 2 3 4 results in an "e" witch circumflex (^).
+% 234 is its decimal character code (see 'man latin1').
+% 
+% To make this work also in Unicode mode, GetKey() which processes
+% these special commands may not pass the latin1 code down because
+% the Generic file and screen input layer below expects UTF-8 sequencies
+% unicode mode an input. Thus GetKey() has to convert latin1 code to
+% it's UTF-8 sequence and send it down. Since it consists of two bytes
+% for such cases and GetKey() only passes one character down per call,
+% it has to remember the second character in the saved variable. This
+% has to be in integer variable of it it's a char variable, it would
+% have to casted to an unsigned char before returning, otherwise C's
+% signed extension would make these "negative" (between 127 and 255)
+% char values a big negative int when assinged to the integer return
+% type of GetKey(). But it's easyest for all (including the compiler
+% and the CPU to just use an integer which gets the correct value.
+%
+--- pine/pico/osdep/unix
++++ pine/pico/osdep/unix
+@@ -409,6 +409,7 @@
+ GetKey()
+ {
+     int    ch, status, cc;
++    static int saved;
+ 
+     switch (sendnow){
+ 	case 1 : sendnow++;
+@@ -426,6 +427,12 @@
+     if (sendnow)
+ 	return ch;
+ 
++    if (saved) {
++	ch = saved;
++	saved = 0;
++	return ch;
++    }
++
+     if(!ReadyForKey(FUDGE-5))
+       return(NODATA);
+ 
+@@ -462,6 +469,10 @@
+ 	    }
+ 
+ 	    ch = i;
++	    if (gmode & P_UNICODE) {
++		saved = 0x80 | (ch & 0x3f);
++		ch = 0xc0 | ((ch >> 6) & 0x3f);
++	    }
+ 	}
+ 	else{
+ 	    if(islower((unsigned char)ch))	/* canonicalize if alpha */
+%
+% This is neccesary to make Eduardo Chappa's patch to write accents in pico
+% working if pico is in Unicode/UTF-8 mode, Patch from Eduardo Chappa:
+%
+*** pine4.61.I.USE/pico/basic.c	Fri Aug 20 14:22:37 2004
+--- pine4.61.allutf8/pico/basic.c	Wed Aug 25 14:03:37 2004
+***************
+*** 385,390 ****
+--- 385,391 ----
+  GetAccent()
+  {
+    char c,d;
++   unsigned char ch, saved;
+      c = (char) GetKey();
+      if ((c == '?') || (c == '!')) {
+          d = c;
+***************
+*** 400,406 ****
+  	}
+  	else
+            d = (char) GetKey();
+! 	return (int) accent(c,d);
+  }
+  
+  pineaccent(f,n)
+--- 401,415 ----
+  	}
+  	else
+            d = (char) GetKey();
+!    ch = (unsigned char) accent(c,d);
+!    if (gmode & P_UNICODE){
+!        saved = 0x80 | (ch & 0x3f);
+!        ch = 0xc0 | ((ch >> 6) & 0x3f);
+!        execute(ch,0, 1);
+!        execute(saved,0, 1);
+! 	ch = 0;
+!    }
+!    return (int) ch;
+  }
+  
+  pineaccent(f,n)
+%
+% read_char is used from this function stack for example:
+%
+% #7  read_char (time_out=-514) at os.c:3274
+% #8  read_command () at os.c:3750
+% #9  index_lister () at mailindx.c:998
+% #10 index_index_screen () at mailindx.c:663
+% #11 main () at pine.c:1314
+%
+% This is the function stack used to seach a string in the
+% mail index screen. This patch adds the UTF-8 support to
+% the ESC ESC code which allows entering character codes
+% into pine. Currently this assumes the code is ISO 8859-1
+% as most users will expect this, and this is most easyest
+% to implement since UCS-2 is, for the range of 0xa0-0xff
+% identical to ISO 8859-1, but support for entering
+% unicode code points or code points of other charsets
+% could be added as well.
+%
+--- pine4.61/pine/osdep/termin.unx	2004/08/27 00:02:09	1.1
++++ pine4.61/pine/osdep/termin.unx	2004/08/27 00:07:03
+@@ -266,11 +266,17 @@ read_char(time_out)
+     int time_out;
+ {
+     int ch, status, cc;
++    static int saved;
+ 
+     /* Get input from initial-keystrokes */
+     if(process_config_input(&ch))
+       return(ch);
+ 
++    if (saved) {
++	ch = saved;
++	saved = 0;
++	return ch;
++    }
+     /*
+      * We only check for timeouts at the start of read_char, not in the
+      * middle of escape sequences.
+@@ -312,6 +318,10 @@ read_char(time_out)
+ 	    }
+ 
+ 	    ch = i;
++	    if (gmode & P_UNICODE) {
++		saved = 0x80 | (ch & 0x3f);
++		ch = 0xc0 | ((ch >> 6) & 0x3f);
++	    }
+ 	}
+ 	else{
+ 	    if(islower((unsigned char)ch))	/* canonicalize if alpha */

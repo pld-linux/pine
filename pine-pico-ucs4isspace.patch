@@ -1,0 +1,169 @@
+%
+% The function "int isspace(int c)" from <type.h> (POSIX) must be called
+% with a cast to unsigned char like this: "isspace((unsigned char) c)".
+%
+% But if Unicode is stored in pico's character cells, the 32-bit Unicode value
+% in it should not be casted to unsigned char to check for space since this
+% could result in some Unicode codes to be interpreted as space.
+%
+% For now, to not treat Unicode codes wrongly as space (e.g. in
+% cleanwhitespace()) and as result have these characters removed
+% from the text, a new function I called Pisspace() is used which
+% checks if pico is in Unicode mode and declare chars which isspace
+% is not able to check as non-space chars. Since the U0000 to U00FF
+% are identical to ISO 8859-1, ISO 8859-1 does not include spaces
+% above of 0x7f, isspace will work correcty in the US-ASCII character
+% range, it's safe to return 0 on char > 127 in Unicode mode and
+% otherswise let isspace((unsigned char)c) on space or not space.
+%
+================================================================================
+--- pine4.64/pico/estruct.h
++++ pine4.64/pico/estruct.h
+@@ -354,6 +354,7 @@
+ #define lgetc(lp, n)    ((lp)->l_text[(n)])
+ #define lputc(lp, n, c) ((lp)->l_text[(n)]=(c))
+ #define llength(lp)     ((lp)->l_used)
++#define cell_isspace(lp,n) Pisspace(lgetc(lp, n).c)
+ 
+ /*
+  * The editor communicates with the display using a high level interface. A
+--- pine4.64/pico/pico.c
++++ pine4.64/pico/pico.c
+@@ -561,7 +561,7 @@
+ 	    register int k;
+ 
+ 	    for(j = k = 0; j < llength(curwp->w_dotp); j++, k++)
+-	      if(isspace((unsigned char)lgetc(curwp->w_dotp, j).c)){
++	      if(cell_isspace(curwp->w_dotp, j)){
+ 		  if(lgetc(curwp->w_dotp, j).c == TAB)
+ 		    while(k+1 & 0x07)
+ 		      k++;
+@@ -830,7 +830,7 @@
+ 	    is_cursor_line = (cursor_dotp == (*lp));
+ 	    /* trim trailing whitespace, to be added back if flowing */
+ 	    for(i = llength(*lp); i; i--)
+-	      if(!isspace(lgetc(*lp, i - 1).c))
++	      if(!cell_isspace(*lp, i - 1))
+ 		break;
+ 	    if(i != llength(*lp)){
+ 		int flow_line = 0;
+@@ -838,7 +838,7 @@
+ 		if(Pmaster && !Pmaster->strip_ws_before_send
+ 		   && lforw(*lp) != curbp->b_linep
+ 		   && llength(lforw(*lp))
+-		   && !(isspace(lgetc(lforw(*lp), 0).c)
++		   && !(cell_isspace(lforw(*lp), 0)
+ 			|| isquotedspace(lforw(*lp)))
+ 		   && !(llength(lforw(*lp)) == 3
+ 			&& lgetc(lforw(*lp), 0).c == '-'
+@@ -853,7 +853,7 @@
+ 			ldelete(llength(*lp) - i, NULL);
+ 		    }
+ 		}
+-		else if(flow_line && i && isspace(lgetc(*lp, i).c)){
++		else if(flow_line && i && cell_isspace(*lp, i)){
+ 		    /* flowed line ending with whitespace other than space*/
+ 		    curwp->w_doto = i;
+ 		    ldelete(llength(*lp) - i, NULL);
+@@ -865,7 +865,7 @@
+ 		}
+ 	    }
+ 	    if(Pmaster && Pmaster->allow_flowed_text
+-	       && llength(*lp) && isspace(lgetc(*lp, 0).c)){
++	       && llength(*lp) && cell_isspace(*lp, 0)){
+ 		/* space-stuff only if flowed */
+ 		curwp->w_doto = 0;
+ 		if(is_cursor_line && cursor_doto)
+--- pine4.64/pico/random.c
++++ pine4.64/pico/random.c
+@@ -144,6 +144,12 @@
+     return(linsert(tabsize - (getccol(FALSE) % tabsize), ' '));
+ }
+ 
++int Pisspace(int c) {
++	if (gmode & P_UNICODE && c > 127) /* to be extended when time permits */
++		return 0;
++	return isspace((unsigned char)c);
++}
++
+ 
+ /*
+  * Insert a newline. Bound to "C-M".
+@@ -174,7 +180,7 @@
+ 
+     if(Pmaster && Pmaster->allow_flowed_text && Pmaster->flow_text
+        && curwp->w_doto
+-       && isspace(lgetc(curwp->w_dotp, curwp->w_doto - 1).c)
++       && cell_isspace(curwp->w_dotp, curwp->w_doto - 1)
+        && !(curwp->w_doto == 3
+ 	    && lgetc(curwp->w_dotp, 0).c == '-'
+ 	    && lgetc(curwp->w_dotp, 1).c == '-'
+@@ -185,7 +191,7 @@
+ 	 */
+ 	int i, dellen;
+ 	for(i = curwp->w_doto - 1;
+-	    i && isspace(lgetc(curwp->w_dotp, i - 1).c);
++	    i && cell_isspace(curwp->w_dotp, i - 1);
+ 	    i--);
+ 	dellen = curwp->w_doto - i;
+ 	curwp->w_doto = i;
+--- pine4.64/pico/word.c
++++ pine4.64/pico/word.c
+@@ -54,7 +54,7 @@
+       return(FALSE);
+ 
+     for(bp = cnt = i = 0; cnt < llength(curwp->w_dotp) && !bp; cnt++, i++){
+-	if(isspace((unsigned char) lgetc(curwp->w_dotp, cnt).c)){
++	if(cell_isspace(curwp->w_dotp, cnt)){
+ 	    first = 0;
+ 	    if(lgetc(curwp->w_dotp, cnt).c == TAB)
+ 	      while(i+1 & 0x07)
+@@ -84,7 +84,7 @@
+     if(!(curbp->b_flag & BFWRAPOPEN)
+        && lforw(curwp->w_dotp) != curbp->b_linep 
+        && llength(lforw(curwp->w_dotp)) 
+-       && !isspace((unsigned char) lgetc(lforw(curwp->w_dotp), 0).c)
++       && !cell_isspace(lforw(curwp->w_dotp), 0)
+        && (llength(curwp->w_dotp) + llength(lforw(curwp->w_dotp)) < fillcol)){
+ 	gotoeol(0, 1);			/* then pull text up from below */
+ 	if(lgetc(curwp->w_dotp, curwp->w_doto - 1).c != ' ')
+@@ -1767,13 +1767,13 @@
+ 	    if(spaces){				/* flush word? */
+ 		if((line_len - qlenis > 0)
+ 		   && line_len + word_len + 1 > fillcol
+-		   && ((ISspace(line_last))
++		   && ((Pisspace(line_last))
+ 		       || (linsert(1, ' ')))
+ 		   && (line_len = fpnewline(qstr)))
+ 		  line_last = ' ';	/* no word-flush space! */
+ 
+ 		if(word_len){			/* word to write? */
+-		    if(line_len && !ISspace(line_last)){
++		    if(line_len && !Pisspace(line_last)){
+ 			linsert(1, ' ');	/* need padding? */
+ 			line_len++;
+ 		    }
+@@ -1796,7 +1796,7 @@
+ 	    if(word_len + 1 >= NSTRING){
+ 		/* Magic!  Fake that we output a wrapped word */
+ 		if((line_len - qlenis > 0) && !same_word++){
+-		    if(!ISspace(line_last))
++		    if(!Pisspace(line_last))
+ 		      linsert(1, ' ');
+ 		    line_len = fpnewline(qstr);
+ 		}
+@@ -1816,12 +1816,12 @@
+ 
+     if(word_len){
+ 	if((line_len - qlenis > 0) && (line_len + word_len + 1 > fillcol)){
+-	    if(!ISspace(line_last))
++	    if(!Pisspace(line_last))
+ 	      linsert(1, ' ');
+           if (line_len && (line_len != qlenis))
+              (void) fpnewline(qstr);
+ 	}
+-	else if(line_len && !ISspace(line_last))
++	else if(line_len && !Pisspace(line_last))
+ 	  linsert(1, ' ');
+ 
+ 	for(j = 0; j < word_len; j++)
