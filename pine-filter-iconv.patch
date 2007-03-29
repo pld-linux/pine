@@ -1,0 +1,268 @@
+--- pine4.59.9z/pine/filter.c
++++ pine4.59.9d/pine/filter.c
+@@ -65,6 +65,9 @@ static char rcsid[] = "$Id: filter.c,v 4
+ 
+ 
+ #include "headers.h"
++#ifdef HAVE_ICONV
++#include <iconv.h>
++#endif
+ 
+ 
+ /*
+@@ -2157,6 +2167,110 @@ gf_euc_to_2022_jp(f, flg)
+     }
+ }
+ 
++#ifdef HAVE_ICONV
++/*
++ * This filter converts the input buffer in the MIME charset of 
++ * a message, for example) to another (the user's display charset)
++ * using iconv(3), POSIX/Single Unix Standard API. 
++ */
++void
++gf_convert_utf8_charset(f, flg)
++    FILTER_S *f;
++    int       flg;
++{
++    static iconv_t iconv_desc;
++    static int einval_inbytesleft;
++    GF_INIT(f, f->next);
++
++    switch (flg) {
++    case GF_DATA: {
++	size_t conv, inbytesleft = eob - op, outbytesleft = eib - ip;
++	/*
++	 * If einval_inbytesleft is set, iconv() encountered an incomplete
++	 * multibyte sequence and we asked for more input. In case the number
++	 * of chars left to convert did not change, we should be at the end
++	 * of input and we have an incomplete multibyte sequence at the end
++	 * end of input. We only mark this and ignore the incomplete data.
++	 */
++	if (inbytesleft == einval_inbytesleft) {
++		char *einval_error = "[invalid multibyte seq at end of input]";
++		dprint(8,(debugfile, "inval multibyte seq at end of input\n"));
++		for (;*einval_error;einval_error++)
++		    GF_PUTC(f->next, *einval_error);
++		GF_FLUSH(f->next);
++		op = eob; /* throw the remaing unusable bytes away */
++		GF_CH_RESET(f);
++		break;
++	}
++	while (1) {
++	    if (!outbytesleft || !inbytesleft) {
++		GF_FLUSH(f->next);
++		outbytesleft = eib - ip;
++	    }
++	    if (!inbytesleft) {
++		GF_CH_RESET(f);
++		break;
++	    }
++	    einval_inbytesleft = -1;
++	    conv = iconv(iconv_desc, (char **)&op, &inbytesleft,
++				      (char **)&ip, &outbytesleft);
++	    if (conv != (size_t) (-1)) { /* iconv succeeded */
++		dprint(9,(debugfile, "irres. conv. count: %d, il: %d, ol: %d\n",
++			  conv, inbytesleft, outbytesleft));
++	    /* iconv failed. check errno */
++	    } else if (errno == E2BIG){
++		dprint(9,(debugfile, "e2big: outbytesleft=%d\n", outbytesleft));
++		outbytesleft = 0;
++	    } else if (errno == EILSEQ){
++		char hexout[3];
++		dprint(9,(debugfile, "eilseq: ill.octet=0x%02x, il=%d, ol=%d\n",
++			  *op, inbytesleft, outbytesleft));
++		sprintf(hexout, "%2x", *op++);
++		inbytesleft--;
++		GF_PUTC(f->next, '[');
++		GF_PUTC(f->next, hexout[0]);
++		GF_PUTC(f->next, hexout[1]);
++		GF_PUTC(f->next, ']');
++		outbytesleft = eib - ip;
++		iconv(iconv_desc, NULL, NULL, NULL, NULL);
++	    } else if (errno == EINVAL){
++		/* 
++		 * We have to return from this function now because our input
++		 * buffer contains an incomplete multibyte character which we
++		 * can't complete without the next bytes of input.
++		 */
++		dprint(9,(debugfile,
++			  "einval: %d, ol: %d, incomplete input: 0x%02x\n",
++			  inbytesleft, outbytesleft, (unsigned char) *op));
++		/*
++		 * Before we abort here, we need to flush already converted
++		 * output to the filter chain, otherwise we may loose this
++		 * already converted content.
++                 */
++		GF_FLUSH(f->next);
++		/*
++		 * In case we are at the end of all input, and we have
++		 * an incomplete multibyte sequence left, we must find
++		 * a way to not fall into a loop, remember the bytes left:
++		 */
++		einval_inbytesleft = inbytesleft;
++		break;		/* Take the straigt way out now */
++	    } /* errno check */
++	} /*  while (1) */
++	GF_END(f, f->next);
++	break;
++    } /* GF_DATA */
++    case GF_RESET:
++	iconv_desc = (iconv_t)(f->opt);
++	iconv(iconv_desc, NULL, NULL, NULL, NULL);
++    	einval_inbytesleft = -1;
++	break;
++    case GF_EOD:
++	GF_FLUSH(f->next);
++	(*f->next->f)(f->next, GF_EOD);
++    } /* switch (flg) */
++}
++#else
+ 
+ /*
+  * This filter converts characters in one character set (the character
+@@ -2293,6 +2407,7 @@ gf_convert_utf8_charset(f, flg)
+ 	 f->n = 0L;
+     }
+ }
++#endif
+ 
+ 
+ /*
+--- pine4.59.9z/pine/mailpart.c
++++ pine4.59.9d/pine/mailpart.c
+@@ -4069,7 +4069,8 @@ df_valid_test(body, test)
+ 		    fs_give((void **) &p);
+ 		}
+ 		else
+-		  passed = !strucmp(test + 9, "us-ascii");
++		  passed = !strucmp(test + 9, 
++		    ps_global->VAR_ASSUMED_CHAR_SET ? ps_global->VAR_ASSUMED_CHAR_SET : "us-ascii");
+ 	    }
+ 	    else
+ 	      dprint(1, (debugfile,
+--- pine4.59.9z/pine/osdep/os-lnx.h
++++ pine4.59.9d/pine/osdep/os-lnx.h
+@@ -214,6 +214,9 @@
+  ----*/
+ #define DF_DEFAULT_PRINTER        ANSI_PRINTER
+ 
++/* all recent Linux distributions come with glibc 2.x. with an excellent
++ * iconv implementation */
++#define HAVE_ICONV
+ 
+ 
+ /*----- The usual sendmail configuration for sending mail on Unix ------*/
+--- pine4.59.9z/pine/pine.hlp
++++ pine4.59.9d/pine/pine.hlp
+@@ -18900,6 +18910,110 @@ will label the text as &quot;X-UNKNOWN&q
+ &lt;End of help on this topic&gt;
+ </BODY>
+ </HTML>
++====== h_config_charset_aliases =====
++<HTML>
++<HEAD>
++<TITLE>OPTION: Charset-Aliases</TITLE>
++</HEAD>
++<BODY>
++<H1>OPTION: Charset-Aliases</H1>
++
++List of charset aliases.
++
++<P>
++Each alias is a pair of charsets delimetered by a single colon,
++the first one being an alias to the second one.
++
++<P>
++The latter is usually standard/prefered MIME name while the former
++is a non-standard name used by some email clients.
++
++<P>
++For instance, you may set it to: 'x-big5:big5,euc-cn:gb2312'
++
++<P>
++<UL>
++<LI><A HREF="h_finding_help">Finding more information and requesting
++help</A>
++</UL><P>
++&lt;End of help on this topic&gt;
++</BODY>
++</HTML>
++====== h_config_iconv_aliases =====
++<HTML>
++<HEAD>
++<TITLE>OPTION: Iconv-Aliases</TITLE>
++</HEAD>
++<BODY>
++<H1>OPTION: Iconv-Aliases</H1>
++
++List of charset aliases to use with iconv().
++
++<P>
++Each alias is a pair of charsets delimetered by a single colon,
++the first one being an alias to the second one.
++
++<P>
++The former is usually standard/prefered MIME name while the latter
++is a non-standard name used by iconv(3) on your system.
++
++<P>
++For example, your iconv may use non-standard 'UTF8' for the standard
++'UTF-8'. In that case, you can put 'UTF-8:UTF8' here.
++
++<P>
++<UL>
++<LI><A HREF="h_finding_help">Finding more information and requesting
++help</A>
++</UL><P>
++&lt;End of help on this topic&gt;
++</BODY>
++</HTML>
++====== h_config_assumed_charset =====
++<HTML>
++<HEAD>
++<TITLE>OPTION: Assumed-Charset</TITLE>
++</HEAD>
++<BODY>
++<H1>OPTION: Assumed-Charset</H1>
++
++When MIME charset information is missing in Content-Type header field
++the Message is assumed to be in this charset. Default: US-ASCII.
++Typical values include ISO-8859-x, ISO-2022-JP, EUC-KR, GB2312, and Big5.
++Header fields which are not encoded per RFC 2047 is also assumed to be
++in this charset.
++
++<P>
++<UL>
++<LI><A HREF="h_finding_help">Finding more information and requesting
++help</A>
++</UL><P>
++&lt;End of help on this topic&gt;
++</BODY>
++</HTML>
++====== h_config_send_char_set =====
++<HTML>
++<HEAD>
++<TITLE>OPTION: Send-Charset</TITLE>
++</HEAD>
++<BODY>
++<H1>OPTION: Send-Charset</H1>
++
++If it's set, the headers and the body of an outgoing message is converted
++from the value of character-set (display/terminal charset) to the value
++of this option. You have to set this option if your terminal/display charset
++(say, UTF-8) is different from the charset you want your outgoing messsages
++to be in (say, ISO-8859-1, EUC-KR, Big5, GB2312) because your correspondents
++can't handle emails in UTF-8.
++
++<P>
++<UL>
++<LI><A HREF="h_finding_help">Finding more information and requesting
++help</A>
++</UL><P>
++&lt;End of help on this topic&gt;
++</BODY>
++</HTML>
+ ====== h_config_editor =====
+ <HTML>
+ <HEAD>

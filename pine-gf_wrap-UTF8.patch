@@ -1,0 +1,80 @@
+--- pine4.61/pine/filter.c
++++ pine4.61/pine/filter.c
+@@ -711,6 +711,7 @@ static	jmp_buf   gf_error_state;
+ #define	FL_SIG	17
+ #define	STOP_DECODING	18
+ #define	SPACECR	19
++#define	UTF8	20
+ 
+ 
+ 
+@@ -6878,7 +6879,9 @@ typedef struct wrap_col_s {
+ 		wrap_max,
+ 		margin_l,
+ 		margin_r,
++		offset,
+ 		indent;
++    char	utf_seq[8];
+     char	special[256];
+     long	curlinenum;	/* current line number */
+     int		curqstrpos;	/* current position in quote string */
+@@ -6904,6 +6907,7 @@ typedef struct wrap_col_s {
+ #define	WRAP_USE_CLR(F)	(((WRAP_S *)(F)->opt)->use_color)
+ #define	WRAP_STATE(F)	(((WRAP_S *)(F)->opt)->state)
+ #define	WRAP_QUOTED(F)	(((WRAP_S *)(F)->opt)->quoted)
++#define	WRAP_UTF_SEQ(F) (((WRAP_S *)(F)->opt)->utf_seq)
+ #define	WRAP_TAGS(F)	(((WRAP_S *)(F)->opt)->tags)
+ #define	WRAP_BOLD(F)	(((WRAP_S *)(F)->opt)->bold)
+ #define	WRAP_ULINE(F)	(((WRAP_S *)(F)->opt)->uline)
+@@ -6982,7 +6986,7 @@ gf_wrap(f, flg)
+     GF_INIT(f, f->next);
+ 
+     if(flg == GF_DATA){
+-	register unsigned char c;
++	unsigned char c, *ch, *cm;
+ 	register int state = f->f1;
+ 	register int x;
+ 
+@@ -7417,8 +7421,42 @@ gf_wrap(f, flg)
+ 
+ 		break;
+ 
++	      case UTF8 :
++		if(!(ch = cm = pine_check_utf8(&c, WRAP_UTF_SEQ(f), sizeof(WRAP_UTF_SEQ(f)))))
++		  break;	    /* sequence not complete, need next byte */
++		state = DFL;	    /* end of sequence, leave the UTF-8 mode */
++		if(ch != &c) {		/* seq. complete, wrap and write it  */
++		  if(f->n + f->f2 + WRAP_SPC_LEN(f)
++			> WRAP_COL(f) - (*ch == ' '?2:1)) {
++		    dprint(8, (debugfile, "UTF8: newline\n"));
++		    wrap_flush(f, &ip, &eib, &op, &eob); /* write everything */
++		    wrap_eol(f, 0, &ip, &eib, &op, &eob); /* no fit, the end */
++		    wrap_bol(f,1,1, &ip, &eib, &op, &eob); /* start w/prefix */
++		  }
++		  f->n++;
++		  if(*ch == ' ') {   /* double-wide UTF-8 char, check space  */
++		    ch++;            /* ' ' was just a flag, skip over it    */
++		    f->n++;
++		  }
++		  dprint(9, (debugfile, "UTF8: free room: %02d char: '%s'\n",
++			(WRAP_COL(f) - f->n - f->f2 - WRAP_SPC_LEN(f)), ch));
++		  f->n -= strlen(ch);
++		  WRAP_PUTC(f, *ch++, 1);
++		  while(*ch)
++		    WRAP_PUTC(f, *ch++, 1);
++		  if(*cm == ' ')
++		    wrap_flush(f, &ip, &eib, &op, &eob); /* write everything */
++		  break;
++		}
++		WRAP_PUTC(f, '?', 1);	/* in place of invalid sequence    */
++					/* fall thru to process new char   */
++		wrap_flush(f, &ip, &eib, &op, &eob);   /* write everything */
+ 	      case_dfl :
+ 	      case DFL :
++		if (!pine_check_utf8(&c, WRAP_UTF_SEQ(f), sizeof(WRAP_UTF_SEQ(f)))) {
++		  state = UTF8;		/* Change to UTF-8 mode            */
++		  break;		/* Process next char in UTF-8 mode */
++		}
+ 		if(WRAP_SPEC(f, c)){
+ 		    switch(c){
+ 		      default :

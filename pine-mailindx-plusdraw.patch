@@ -1,0 +1,53 @@
+diff -pruN -x '*~' -x '*.rej' -x '*.orig' pine4.63-patch29/pine/mailindx.c pine4.63/pine/mailindx.c
+--- pine4.63-patch29/pine/mailindx.c	2005-06-01 08:55:25.139074000 -0600
++++ pine4.63/pine/mailindx.c	2005-06-01 09:10:19.126042155 -0600
+@@ -2223,6 +2223,9 @@ paint_index_line(hline, line, scol, pcol
+ 	    int   uc, ac, do_arrow;
+ 	    int   i, drew_X = 0, cols = ps_global->ttyo->screen_cols;
+ 	    int   inverse_hack = 0, need_inverse_hack = 0, lim;
++	    int   seq = 0, w = 0;
++	    char  utf_seq[7], *cp, *r;
++
+ 
+ 	    if(uc=pico_usingcolor())
+ 	      lastc = pico_get_cur_color();
+@@ -2302,9 +2305,26 @@ paint_index_line(hline, line, scol, pcol
+ 		draw[acol+i] = '>';
+ 	    }
+ 
++	    cp = NULL;
+ 	    if(pcol >= 0 && pcol < cols){
+-		save_pchar = draw[pcol];
+-		draw[pcol] = h->plus;
++		memset(utf_seq, 0, sizeof(utf_seq));
++		for(cp = draw; *cp; cp++) { 
++		    if (!(r = pine_check_utf8(cp, utf_seq, sizeof(utf_seq)))) {
++			seq = 1;
++			continue;
++		    }
++		    if (seq)
++			w++;
++		    seq = 0;
++		    if (r == cp)
++			w++;
++		    else if (*r == ' ')
++			w++;
++		    if (w > pcol)
++			break;
++		}
++		save_pchar = *cp;
++		*cp = h->plus;
+ 	    }
+ 
+ 	    if(h->offs[0].offset < 0 || h->offs[0].offset >= cols){
+@@ -2467,8 +2487,8 @@ done_drawing:
+ 	    if(!ac && cur)
+ 	      EndInverse();
+ 
+-	    if(pcol >= 0 && pcol < cols)
+-	      draw[pcol] = save_pchar;
++	    if(cp)
++	      *cp = save_pchar;
+ 
+ 	    if(do_arrow && cur){
+ 		int i;

@@ -1,0 +1,33 @@
+--- pine4.61/pico/pico.c	2004/08/12 15:24:12	1.1
++++ pine4.61/pico/pico.c	2004/08/12 15:24:42
+@@ -846,30 +846,6 @@
+ }
+ 
+ /*
+- * Remove all trailing white space from the text
+- */
+-int
+-stripwhitespace()
+-{
+-    int i;
+-    LINE *cur_line = lforw(curbp->b_linep);
+-
+-    do{
+-      /* we gotta test for the sigdash case here */
+-      if(!(cur_line->l_used == 3 && 
+-	   lgetc(cur_line, 0).c == '-' &&
+-	   lgetc(cur_line, 1).c == '-' &&
+-	   lgetc(cur_line, 2).c == ' '))
+-	for(i = cur_line->l_used - 1; i >= 0; i--)
+-	  if(isspace(lgetc(cur_line, i).c))
+-	    cur_line->l_used--;
+-	  else
+-	    break;
+-    }while((cur_line = lforw(cur_line)) != curbp->b_linep);
+-    return 0;
+-}
+-
+-/*
+  * Abort.
+  * Beep the beeper. Kill off any keyboard macro, etc., that is in progress.
+  * Sometimes called as a routine, to do general aborting of stuff.

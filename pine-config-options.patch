@@ -1,0 +1,116 @@
+--- pine4.59.9z/pine/init.c
++++ pine4.59.9d/pine/init.c
+@@ -219,6 +219,16 @@ CONF_TXT_T cf_text_folder_sort_rule[] =	
+ 
+ CONF_TXT_T cf_text_character_set[] =	"Reflects capabilities of the display you have. Default: US-ASCII.\n# Typical alternatives include ISO-8859-x, (x is a number between 1 and 9).";
+ 
++CONF_TXT_T cf_text_assumed_charset[] =	"When MIME charset information is missing in Content-Type header field.\n# Message is assumed to be in this charset. Default: US-ASCII. Typical values\n# include ISO-8859-x, ISO-2022-JP, EUC-KR, GB2312, and Big5. The value of\n# header fields which are not encoded per RFC 2047\n# is also assumed to be\n# in this charset."; 
++
++CONF_TXT_T cf_text_charset_aliases[] =	"List of charset aliases. Each alias is a pair of charsets delimetered by a\n# single colon, the first one being an alias to the second one. The latter is\n# usually standard/prefered MIME name while the former is non-standard name used\n# by some email clients. For instance, you may have 'x-big5:big5,euc-cn:gb2312'";
++
++#ifdef HAVE_ICONV
++CONF_TXT_T cf_text_iconv_aliases[] =	"List of charset aliases to use with iconv(). Each alias is a pair of\n# charsets delimetered by a single colon, the first one being an alias to the\n# second one. The former is usually standard/prefered MIME name while the\n# latter is non-standard name used by iconv(3) on your system.\n#For example,\n# your iconv may use non-standard 'UTF8' for the standard 'UTF-8'. In that\n# case, you can put 'UTF-8:UTF8' here.";
++
++CONF_TXT_T cf_text_send_charset[] =	"Specifies the MIME charset that a message will be sent in. If not set,\n# the value of character set will be used.";
++#endif
++
+ CONF_TXT_T cf_text_editor[] =		"Specifies the program invoked by ^_ in the Composer,\n# or the \"enable-alternate-editor-implicitly\" feature.";
+ 
+ CONF_TXT_T cf_text_speller[] =		"Specifies the program invoked by ^T in the Composer.";
+@@ -522,6 +532,18 @@ static struct variable variables[] = {
+ 				cf_text_thread_lastreply_char},
+ {"character-set",			0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
+ 				cf_text_character_set},
++#ifdef ENABLE_SEND_CHARSET
++{"send-charset",	 		0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
++				cf_text_send_charset},
++#endif
++{"assumed-charset",			0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
++				cf_text_assumed_charset},
++{"charset-aliases",			0, 1, 0, 1, 1, 1, 0, 0, 0, 0,
++				cf_text_charset_aliases},
++#ifdef HAVE_ICONV
++{"iconv-aliases",			0, 1, 0, 1, 1, 1, 0, 0, 0, 0,
++				cf_text_iconv_aliases},
++#endif
+ {"editor",				0, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+ 				cf_text_editor},
+ {"speller",				0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
+@@ -2059,6 +2084,14 @@ init_vars(ps)
+     set_current_val(&vars[V_SIGNATURE_FILE], TRUE, TRUE);
+     set_current_val(&vars[V_LITERAL_SIG], TRUE, TRUE);
+     set_current_val(&vars[V_CHAR_SET], TRUE, TRUE);
++#ifdef ENABLE_SEND_CHARSET
++    set_current_val(&vars[V_SEND_CHARSET], TRUE, TRUE);
++#endif
++    set_current_val(&vars[V_ASSUMED_CHAR_SET], TRUE, TRUE);
++    set_current_val(&vars[V_CHAR_SET_ALIASES], TRUE, TRUE);
++#ifdef HAVE_ICONV
++    set_current_val(&vars[V_ICONV_ALIASES], TRUE, TRUE);
++#endif
+     set_current_val(&vars[V_GLOB_ADDRBOOK], TRUE, TRUE);
+     set_current_val(&vars[V_ADDRESSBOOK], TRUE, TRUE);
+     set_current_val(&vars[V_FORCED_ABOOK_ENTRY], TRUE, TRUE);
+--- pine4.59.9z/pine/pine.h
++++ pine4.59.9d/pine/pine.h
+@@ -599,6 +600,14 @@ typedef	enum {    V_PERSONAL_NAME = 0
+ 		, V_THREAD_EXP_CHAR
+ 		, V_THREAD_LASTREPLY_CHAR
+ 		, V_CHAR_SET
++#ifdef ENABLE_SEND_CHARSET
++		, V_SEND_CHARSET
++#endif
++		, V_ASSUMED_CHAR_SET
++		, V_CHAR_SET_ALIASES
++#ifdef HAVE_ICONV
++		, V_ICONV_ALIASES
++#endif
+ 		, V_EDITOR
+ 		, V_SPELLER
+ 		, V_FILLCOL
+@@ -839,6 +848,14 @@ typedef	enum {    V_PERSONAL_NAME = 0
+ #define GLO_FLD_SORT_RULE	     vars[V_FLD_SORT_RULE].global_val.p
+ #define VAR_CHAR_SET		     vars[V_CHAR_SET].current_val.p
+ #define GLO_CHAR_SET		     vars[V_CHAR_SET].global_val.p
++#ifdef ENABLE_SEND_CHARSET
++#define VAR_SEND_CHARSET	     vars[V_SEND_CHARSET].current_val.p
++#endif
++#define VAR_ASSUMED_CHAR_SET	     vars[V_ASSUMED_CHAR_SET].current_val.p
++#define VAR_CHAR_SET_ALIASES	     vars[V_CHAR_SET_ALIASES].current_val.l
++#ifdef HAVE_ICONV
++#define VAR_ICONV_ALIASES 	     vars[V_ICONV_ALIASES].current_val.l
++#endif
+ #define VAR_EDITOR		     vars[V_EDITOR].current_val.l
+ #define GLO_EDITOR		     vars[V_EDITOR].global_val.l
+ #define VAR_SPELLER		     vars[V_SPELLER].current_val.p
+--- pine4.59.9z/pine/other.c
++++ pine4.59.9d/pine/other.c
+@@ -7317,6 +7317,18 @@ config_help(var, feature)
+ 	return(h_config_fld_sort_rule);
+       case V_CHAR_SET :
+ 	return(h_config_char_set);
++#ifdef ENABLE_SEND_CHARSET
++      case V_SEND_CHARSET :
++	return(h_config_send_char_set);
++#endif
++      case V_ASSUMED_CHAR_SET :
++	return(h_config_assumed_charset);
++      case V_CHAR_SET_ALIASES :
++	return(h_config_charset_aliases);
++#ifdef HAVE_ICONV
++      case V_ICONV_ALIASES :
++	return(h_config_iconv_aliases);
++#endif
+       case V_EDITOR :
+ 	return(h_config_editor);
+       case V_SPELLER :
+@@ -11751,6 +11761,9 @@ toggle_feature_bit(ps, index, var, cl, j
+       case F_PASS_C1_CONTROL_CHARS :
+ 	ps->pass_c1_ctrl_chars = F_ON(F_PASS_C1_CONTROL_CHARS,ps_global)
+ 								    ? 1 : 0;
++	if(ps_global->VAR_CHAR_SET
++	 && !strucmp(ps_global->VAR_CHAR_SET, "UTF-8"))
++	  ps->pass_c1_ctrl_chars = 1;
+ 	break;
+ #endif
+ #ifdef	MOUSE

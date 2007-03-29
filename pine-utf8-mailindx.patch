@@ -1,0 +1,199 @@
+diff -pruN -x '*~' -x '*.orig' -x '*.rej' pine4.63-patch28/pine/mailindx.c pine4.63/pine/mailindx.c
+--- pine4.63-patch28/pine/mailindx.c	2005-05-10 22:30:45.000000000 +0200
++++ pine4.63/pine/mailindx.c	2005-05-11 00:52:20.173941845 +0200
+@@ -4627,6 +4627,58 @@ day_of_year(d)
+     return(doy);
+ }
+ 
++static char *
++rfc_1522_check_charset(chp)
++    char *chp;
++{
++    static char *subj_cs = NULL;
++    char *cs, *enc;
++
++    while(chp && (chp = strstr(chp, "=?")))
++	if(rfc1522_valid(chp++, 1, &cs, &enc, NULL, NULL)){
++	    int cs_len = enc - cs - 1;
++
++	    if(subj_cs)
++		fs_give((void **)&subj_cs);
++
++	    strncpy(subj_cs = fs_get(cs_len + 1), cs, cs_len);
++	    subj_cs[cs_len] = 0;
++
++	    return subj_cs;
++	}
++    return NULL;
++}
++
++static void
++rfc1522_decode_width(dest, source, width, idata)
++    char	*dest;
++    char	*source;
++    int		 width;
++    INDEXDATA_S *idata;
++{
++    char *subj_cs, *assumed_save = NULL, *dummy = NULL, *tmp;
++
++    if(idata && (subj_cs = rfc_1522_check_charset(fetch_subject(idata)))){
++	assumed_save = ps_global->VAR_ASSUMED_CHAR_SET;
++	ps_global->VAR_ASSUMED_CHAR_SET = subj_cs;
++    }
++
++    tmp = (char *) rfc1522_decode((unsigned char *) tmp_20k_buf,
++				   SIZEOF_20KBUF, source, &dummy);
++    if(idata){
++	if(tmp == source)
++	    strncpy(tmp = tmp_20k_buf, source, SIZEOF_20KBUF);
++
++	removing_leading_and_trailing_white_space(tmp);
++
++	if(subj_cs)
++	    ps_global->VAR_ASSUMED_CHAR_SET = assumed_save;
++    }
++    charset_istrncpy(dest, tmp, width, 0);
++	
++    if(dummy)
++	fs_give((void **)&dummy);
++}
+ 
+ 
+ /*----------------------------------------------------------------------
+@@ -4643,7 +4695,8 @@ HLINE_S *
+ format_index_index_line(idata)
+     INDEXDATA_S	*idata;
+ {
+-    char          str_buf[MAXIFLDS][MAX_SCREEN_COLS+1], to_us, status, *field,
++#define STRLEN MAX_SCREEN_COLS*6
++    char          str_buf[MAXIFLDS][STRLEN+1], to_us, status, *field,
+ 		 *buffer, *s_tmp, *p, *str, *newsgroups;
+     int		  width, i, j, smallest, which_array = 0, collapsed = 0,
+ 		  offsets_set = 0, cur_offset = 0, noff = 0, noff_was;
+@@ -5128,7 +5181,7 @@ format_index_index_line(idata)
+ 	      case iFrom:
+ 	      case iAddress:
+ 	      case iMailbox:
+-		from_str(cdesc->ctype, idata, width, str);
++		from_str(cdesc->ctype, idata, min(width*6,STRLEN), str);
+ 	        break;
+ 
+ 	      case iTo:
+@@ -5445,12 +5498,12 @@ getsize:
+ 		break;
+ 
+ 	      case iSubject:
+-		subj_str(idata, width, str, NoKW, NULL, NULL);
++		subj_str(idata, min(width*6,STRLEN), str, NoKW, NULL, NULL);
+ 		break;
+ 
+ 	      case iSubjKey:
+ 		noff_was = noff;
+-		subj_str(idata, width, str, KW, hline->offs, &noff);
++		subj_str(idata, min(width*6,STRLEN), str, KW, hline->offs, &noff);
+ 		/* fix offsets which are now relative to str */
+ 		for(i = noff_was; i < noff; i++)
+ 		  if(hline->offs[i].offset >= 0)
+@@ -5631,34 +5684,11 @@ getsize:
+ 	  }
+ 
+ 	  if(cdesc->adjustment == Left)
+-	    sprintf(p, "%-*.*s", width, width, str);
++	    charset_istrncpy(p, str, width, 1);
+ 	  else
+ 	    sprintf(p, "%*.*s", width, width, str);
+ 
+-	  /*
+-	   * Make sure there are no nulls in the part we were supposed to
+-	   * have just written. This may happen if sprintf returns an
+-	   * error, but we don't want to check for that because some
+-	   * sprintfs don't return anything. If there are nulls, rewrite it.
+-	   */
+-	  for(q = p; q < p+width; q++)
+-	    if(*q == '\0')
+-	      break;
+-	    
+-	  if(q < p+width){
+-	      strncpy(p, repeat_char(width, ' '), width);
+-	      p[width] = '\0';
+-	      /* throw a ? in there too */
+-	      if(width > 4){
+-		  p[(width-1)/2 - 1] = '?';
+-		  p[(width-1)/2    ] = '?';
+-		  p[(width-1)/2 + 1] = '?';
+-	      }
+-	      else if(width > 2)
+-		p[(width-1)/2] = '?';
+-	  }
+-
+-	  p += width;
++	  p += strlen(p);
+       }
+ 
+ 	
+@@ -5687,7 +5717,7 @@ getsize:
+     }
+ 
+     /* Truncate it to be sure not too wide */
+-    buffer[min(ps_global->ttyo->screen_cols, i_cache_width())] = '\0';
++    buffer[i_cache_width()] = '\0';
+     hline->id = line_hash(buffer);
+     dprint(9, (debugfile, "INDEX(%p) -->%s<-- (%d), 0x%lx>\n",
+ 	       hline,
+@@ -6537,21 +6567,12 @@ set_index_addr(idata, field, addr, prefi
+     if(addr && !addr->next		/* only one address */
+        && addr->host			/* not group syntax */
+        && addr->personal && addr->personal[0]){	/* there is a personal name */
+-	char *dummy = NULL;
+-	char  buftmp[MAILTMPLEN];
+ 	int   l;
+ 
+ 	if(l = prefix ? strlen(prefix) : 0)
+ 	  strcpy(s, prefix);
+ 
+-	sprintf(buftmp, "%.75s", addr->personal);
+-	p = (char *) rfc1522_decode((unsigned char *) tmp_20k_buf,
+-				    SIZEOF_20KBUF, buftmp, &dummy);
+-	removing_leading_and_trailing_white_space(p);
+-	istrncpy(s + l, p, width - l);
+-	s[width] = '\0';
+-	if(dummy)
+-	  fs_give((void **)&dummy);
++	rfc1522_decode_width(s + l, addr->personal, width - l, idata);
+ 	
+ 	if(*(s+l))
+ 	  return(TRUE);
+@@ -6572,8 +6593,13 @@ set_index_addr(idata, field, addr, prefi
+ 	if(l = prefix ? strlen(prefix) : 0)
+ 	  strcpy(s, prefix);
+ 
+-	istrncpy(s + l, a_string, width - l);
+-	s[width] = '\0';
++	if (p = rfc_1522_check_charset(fetch_subject(idata))) {
++		char *dest = s + l;
++		conv_sstrncpy(p, NULL, &dest, a_string, width);
++	} else {
++		istrncpy(s + l, a_string, width - l);
++		s[width] = '\0';
++	}
+ 
+ 	fs_give((void **)&a_string);
+ 	return(TRUE);
+@@ -10550,7 +10576,7 @@ i_cache_size(indx)
+ {
+     long j;
+     size_t  newsize = sizeof(HLINE_S)
+-		 + ((max(ps_global->ttyo->screen_cols, 80)+1) * sizeof(char));
++		 + ((max(ps_global->ttyo->screen_cols, 80)+1)*6*sizeof(char));
+ 
+     if(j = (newsize % sizeof(long)))		/* alignment hack */
+       newsize += (sizeof(long) - (size_t)j);
+@@ -10628,7 +10654,7 @@ get_index_cache(msgno)
+ 
+ 	dprint(2, (debugfile, "Called get_index_cache with msgno=%ld\n",
+ 		msgno));
+-	big_enough = sizeof(HLINE_S) + (MAX_SCREEN_COLS * sizeof(char))
++	big_enough = sizeof(HLINE_S) + (MAX_SCREEN_COLS * sizeof(char) * 6)
+ 		     + sizeof(long);
+ 	if(!dummy_to_protect_ourselves)
+ 	  dummy_to_protect_ourselves = (HLINE_S *) fs_get(big_enough);

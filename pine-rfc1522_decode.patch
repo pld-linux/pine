@@ -1,0 +1,193 @@
+
+Changelog:
+
+  - fix lost chars after accents in subject (121943)
+
+rfc2047_decode is not used and likely will never become used,
+to be removed.
+
+--- pine4.63-patch34/pine/strings.c	2005-06-01 09:23:02.504768000 -0600
++++ pine4.63/pine/strings.c	2005-06-01 10:06:22.535726730 -0600
+@@ -3505,6 +3505,29 @@ char	      *rfc1522_8bit PROTO((void *, 
+ char	      *rfc1522_binary PROTO((void *, int));
+ unsigned char *rfc1522_encoded_word PROTO((unsigned char *, int, char *));
+ 
++unsigned char *
++rfc2047_decode(d, len, s, charset)
++    unsigned char  *d;
++    size_t          len;	/* length of d */
++    char	   *s;
++    char	  **charset;
++{
++    unsigned char *t;
++    char *assumed_charset = NULL;
++#ifdef HAVE_ICONV
++    /*
++     * reset VAR_ASSUMED_CHAR_SET temporarily avoid double conversions:
++     */
++    assumed_charset = ps_global->VAR_ASSUMED_CHAR_SET;
++    if (ps_global->VAR_ASSUMED_CHAR_SET && *(ps_global->VAR_ASSUMED_CHAR_SET))
++	ps_global->VAR_ASSUMED_CHAR_SET = UNKNOWN_CHARSET; 
++#endif
++    t = rfc1522_decode(d, len, s, charset);
++#ifdef HAVE_ICONV
++    ps_global->VAR_ASSUMED_CHAR_SET = assumed_charset;
++#endif
++    return t;
++}
+ 
+ /*
+  * rfc1522_decode - try to decode the given source string ala RFC 2047
+@@ -3547,6 +3570,7 @@ rfc1522_decode(d, len, s, charset)
+     unsigned long  l;
+     int		   i, described_charset_once = 0;
+     int            translate_2022_jp = 0;
++    unsigned char *cset_r;    /* cset with alias resolution */
+ 
+     *d = '\0';					/* init destination */
+     if(charset)
+@@ -3554,7 +3578,7 @@ rfc1522_decode(d, len, s, charset)
+ 
+     while(s && (sw = strstr(s, RFC1522_INIT))){
+ 	/* validate the rest of the encoded-word */
+-	if(rfc1522_valid(sw, &cset, &enc, &txt, &ew)){
++	if(rfc1522_valid(sw, 1, &cset, &enc, &txt, &ew)){
+ 	    if(!rv)
+ 	      rv = d;				/* remember start of dest */
+ 
+@@ -3587,6 +3611,7 @@ rfc1522_decode(d, len, s, charset)
+ 	    if(lang = strchr(cset, '*'))
+ 	      *lang++ = '\0';
+ 
++	    cset_r =resolve_charset_alias(cset,ps_global->VAR_CHAR_SET_ALIASES);
+ 	    /* Insert text explaining charset if we don't know what it is */
+ 	    if(F_OFF(F_DISABLE_2022_JP_CONVERSIONS, ps_global)
+ 	       && !strucmp((char *) cset, "iso-2022-jp")){
+@@ -3666,12 +3691,8 @@ rfc1522_decode(d, len, s, charset)
+ 		  q = NULL;
+ 
+ 		if(p = rfc822_qprint((unsigned char *)txt, strlen(txt), &l)){
+-		    strncpy((char *) d, (char *) p, min(l,len-1-(d-rv)));
+-		    d[min(l,len-1-(d-rv))] = '\0';
++		    conv_sstrncpy(cset_r, NULL, &d, p, len-(d-rv));
+ 		    fs_give((void **)&p);	/* free encoded buf */
+-		    d += l;			/* advance dest ptr to EOL */
+-		    if(d-rv > len-1)
+-		      d = rv+len-1;
+ 		}
+ 		else{
+ 		    if(q)
+@@ -3701,12 +3722,8 @@ rfc1522_decode(d, len, s, charset)
+ 		     * embedded nulls don't make sense in this context and
+ 		     * won't work correctly anyway, it is really a no-op.
+ 		     */
+-		    strncpy((char *) d, (char *) p, min(l,len-1-(d-rv)));
+-		    d[min(l,len-1-(d-rv))] = '\0';
++		    conv_sstrncpy(cset_r, NULL, &d, p, len-(d-rv));
+ 		    fs_give((void **)&p);	/* free encoded buf */
+-		    d += l;			/* advance dest ptr to EOL */
+-		    if(d-rv > len-1)
+-		      d = rv+len-1;
+ 		}
+ 		else
+ 		  goto bogus;
+@@ -3733,28 +3750,30 @@ rfc1522_decode(d, len, s, charset)
+ 	else{
+ 
+ 	    /*
+-	     * Found intro, but bogus data followed, treat it as normal text.
++	     * Found intro, but bogus data followed, copy it and continue.
+ 	     */
+-
++#ifdef HAVE_ICONV
++	    if (!rv)
++		rv=d; /* remember start of dest */
++#endif
++	    l = min(len-(d-rv),(sw-s)+ RFC1522_INIT_L); /* data to copy */
+ 	    /* if already copying to destn, copy it */
+-	    if(rv){
+-		strncpy((char *) d, s,
+-			(int) min((l = (sw - s) + RFC1522_INIT_L),
+-			len-1-(d-rv)));
+-		d += l;				/* advance d, tie off text */
+-		if(d-rv > len-1)
+-		  d = rv+len-1;
+-		*d = '\0';
+-		s += l;				/* advance s beyond intro */
+-	    }
+-	    else	/* probably won't have to copy it at all, wait */
+-	      s += ((sw - s) + RFC1522_INIT_L);
++	    if(rv)
++		conv_sstrncpy(ps_global->VAR_ASSUMED_CHAR_SET, NULL,
++			(char **)&d, s, (int) l);
++	    s += l; /* advance s beyond intro */
+ 	}
+     }
+ 
+-    if(rv && *s)				/* copy remaining text */
+-      strncat((char *) rv, s, len - 1 - strlen((char *) rv));
+-
++#ifdef HAVE_ICONV
++	if (!rv)
++	    rv=d; /* remember start of dest */
++#endif
++	if (rv && s)
++	    conv_sstrncpy(ps_global->VAR_ASSUMED_CHAR_SET, NULL,
++		(char **)&d, s, len - strlen((char *)rv));
++ 
++#ifndef HAVE_ICONV /* with iconv, we are done, we have converted during copy */
+     if(translate_2022_jp){
+ 	unsigned char *trans;
+ 
+@@ -3816,6 +3836,7 @@ rfc1522_decode(d, len, s, charset)
+ 	    }
+ 	}
+     }
++#endif
+ 
+     if(cs)
+       fs_give((void **) &cs);
+----------------------------- BEGIN --------------------------------
+Description of the fix included in this patch regarding:
+
+- fix lost chars after accents in subject (bug #121943):
+
+Between pine4.61 and 4.63, a rfc1522_decode was changed along
+these lines:
+
+-            strncpy((char *) d, (char *) p, len-1-(d-rv));
++            strncpy((char *) d, (char *) p, min(l,len-1-(d-rv)));
+-            d[len-1-(d-rv)] = '\0';
++            d[min(l,len-1-(d-rv))] = '\0';
+
+ In short: len-1-(d-rv) was replaced with min(l,len-1-(d-rv)),
+
+ Or shorter: The strcpy was limited to the number of bytes
+ which the strings contain which were given to it, but the
+ strings were already null-terminated like also the comment
+ which was added says:
+
+            /*
+             * C-client's rfc822_base64 was changed so that it now
+             * does do null termination of the returned value.
+             * As long as there are no nulls in the rest of the
+             * string, we could now get rid of worrying about the
+             * l length arg in the next two lines. In fact, since
+             * embedded nulls don't make sense in this context and
+             * won't work correctly anyway, it is really a no-op.
+             */
+
+At least it did not hurt in the context of the orignal code.
+
+But since the semantics change with UTF-8, applying the same change
+to the UTF-8 conversion does not work because the number of bytes
+to copy increas during a converstion from ISO-8859 charsets to UTF-8.
+
+The fix was to revert the harmful min() and only use the availabe
+space in the output puffer to limit the conversion result.
+
+That means that conv_strncpy is again called with the same arguments
+as with all previous UTF-8 releases for pine and the bug is fixed
+thereby.
+
+----------------------------- END --------------------------------

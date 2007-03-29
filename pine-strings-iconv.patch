@@ -1,0 +1,284 @@
+--- pine4.59.9z/pine/strings.c
++++ pine4.59.9d/pine/strings.c
+@@ -82,6 +82,9 @@ static char rcsid[] = "$Id: strings.c,v 
+ 
+ #include "headers.h"
+ #include "../c-client/utf8.h"
++#ifdef HAVE_ICONV
++#include <iconv.h>
++#endif
+ 
+ typedef struct role_args {
+     char    *ourcharset;
+@@ -707,6 +858,205 @@ istrncpy(d, s, n)
+ 
+ 
+ /*
++ *  * * * * * *  Character set translation helpers  * * * * * * * *
++ */
++
++#ifdef HAVE_ICONV
++static iconv_t
++make_iconv_d(toset, fromset)
++    char *toset;
++    char *fromset;
++{
++    iconv_t iconv_d;
++    char * tocode = NULL;
++
++    /* make private copy of toset and append //TRANSLIT if feasible */
++    if(strucmp(toset, "UTF-8")){
++	tocode = (char *)fs_get((size_t)(strlen(toset)) + 11);
++	strcpy(tocode, toset);
++	strcat(tocode, "//TRANSLIT");
++    }
++
++    if((iconv_d = iconv_open(tocode?tocode:toset, fromset)) == (iconv_t)-1){
++       dprint(7, (debugfile,"iconv open failed:"));
++       iconv_d = NULL;
++    }    
++    dprint(7, (debugfile, "from %s to %s\n", fromset, toset));
++
++    /* free local copy for //TRANSLIT */
++    if(tocode)
++	fs_give((void **) &tocode);
++
++    return iconv_d;
++}
++
++static
++iconv_t
++get_iconv_d(tocset, fromcset, local_iconvd)
++    char *tocset;
++    char *fromcset;
++    iconv_t *local_iconvd;
++{
++    static char    *s_fromcset = NULL, *s_tocset  = NULL;
++    static iconv_t  s_iconv_d = 0;
++
++    /* no conversion if charset missing, from=ASCII or charets are equal */
++    if(!tocset || (fromcset && tocset && !strucmp(fromcset, tocset)))
++	return NULL; 
++
++    dprint(6, (debugfile,"charsets %s -> %s\n", fromcset, tocset));
++
++    fromcset = resolve_charset_alias(fromcset,
++				     ps_global->VAR_CHAR_SET_ALIASES);
++    fromcset = resolve_charset_alias(fromcset,
++				     ps_global->VAR_ICONV_ALIASES);
++    tocset   = resolve_charset_alias(tocset,
++				     ps_global->VAR_CHAR_SET_ALIASES);
++    tocset   = resolve_charset_alias(tocset,
++				     ps_global->VAR_ICONV_ALIASES);
++
++    if(local_iconvd){
++	if (strucmp(fromcset, US_ASCII_CHARSET))
++	   *local_iconvd  = make_iconv_d(tocset, fromcset);
++	return NULL;
++    }
++
++    if(s_iconv_d && !strucmp(fromcset, US_ASCII_CHARSET)
++       && s_tocset && !strucmp(s_tocset, tocset)) {
++	dprint(6, (debugfile,"use charsets %s -> %s\n", s_fromcset, tocset));
++	iconv(s_iconv_d, NULL, NULL, NULL, NULL);
++    } else {
++
++      if (ps_global->VAR_ASSUMED_CHAR_SET
++	&& (!fromcset || !*fromcset || !strucmp(UNKNOWN_CHARSET, fromcset)))
++	    fromcset = ps_global->VAR_ASSUMED_CHAR_SET;
++
++      if(!strucmp(fromcset, US_ASCII_CHARSET))
++	return NULL; 
++
++      if(s_fromcset && strucmp(s_fromcset, fromcset))
++	fs_give((void **)&s_fromcset);
++
++      if(s_tocset   && strucmp(s_tocset,   tocset))
++	fs_give((void **)&s_tocset);
++    
++      if(!s_fromcset || !s_tocset) {
++	if (s_iconv_d)
++	    iconv_close(s_iconv_d);
++	s_fromcset = cpystr(fromcset);
++	s_tocset   = cpystr(tocset);
++	s_iconv_d  = make_iconv_d(tocset, fromcset);
++      }
++      else if(s_iconv_d)
++	iconv(s_iconv_d, NULL, NULL, NULL, NULL);
++    }
++
++    return s_iconv_d;
++}
++#endif
++
++/*
++ * Like sstrncpy, but with charset conversion(if possible) and null termination.
++ * *dest is left pointing a the terminating zero byte. It will not write
++ * more than length bytes. To copy the whole string, the output buffer and
++ * the length passed must be strlen(source)+1 in order to get a full copy.
++ *
++ * fromcset -- charset to convert from
++ * tocset   -- charset ro convert to
++ * **dest   -- address of a pointer which points to the destination buffer
++ * *src     -- address of the start of the rfc2047-decoded source buffer
++ * len      -- maximum number of bytes to write at **dest and increase *dest
++ *             __including__ the terminating null. 
++ */ 
++void
++conv_sstrncpy(fromcset, tocset, dest, src, length)
++    char  *fromcset;
++    char  *tocset;
++    char **dest;
++    char  *src;
++    size_t length;
++{
++#ifdef HAVE_ICONV
++    iconv_t iconv_desc = NULL;
++
++    if((!fromcset || !*fromcset) && (!tocset || !*tocset))
++	goto noconv;
++
++    fromcset = (fromcset && *fromcset) ? fromcset : ps_global->VAR_CHAR_SET;
++    tocset   = (tocset   && *tocset)   ? tocset   : ps_global->VAR_CHAR_SET;
++
++    iconv_desc = get_iconv_d(tocset, fromcset, NULL);
++
++    if(iconv_desc){
++	size_t inbytesleft = strlen(src);
++	char * buf = *dest; int ret;
++
++	length--;			/* reserve a byte for '\0' */
++	ret = iconv(iconv_desc, &src, &inbytesleft, dest, &length);
++	**dest = '\0';			/* terminate the output string */
++	dprint(9, (debugfile, "iconv ret=%3d: >%s<\n", ret, buf));
++	return;
++    }
++#endif
++noconv:
++    dprint(9, (debugfile,"no convert: >%s<(%d)\n", src, length));
++    sstrncpy(dest, src, length);
++    **dest = '\0'; /* ensure that the output string is terminated */
++}
++
++unsigned char*
++resolve_charset_alias(cs, aliases)
++    char  *cs;
++    char **aliases;
++{
++    int i;
++    char *bdry;
++
++    if(!aliases)
++	return cs;
++    for(i=0; aliases[i] && *(aliases[i]); i++)
++	if(bdry=strchr(aliases[i],':')){
++	    *bdry='\0';
++	    if (!strucmp(aliases[i], cs)) {
++	  	*bdry=':';
++	  	return *(bdry+1) ? bdry+1 : cs;
++	    }
++	    *bdry=':';
++	}
++    return cs;
++}
++
++#ifdef HAVE_ICONV
++/*
++ * Converts the source string in fromcset to tocset and copy the result
++ * into allocated space.
++ * Caller is responsible for freeing the result.
++ */
++unsigned char *
++trans_with_iconv(src, fromcset, tocset)
++    unsigned char *src;
++    char *fromcset;
++    char *tocset;
++{
++    size_t len;
++    unsigned char *rv, *pstr;
++    if (!src)
++	return NULL;
++
++    dprint(5, (debugfile, "translating from %s to %s\n",fromcset, tocset));
++
++    /* 
++     * XXX: multiplier of 5 should be sufficient for virtually all
++     * cases (EUC-JP -> ISO-2022-JP)
++     */
++    len = strlen((char *) src) * 5 + 1;
++    pstr = rv = (unsigned char *) fs_get(sizeof(char) * len);
++    conv_sstrncpy(fromcset, tocset, (char **) &pstr, src, len);
++    return rv;
++}
++#endif
++
++/*
+  * Copies the source string into allocated space with the 8-bit EUC codes
+  * (on Unix) or the Shift-JIS (on PC) converted into ISO-2022-JP.
+  * Caller is responsible for freeing the result.
+@@ -3522,6 +3903,27 @@ conversion_table(from_cs, to_cs)
+     CHARSET          *from, *to;
+     static CONV_TABLE null_tab;
+ 
++#ifndef HAVE_ICONV
++    /*
++     * Another idea would be to check if the subject had charset tags
++     * and use this charset (we could use the last charset variable from
++     * conv_sstrcpy() in mailview.c)
++     */
++    if (ps_global->VAR_ASSUMED_CHAR_SET
++	&& (!from_cs || !*from_cs || !strucmp(UNKNOWN_CHARSET, from_cs)
++				  || !strucmp(US_ASCII_CHARSET, from_cs)))
++	    from_cs = ps_global->VAR_ASSUMED_CHAR_SET;
++
++    /*
++     * Lets do user-specified charset aliasing before starting work:
++     */
++    from_cs = resolve_charset_alias(from_cs, ps_global->VAR_CHAR_SET_ALIASES);
++    to_cs   = resolve_charset_alias(to_cs,   ps_global->VAR_CHAR_SET_ALIASES);
++#endif
++
++    /*
++     * Check if we need conversion for this pair. If not, it's easy:
++     */
+     if(!(from_cs && *from_cs && to_cs && *to_cs) || !strucmp(from_cs, to_cs)){
+ 	memset(&null_tab, 0, sizeof(null_tab));
+ 	null_tab.quality = CV_NO_TRANSLATE_NEEDED;
+@@ -3553,6 +3955,12 @@ conversion_table(from_cs, to_cs)
+     if(ct){
+ 	if(ct->table && (ct->convert != gf_convert_utf8_charset))
+ 	  fs_give((void **) &ct->table);
++#ifdef HAVE_ICONV
++	if(ct->table && (ct->convert == gf_convert_utf8_charset)) {
++	  iconv_close((iconv_t)ct->table);
++	  ct->table = NULL;
++	}
++#endif
+ 	
+ 	if(ct->from_charset)
+ 	  fs_give((void **) &ct->from_charset);
+@@ -3567,6 +3973,16 @@ conversion_table(from_cs, to_cs)
+ 
+     ct->from_charset = cpystr(from_cs);
+     ct->to_charset   = cpystr(to_cs);
++#ifdef HAVE_ICONV
++    ct->convert = gf_convert_utf8_charset;
++    get_iconv_d(to_cs, from_cs, (iconv_t *)&ct->table);
++    ct->quality = ct->table ? CV_LOSES_SPECIAL_CHARS:CV_NO_TRANSLATE_POSSIBLE;
++//  The code could be changed to falls thru if iconv fails for some reason, but
++//  this should be also changed to use the quality info from the c-client
++//  as a hint.
++//    if (ct->table)
++//	return(ct);
++#else
+     ct->quality = CV_NO_TRANSLATE_POSSIBLE;
+ 
+     /*
+@@ -3701,6 +4117,7 @@ conversion_table(from_cs, to_cs)
+ 	    }
+ 	}
+     }
++#endif
+ 
+     return(ct);
+ }

@@ -1,0 +1,306 @@
+#
+# This patch isn't complete yet, the call to filter_msgtxt_to_send_charset
+# has yet to be included into the send filter process (strings2outgoing):
+#
+# Additional description:
+#
+# Thus, for now, ENABLE_SEND_CHARSET is not defined, this means that this
+# patch is for now completely #ifdef'ed out, except for two hunks:
+# 
+# This first hunk changes a variable in the resulting preprocessed code,
+# it ensures that if pine is using a charset for charset conversion,
+# the outgoing mails are also encoded using a charset, to prevent
+# that mails could go out without being encoded correctly, it would
+# show it not on every outgoing mail but one quite some.
+#
+set_mime_charset(pm, ascii_ok, cs):
+
+     if(pm->value && (!*pm->value || strucmp(pm->value, us_ascii) == 0))
+       fs_give((void **)&pm->value);
+
++    cs = cs ? cs
++#ifdef ENABLE_SEND_CHARSET
++       : ps_global->VAR_SEND_CHARSET ? ps_global->VAR_SEND_CHARSET
++#endif
++       : ps_global->VAR_CHAR_SET;
+     /* see if cs is a special non_ascii charset */
+     for(excl = non_ascii; cs && *excl && strucmp(*excl, cs); excl++)
+       ;
+# 
+# This second hunk is an tuned copy of the rule which occurs in the
+# code just before this hunk. It improves the selection of the mime
+# encoding which is used use for encoding mail. Only tunes the
+# efficiency of the mine encoding.
+#
+set_mime_type_by_grope(body, charset):
+
+            if(new_encoding != ENCBINARY)
+              new_encoding = ENC8BIT;  /* short lines, < 30% 8 bit chars */
+        }
++       else if(max_line < 300L || (eight_bit_chars * 100L)/len < 80L){
++           /*
++            * The previous test misses East Asian, Greek and Russian text
++            * in ISO-8859-7, KOI8-R, EUC-KR, Big5, and GB2312
++            * with a lot higher percentage of 8bit chars than Western European text
++            * in ISO-8859-x. For them, use a relaxed condition for the 
++            * percentage of 8bit chars along with a more strict condition
++            * on the maximum line length. 
++            */
++           can_be_ascii--;
++           if(body->type == TYPEOTHER)
++             body->type = TYPETEXT;
++
++           if(new_encoding != ENCBINARY)
++             new_encoding = ENC8BIT;  /* short lines, < 30% 8 bit chars */
++       }
+        else{
+            can_be_ascii--;
+            if(body->type == TYPEOTHER){
+
+--- pine4.59.9z/pine/send.c
++++ pine4.59.9d/pine/send.c
+@@ -6372,6 +6375,54 @@ filter_msgtxt_euc_to_2022_jp(body)
+     }
+ }
+ 
++#ifdef ENABLE_SEND_CHARSET
++/*
++ * Take the PicoText pointed to and replace it with PicoText which has been
++ * filtered to change the 'character-set' (display/terminal-charset) to 
++ * 'send-charset'. (based on filter_msgtxt_euc_to_2022_jp, above)
++ */
++void
++filter_msgtxt_to_send_charset(body)
++    BODY *body;
++{
++    STORE_S **so = (STORE_S **)((body->type == TYPEMULTIPART)
++				? &body->nested.part->body.contents.text.data
++				: &body->contents.text.data);
++    STORE_S  *filtered_so = NULL; 
++    gf_io_t   pc, gc;
++    char     *errstr;
++    CONV_TABLE *ct;
++    char * assumed_save = ps_global->VAR_ASSUMED_CHAR_SET;
++
++    ps_global->VAR_ASSUMED_CHAR_SET = NULL;
++    ct = conversion_table(ps_global->VAR_CHAR_SET, ps_global->VAR_SEND_CHARSET);
++    ps_global->VAR_ASSUMED_CHAR_SET = assumed_save;
++
++    if(ct->table && (filtered_so = so_get(PicoText, NULL, EDIT_ACCESS))){
++	so_seek(*so, 0L, 0);
++	gf_filter_init();
++	gf_link_filter(ct->convert, ct->table);
++	gf_set_so_readc(&gc, *so);
++	gf_set_so_writec(&pc, filtered_so);
++	if(errstr = gf_pipe(gc, pc)){
++	    so_give(&filtered_so);
++	    dprint(1, (debugfile,
++		       "Error with converting to send-charset %s:%s\n", 
++		       ps_global->VAR_SEND_CHARSET, errstr));
++	    return;
++	}
++
++	gf_clear_so_readc(*so);
++	gf_clear_so_writec(filtered_so);
++
++	so_give(so);
++	*so = filtered_so;
++    }
++    dprint(5, (debugfile,
++	       "Succeeded in converting %s to %s for outgoing email\n",
++	       ps_global->VAR_CHAR_SET, ps_global->VAR_SEND_CHARSET));
++}
++#endif
+ 
+ /*----------------------------------------------------------------------
+     Pass the first text segment of the message thru the "send filter"
+@@ -7587,7 +7638,12 @@ outgoing2strings(header, bod, text, pico
+ 		src = pf->scratch ? pf->scratch
+ 				  : (*pf->text) ? *pf->text : "";
+ 
++#ifndef ENABLE_SEND_CHARSET
+		len = strlen(src)+1;
++#else
++		/* multiplyer 5 should be enough for EUC-JP -> ISO-2022-JP */
++		len = strlen(src)*5+1;  
++#endif
+ 		p = (char *)fs_get(len * sizeof(char));
+ 		if(rfc1522_decode((unsigned char *)p, len, src, &charset)
+ 						   == (unsigned char *) p){
+@@ -7718,6 +7770,13 @@ strings2outgoing(header, bod, attach, ch
+ 		         !strucmp(ps_global->VAR_CHAR_SET, "iso-2022-jp"))
+ 		        *pf->text =
+ 			 (char *) trans_euc_to_2022_jp((unsigned char *) (pf->scratch));
++#ifdef ENABLE_SEND_CHARSET
++		      else if(ps_global->VAR_CHAR_SET && ps_global->VAR_SEND_CHARSET &&
++		         !strucmp(ps_global->VAR_CHAR_SET, ps_global->VAR_SEND_CHARSET))
++		        *pf->text =
++			 (char *) trans_with_iconv((unsigned char *) (pf->scratch),
++			   ps_global->VAR_CHAR_SET, ps_global->VAR_SEND_CHARSET);  
++#endif
+ 		      else
+ 		        *pf->text = cpystr(pf->scratch);
+ 		  }
+@@ -7783,6 +7872,10 @@ resolve_encoded_entries(new, old)
+ 					  SIZEOF_20KBUF, buftmp, &charset);
+ 
+ 	      q = (char *) trans_euc_to_2022_jp((unsigned char *)(a->personal));
++#ifdef ENABLE_SEND_CHARSET
++	      q = (char *) trans_with_iconv((unsigned char *)(a->personal),
++		      ps_global->VAR_CHAR_SET, ps_global->VAR_SEND_CHARSET);
++#endif
+ 
+ 	      if(p == tmp_20k_buf		/* personal was decoded */
+ 		 && !strcmp(q, p)){		/* still matches what it was */
+@@ -7881,6 +7980,10 @@ create_message_body(b, attach, charset)
+ 			   rfc1522_encode(tmp_20k_buf,
+ 					  SIZEOF_20KBUF,
+ 					  (unsigned char *) pa->description,
++#ifdef ENABLE_SEND_CHARSET
++					   ps_global->VAR_SEND_CHARSET ? 
++					   ps_global->VAR_SEND_CHARSET :
++#endif
+ 					  ps_global->VAR_CHAR_SET));
+ 	      }
+ 
+@@ -7943,6 +8048,10 @@ create_message_body(b, attach, charset)
+         p->body.description = cpystr(rfc1522_encode(tmp_20k_buf,
+ 					   SIZEOF_20KBUF,
+ 				           (unsigned char *) pa->description,
++#ifdef ENABLE_SEND_CHARSET
++					   ps_global->VAR_SEND_CHARSET ? 
++					   ps_global->VAR_SEND_CHARSET :
++#endif
+ 					   ps_global->VAR_CHAR_SET));
+ 
+ 	/* Add name attribute for backward compatibility */
+@@ -8329,6 +8440,22 @@ set_mime_type_by_grope(body, charset)
+ 	    if(new_encoding != ENCBINARY)
+ 	      new_encoding = ENC8BIT;  /* short lines, < 30% 8 bit chars */
+ 	}
++	else if(max_line < 300L || (eight_bit_chars * 100L)/len < 80L){
++	    /*
++	     * The previous test misses East Asian, Greek and Russian text
++	     * in ISO-8859-7, KOI8-R, EUC-KR, Big5, and GB2312
++	     * with a lot higher percentage of 8bit chars than Western European text
++	     * in ISO-8859-x. For them, use a relaxed condition for the 
++	     * percentage of 8bit chars along with a more strict condition
++	     * on the maximum line length. 
++	     */
++	    can_be_ascii--;
++	    if(body->type == TYPEOTHER)
++	      body->type = TYPETEXT;
++
++	    if(new_encoding != ENCBINARY)
++	      new_encoding = ENC8BIT;  /* short lines, < 30% 8 bit chars */
++	}
+ 	else{
+ 	    can_be_ascii--;
+ 	    if(body->type == TYPEOTHER){
+@@ -8392,7 +8519,11 @@ set_mime_type_by_grope(body, charset)
+ 	else
+ 	  set_mime_charset(pm,
+ 			   can_be_ascii > 0,
++#ifndef ENABLE_SEND_CHARSET
+ 			   charset ? charset : ps_global->VAR_CHAR_SET);
++#else
++			   charset);
++#endif
+     }
+ 
+     if(body->encoding == ENCOTHER)
+@@ -8451,7 +8578,11 @@ set_only_charset_by_grope(body, charset)
+ 
+     set_mime_charset(pm,
+ 		     can_be_ascii > 0,
++#ifndef ENABLE_SEND_CHARSET
+ 		     charset ? charset : ps_global->VAR_CHAR_SET);
++#else
++		     charset);
++#endif
+ 
+     if(we_cancel)
+       cancel_busy_alarm(-1);
+@@ -8482,6 +8609,11 @@ set_mime_charset(pm, ascii_ok, cs)
+     if(pm->value && (!*pm->value || strucmp(pm->value, us_ascii) == 0))
+       fs_give((void **)&pm->value);
+ 
++    cs = cs ? cs
++#ifdef ENABLE_SEND_CHARSET
++	: ps_global->VAR_SEND_CHARSET ? ps_global->VAR_SEND_CHARSET
++#endif
++	: ps_global->VAR_CHAR_SET;
+     /* see if cs is a special non_ascii charset */
+     for(excl = non_ascii; cs && *excl && strucmp(*excl, cs); excl++)
+       ;
+@@ -8566,8 +8700,16 @@ pine_header_line(field, header, text, f,
+     char *value, *folded = NULL;
+ 
+ 
++#ifdef ENABLE_SEND_CHARSET
++    text = (char *) trans_with_iconv(text, ps_global->VAR_CHAR_SET,
++			    ps_global->VAR_SEND_CHARSET);
++#endif
+     value = encode_header_value(tmp_20k_buf, SIZEOF_20KBUF,
+ 				(unsigned char *) text,
++#ifdef ENABLE_SEND_CHARSET
++			        ps_global->VAR_SEND_CHARSET ?
++			        ps_global->VAR_SEND_CHARSET :
++#endif
+ 			        ps_global->VAR_CHAR_SET,
+ 				encode_whole_header(field, header));
+     
+@@ -8632,6 +8776,10 @@ pine_header_line(field, header, text, f,
+ 	  fs_give((void **)&folded);
+     }
+     
++#ifdef ENABLE_SEND_CHARSET
++    if (text)
++	fs_give((void **)&text);
++#endif
+     return(ret);
+ }
+ 
+--- pine4.59.9z/pine/reply.c
++++ pine4.59.9d/pine/reply.c
+@@ -4640,6 +4655,9 @@ bounce_msg(stream, rawno, part, to, subj
+     ENVELOPE *outgoing;
+     BODY     *body = NULL;
+     MESSAGECACHE *mc;
++#ifdef ENABLE_SEND_CHARSET
++    char     *temp_send_cset = NULL;
++#endif
+ 
+     outgoing		 = mail_newenvelope();
+     outgoing->message_id = generate_message_id();
+@@ -4723,6 +4739,17 @@ bounce_msg(stream, rawno, part, to, subj
+ 
+     gf_clear_so_writec((STORE_S *) msgtext);
+ 
++#ifdef ENABLE_SEND_CHARSET
++    /*
++     * reset VAR_SEND_CHARSET to '' temporarily NOT to 
++     * apply  the charset conversion to a bounced message.
++     */
++    if (ps_global->VAR_SEND_CHARSET && *(ps_global->VAR_SEND_CHARSET)){
++	temp_send_cset = (char *)fs_get(strlen(ps_global->VAR_SEND_CHARSET)+1);
++	strcpy(temp_send_cset, ps_global->VAR_SEND_CHARSET);
++	(ps_global->VAR_SEND_CHARSET)[0] = '\0'; 
++    }
++#endif
+     if(pine_simple_send(outgoing, &body, role, pmt_who, pmt_cnf, to,
+ 			!(to && *to) ? SS_PROMPTFORTO : 0) < 0){
+ 	errstr = "";		/* p_s_s() better have explained! */
+@@ -4733,6 +4760,12 @@ bounce_msg(stream, rawno, part, to, subj
+ 	  mail_flag(stream, long2string(rawno), "\\SEEN", 0);
+     }
+ 
++#ifdef ENABLE_SEND_CHARSET
++    if (temp_send_cset){
++	strcpy(ps_global->VAR_SEND_CHARSET, temp_send_cset);
++	fs_give((void **)&temp_send_cset);
++    }
++#endif
+     /* Just for good measure... */
+     mail_free_envelope(&outgoing);
+     pine_free_body(&body);
