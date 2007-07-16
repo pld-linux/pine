@@ -159,7 +159,6 @@ Pine - це повноцінний текст-орієнтований кліє�
 
 %package -n pico
 Summary:	Simple text editor in the style of the Pine Composer
-Summary(es.UTF-8):	Simple, easy-to-use text-based editor
 Summary(pl.UTF-8):	Prosty edytor tekstowy w stylu pine
 Summary(pt_BR.UTF-8):	Editor de textos para terminal simples e fácil de usar
 Group:		Applications/Editors
@@ -169,11 +168,6 @@ Pico is a simple, display-oriented text editor based on the Pine
 message system composer. As with Pine, commands are displayed at the
 bottom of the screen, and context-sensitive help is provided. As
 characters are typed they are immediately inserted into the text.
-
-%description -n pico -l es.UTF-8
-Pico is a simple, display-oriented text editor based on the Pine
-message system composer. As with Pine, commands are displayed at the
-bottom of the screen, and context- sensitive help is provided.
 
 %description -n pico -l pl.UTF-8
 Pico jest prostym, zorientowanym na wyświetlanie edytorem bazującym na
@@ -188,17 +182,11 @@ e ajuda de acordo com o contexto está disponível.
 
 %package -n pilot
 Summary:	Simple file system browser in the style of the Pine Composer
-Summary(es.UTF-8):	Simple filesystem browser in the style of the Pine Composer
 Summary(pl.UTF-8):	Prosta przeglądarka plików w stylu composera pine
 Summary(pt_BR.UTF-8):	Navegador de sistemas de arquivos no estilo do compositor do Pine
 Group:		Applications/Shells
 
 %description -n pilot
-Pilot is a simple, display-oriented file system browser based on the
-Pine message system composer. As with Pine, commands are displayed at
-the bottom of the screen, and context-sensitive help is provided.
-
-%description -n pilot -l es.UTF-8
 Pilot is a simple, display-oriented file system browser based on the
 Pine message system composer. As with Pine, commands are displayed at
 the bottom of the screen, and context-sensitive help is provided.
