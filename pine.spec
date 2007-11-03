@@ -16,7 +16,7 @@ Summary(uk.UTF-8):	Сумісний з MIME почтовий редактор з
 Name:		pine
 %define		realversion	4.64
 Version:	%{realversion}N
-Release:	7
+Release:	8
 %if %{with distributable}
 License:	Distributable for PLD
 %else
