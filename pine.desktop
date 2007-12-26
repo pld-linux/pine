@@ -25,6 +25,6 @@ Comment[sv]=PINE mejlprogram
 Icon=pine
 Exec=pine
 Terminal=true
-Type=Application 
+Type=Application
 Categories=ConsoleOnly;Network;Email;
 # vi: encoding=utf-8
