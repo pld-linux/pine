@@ -49,6 +49,7 @@ Patch14:	%{name}-N_on_version.patch
 Patch15:	%{name}-overflow.patch
 # http://www.math.washington.edu/~chappa/pine/
 Patch16:	http://www.math.washington.edu/~chappa/pine/patches/pine%{realversion}/all.patch.gz
+# Patch16-md5:	fc22f32a25c21586c10642f417af0ed0
 # Original from: http://www.signet.pl/instrukcje/pine/pine-smime-211101-fixed.diff
 Patch17:	%{name}-smime.patch
 Patch18:	%{name}-css.patch
