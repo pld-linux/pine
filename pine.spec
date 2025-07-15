@@ -222,7 +222,7 @@ ajuda de acordo com o contexto está disponível.
 %patch -P15 -p1
 %patch -P16 -p1
 # breaks pine
-#%{!?with_distributable:%patch17 -p1}
+#%{!?with_distributable:%%patch17 -p1}
 %if ! %{with distributable}
 %{?with_utf8:%patch22 -p1}
 %{?with_utf8:%patch40 -p0}
